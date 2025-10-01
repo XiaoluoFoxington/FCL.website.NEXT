@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Fold Craft Launcher 下载站</title>
+
+  <link rel="stylesheet" href="/css/lib/mdui.min.css">
+  <link rel="stylesheet" href="/css/mdui.repair.css">
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+
+<body class="mdui-appbar-with-toolbar mdui-appbar-with-tab-larger mdui-theme-primary-teal mdui-theme-accent-green mdui-theme-layout-dark">
+
+    <!-- 下载提示 -->
+    <div class="xf-loadContainer" id="xf_downloadingTip">
+      <div class="mdui-panel" style="width: auto;" mdui-panel>
+        <div class="mdui-panel-item mdui-panel-item-open">
+          <div class="mdui-panel-item-header mdui-ripple">
+            <div>等待 window.onload …</div>
+            <i class="mdui-panel-item-arrow mdui-icon material-icons">keyboard_arrow_down</i>
+          </div>
+          <div class="mdui-panel-item-body">
+            <div class="mdui-typo">
+              <p>网页正在下载，可能需要一段时间，请耐心等待。</p>
+              <p>如果你已经没有耐心继续等待了，请尝试：</p>
+              <ul>
+                <li>检查网络连接</li>
+                <li>绕过 GFW</li>
+                <li>启用 JavaScript</li>
+                <li>更换浏览器</li>
+                <li><a href="https://wj.qq.com/s2/22395480/df5b/" target="_blank">向站长反馈</a></li>
+                <li><a href="javascript: document.getElementById('xf_loadingTip').remove();">强制关闭此提示</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+  <!-- 应用栏 -->
+  <div class="mdui-appbar mdui-appbar-fixed">
+    <!-- 工具栏 -->
+    <div class="mdui-toolbar mdui-color-indigo mdui-color-theme">
+      <div mdui-menu="{target: '#toolbar-info'}" class="mdui-btn mdui-btn-icon mdui-ripple" mdui-tooltip="{content: 'FCLicon'}" id="xf_fclIcon"><img src="/media/img/FCLicon.avif" class="mdui-img-fluid"></div>
+      <ul class="mdui-menu mdui-menu-cascade" id="toolbar-info">
+        <li class="mdui-menu-item">
+          <a href="javascript:;" class="mdui-ripple">
+            CONTRIBUTORS
+          </a>
+        </li><!-- 简易贡献列表 -->
+        <li class="mdui-menu-item">
+          <a href="" class="mdui-ripple">
+            <img src="/media/img/awatar/XiaoluoFoxington.avif" class="mdui-menu-item-icon mdui-icon" loading="lazy">
+            XiaoluoFoxington
+          </a>
+        </li>
+        <li class="mdui-menu-item">
+          <a href="https://about.latedream.cn" target="_blank" class="mdui-ripple">
+            <img src="https://about.latedream.cn/assets/statics/avatar.webp" class="mdui-menu-item-icon mdui-icon" loading="lazy">
+            LateDream
+          </a>
+        </li>
+        <li class="mdui-menu-item">
+          <a href="#tab=4" class="mdui-ripple">
+            <i class="mdui-menu-item-icon mdui-icon material-icons">more_horiz</i>
+            (and 7 more)
+          </a>
+        </li>
+        <li class="mdui-divider"></li>
+        <li class="mdui-menu-item">
+          <a href="javascript:;" class="mdui-ripple">LINKS</a>
+        </li>
+        <li class="mdui-menu-item">
+          <a href="https://github.com/XiaoluoFoxington/FCL.website.NEXT" target="_blank" class="mdui-ripple">
+            <i class="mdui-menu-item-icon mdui-icon material-icons">links</i>
+            GitHub
+          </a>
+        </li>
+        <li class="mdui-menu-item">
+          <a href="https://info.flagcounter.com/cxFC" class="mdui-ripple" target="_blank"><img src="https://s01.flagcounter.com/mini/cxFC/bg_FFFFFF/txt_000000/border_FFFFFF/flags_0/" alt="Flag Counter" border="0" class="hide">
+            <i class="mdui-menu-item-icon mdui-icon material-icons">links</i>
+            FlagCounter
+          </a>
+        </li>
+        <li class="mdui-divider"></li>
+        <li class="mdui-menu-item">
+          <a href="javascript:;" class="mdui-ripple">COUNTERS</a>
+        </li>
+        <li class="mdui-menu-item">
+          <a href="https://vercount.one" target="_blank" class="mdui-ripple">
+            <i class="mdui-menu-item-icon mdui-icon material-icons">remove_red_eye</i>
+            siteUV / sitePV / pagePV
+          </a>
+        </li>
+        <li class="mdui-menu-item">
+          <a href="https://vercount.one" target="_blank" class="mdui-ripple">
+            <i class="mdui-menu-item-icon mdui-icon material-icons"></i>
+            <span id="vercount_value_site_uv">?</span>
+            <span>/</span>
+            <span id="vercount_value_site_pv">?</span>
+            <span>/</span>
+            <span id="vercount_value_page_pv">?</span>
+          </a>
+        </li>
+        <li class="mdui-menu-item">
+          <a href="javascript:;" class="mdui-ripple">
+            <i class="mdui-menu-item-icon mdui-icon material-icons">timer</i>
+            这坨屎山已经非常松弛地运行了
+          </a>
+        </li>
+        <li class="mdui-menu-item">
+          <a href="javascript:;" class="mdui-ripple">
+            <i class="mdui-menu-item-icon mdui-icon material-icons"></i>
+            <span id="xf_runTime">?</span>
+          </a>
+        </li>
+        <li class="mdui-menu-item">
+          <a href="https://frostlynx.work/api/fcl-traffic/" target="_blank" class="mdui-ripple">
+            <i class="mdui-menu-item-icon mdui-icon material-icons">data_usage</i>
+            FCL下载线路2 已使用流量
+          </a>
+        </li>
+        <li class="mdui-menu-item">
+          <a href="https://frostlynx.work/api/fcl-traffic/" target="_blank" class="mdui-ripple">
+            <i class="mdui-menu-item-icon mdui-icon material-icons"></i>
+            <span id="xf_fclWay2Info">?</span>
+          </a>
+        </li>
+        <li class="mdui-divider"></li>
+        <li class="mdui-menu-item">
+          <a href="javascript:;" class="mdui-ripple">
+            COPYRIGHT
+          </a>
+        </li>
+        <li class="mdui-menu-item">
+          <a href="javascript:;" class="mdui-ripple">
+            <i class="mdui-menu-item-icon mdui-icon material-icons">copyright</i>
+            洛狐XIAOLUOFOXINGTON 2025
+          </a>
+        </li>
+        <li class="mdui-menu-item">
+          <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" class="mdui-ripple">
+            <i class="mdui-menu-item-icon mdui-icon material-icons"></i>
+            GPLv3
+          </a>
+        </li>
+      </ul>
+      <a href="javascript:;" class="mdui-typo-title">FCL下载站</a>
+      <div class="mdui-toolbar-spacer mdui-ripple"></div>
+      <a mdui-menu="{target: '#toolbar-theme'}" class="mdui-btn mdui-btn-icon mdui-ripple" mdui-tooltip="{content: '样式'}"><i class="mdui-icon material-icons">style</i></a>
+      <ul class="mdui-menu mdui-menu-cascade" id="toolbar-theme">
+        <li class="mdui-menu-item">
+          <a href="javascript: toggleTheme();" class="mdui-ripple">
+            <i class="mdui-menu-item-icon mdui-icon material-icons">brightness_medium</i>
+            占位
+          </a>
+        </li>
+      </ul>
+      <a mdui-menu="{target: '#toolbar-gh'}" class="mdui-btn mdui-btn-icon mdui-ripple" mdui-tooltip="{content: 'GitHub'}"><ion-icon name="logo-github" class="mdui-icon"></ion-icon></a>
+      <ul class="mdui-menu mdui-menu-cascade" id="toolbar-gh">
+        <li class="mdui-menu-item" disabled>
+          <a href="https://github.com/FCL-Team/FoldCraftLauncher" target="_blank" class="mdui-ripple">FCL启动器</a>
+        </li>
+        <li class="mdui-menu-item">
+          <a href="https://github.com/FCL-Team/FoldCraftLauncher" target="_blank" class="mdui-ripple">FCL-Team/FoldCraftLauncher</a>
+        </li>
+        <li class="mdui-divider"></li>
+        <li class="mdui-menu-item" disabled>
+          <a href="https://github.com/XiaoluoFoxington/FCL.website.NEXT" target="_blank" class="mdui-ripple">此网站</a>
+        </li>
+        <li class="mdui-menu-item">
+          <a href="https://github.com/XiaoluoFoxington/FCL.website.NEXT" target="_blank" class="mdui-ripple">XiaoluoFoxington/FCL.website.mdui</a>
+        </li>
+        <li class="mdui-divider"></li>
+        <li class="mdui-menu-item" disabled>
+          <a href="https://github.com/fcl-docs/FCL.website" target="_blank" class="mdui-ripple">此网站旧样式</a>
+        </li>
+        <li class="mdui-menu-item">
+          <a href="https://github.com/fcl-docs/FCL.website" target="_blank" class="mdui-ripple">fcl-docs/FCL.website</a>
+        </li>
+      </ul>
+      <a mdui-menu="{target: '#toolbar-more'}" class="mdui-btn mdui-btn-icon mdui-ripple" mdui-tooltip="{content: '更多'}"><i class="mdui-icon material-icons">more_vert</i></a>
+      <ul class="mdui-menu mdui-menu-cascade" id="toolbar-more">
+        <li class="mdui-menu-item">
+          <a href="https://foldcraftlauncher.cn" class="mdui-ripple">
+            <i class="mdui-menu-item-icon mdui-icon material-icons">links</i>
+            主域名
+          </a>
+        </li><!-- 主域名 -->
+        <li class="mdui-menu-item">
+          <a href="javascript: location.reload(true);" class="mdui-ripple">
+            <i class="mdui-menu-item-icon mdui-icon material-icons">refresh</i>
+            刷新
+          </a>
+        </li>
+        <li class="mdui-menu-item">
+          <a href="https://wj.qq.com/s2/22395480/df5b/" target="_blank" class="mdui-ripple">
+            <i class="mdui-menu-item-icon mdui-icon material-icons">bug_report</i>
+            反馈与建议
+          </a>
+        </li><!-- 反馈 -->
+        <li class="mdui-divider"></li>
+        <li class="mdui-menu-item">
+          <a href="javascript: document.getElementById('xf_fclIcon').click();
+  ;" class="mdui-ripple">
+            <i class="mdui-menu-item-icon mdui-icon material-icons">info</i>
+            网站信息
+          </a>
+        </li>
+      </ul>
+    </div>
+    <!-- TAB栏 -->
+    <div class="mdui-tab mdui-color-indigo mdui-color-theme" mdui-tab>
+      <a href="#tab1" class="mdui-ripple mdui-ripple-white mdui-ripple" id="tab1-link">
+        <i class="mdui-icon material-icons">home</i>
+        <label>主页</label>
+      </a><!-- 主页 -->
+      <a href="#tab2" class="mdui-ripple mdui-ripple-white mdui-ripple" id="tab2-link">
+        <i class="mdui-icon material-icons">file_download</i>
+        <label>下载</label>
+      </a><!-- 下载 -->
+      <a href="#tab3" class="mdui-ripple mdui-ripple-white mdui-ripple" id="tab3-link">
+        <i class="mdui-icon material-icons">playlist_add_check</i>
+        <label>校验</label>
+      </a><!-- 校验 -->
+      <a href="#tab4" class="mdui-ripple mdui-ripple-white mdui-ripple" id="tab4-link">
+        <i class="mdui-icon material-icons">card_giftcard</i>
+        <label>赞助</label>
+      </a><!-- 赞助 -->
+      <a href="#tab5" class="mdui-ripple mdui-ripple-white mdui-ripple" id="tab5-link">
+        <i class="mdui-icon material-icons">people</i>
+        <label>关于</label>
+      </a><!-- 关于 -->
+    </div>
+  </div>
+  
+  <!-- 主容器 -->
+  <div class="mdui-container-fluid mdui-m-t-1">
+    <!-- 主页 -->
+    <div id="tab1">
+    </div>
+    <!-- 下载 -->
+    <div id="tab2">
+    </div>
+    <!-- 校验 -->
+    <div id="tab3">
+    </div>
+    <!-- 赞助 -->
+    <div id="tab4">
+    </div>
+    <!-- 关于 -->
+    <div id="tab5">
+    </div>
+  </div>
+
+
+  <script src="/js/lib/mdui.min.js"></script>
+  <script src="/js/main.js"></script>
+  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+</body>
+
+</html>
