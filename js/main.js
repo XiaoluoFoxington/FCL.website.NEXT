@@ -2,7 +2,7 @@ var loadContent;
 
 document.addEventListener('DOMContentLoaded', async function () {
   // 销毁提示
-  xf_removeDownloadingTip();
+  // xf_removeDownloadingTip();
   // 添加事件监听
   xf_addEventListeners();
   // 加载loadContent模块
