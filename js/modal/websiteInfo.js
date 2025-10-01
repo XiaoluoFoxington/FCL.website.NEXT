@@ -2,11 +2,6 @@
  * 加载所有
  */
 export function loadAll() {
-  // 获取访问量（创建一个<script>并设置src为https://vercount.one/js）
-  const scriptElement = document.createElement('script');
-  scriptElement.src = 'https://vercount.one/js';
-  document.head.appendChild(scriptElement);
-
   // 获取建站时间
   loadRunTime();
   setInterval(loadRunTime, 1000);

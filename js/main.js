@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', async function () {
   loadContent = await import('./modal/loadContent.js');
   // 加载tab1
   xf_loadTab1Content();
+  // 获取访问量
+  xf_loadWebsiteVisitCount();
 });
 
 /**
@@ -45,6 +47,16 @@ function xf_addEventListeners() {
 async function xf_loadWebsiteInfo() {
   const websiteInfo = await import('./modal/websiteInfo.js');
   websiteInfo.loadAll();
+}
+
+/**
+ * 获取访问量
+ */
+function xf_loadWebsiteVisitCount() {
+  // 获取访问量（创建一个<script>并设置src为https://vercount.one/js）
+  const scriptElement = document.createElement('script');
+  scriptElement.src = 'https://vercount.one/js';
+  document.head.appendChild(scriptElement);
 }
 
 /**
