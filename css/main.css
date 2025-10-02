@@ -2,6 +2,10 @@
   font-family: unset;
 }
 
+img {
+  width: 100%;
+}
+
 .xf-loadContainer {
   background-color: #00000080;
   z-index: 114514;

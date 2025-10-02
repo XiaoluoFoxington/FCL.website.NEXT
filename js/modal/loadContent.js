@@ -80,6 +80,8 @@ export async function xf_loadHtmlContentFromUrl(url, container) {
       // 加载 HTML 内容到指定容器
       xf_loadHtmlContent(htmlContent, container);
     }
+    // 更新 MDUI
+    mdui.mutation();
   } catch (e) {
     // 报错
     console.error('获取并加载 HTML 内容到指定容器：', e);

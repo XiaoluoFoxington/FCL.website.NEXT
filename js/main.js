@@ -66,3 +66,11 @@ function xf_loadTab1Content() {
   // 加载tab1内容
   loadContent.xf_loadHtmlContentFromUrl('/page/tab1.html', document.getElementById('tab1'));
 }
+
+/**
+ * 加载介绍FCL内容
+ */
+function xf_loadIntroFcl() {
+  // 加载介绍FCL内容
+  loadContent.xf_loadHtmlContentFromUrl('/page/introFcl.html', document.getElementById('introFcl'));
+}
