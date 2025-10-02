@@ -2,12 +2,9 @@
  * 加载所有
  */
 export function loadAll() {
-  // 获取建站时间
-  loadRunTime();
-  setInterval(loadRunTime, 1000);
-
-  // 获取线路2流量信息
-  loadDownWay2Info();
+  loadRunTime(); // 获取建站时间
+  setInterval(loadRunTime, 1000); // 每1秒更新一次建站时间
+  loadDownWay2Info(); // 获取线路2流量信息
 }
 
 /**

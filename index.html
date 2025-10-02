@@ -13,34 +13,6 @@
 </head>
 
 <body class="mdui-appbar-with-toolbar mdui-appbar-with-tab-larger mdui-theme-primary-teal mdui-theme-accent-green mdui-theme-layout-dark">
-
-    <!-- 下载提示 -->
-    <!--
-    <div class="xf-loadContainer" id="xf_downloadingTip">
-      <div class="mdui-panel" style="width: auto;" mdui-panel>
-        <div class="mdui-panel-item mdui-panel-item-open">
-          <div class="mdui-panel-item-header mdui-ripple">
-            <div>等待 window.onload …</div>
-            <i class="mdui-panel-item-arrow mdui-icon material-icons">keyboard_arrow_down</i>
-          </div>
-          <div class="mdui-panel-item-body">
-            <div class="mdui-typo">
-              <p>网页正在下载，可能需要一段时间，请耐心等待。</p>
-              <p>如果你已经没有耐心继续等待了，请尝试：</p>
-              <ul>
-                <li>检查网络连接</li>
-                <li>绕过 GFW</li>
-                <li>启用 JavaScript</li>
-                <li>更换浏览器</li>
-                <li><a href="https://wj.qq.com/s2/22395480/df5b/" target="_blank">向站长反馈</a></li>
-                <li><a href="javascript: document.getElementById('xf_loadingTip').remove();">强制关闭此提示</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    -->
   
   <!-- 应用栏 -->
   <div class="mdui-appbar mdui-appbar-fixed">
@@ -49,7 +21,7 @@
       <div mdui-menu="{target: '#toolbar-info'}" class="mdui-btn mdui-btn-icon mdui-ripple" mdui-tooltip="{content: 'FCLicon'}" id="xf_fclIcon"><img src="/media/img/FCLicon.avif" class="mdui-img-fluid"></div>
       <ul class="mdui-menu mdui-menu-cascade" id="toolbar-info">
         <li class="mdui-menu-item">
-          <a href="javascript:;" class="mdui-ripple">
+          <a href="" class="mdui-ripple">
             CONTRIBUTORS
           </a>
         </li><!-- 简易贡献列表 -->
@@ -73,7 +45,7 @@
         </li>
         <li class="mdui-divider"></li>
         <li class="mdui-menu-item">
-          <a href="javascript:;" class="mdui-ripple">LINKS</a>
+          <a href="" class="mdui-ripple">LINKS</a>
         </li>
         <li class="mdui-menu-item">
           <a href="https://github.com/XiaoluoFoxington/FCL.website.NEXT" target="_blank" class="mdui-ripple">
@@ -89,7 +61,7 @@
         </li>
         <li class="mdui-divider"></li>
         <li class="mdui-menu-item">
-          <a href="javascript:;" class="mdui-ripple">COUNTERS</a>
+          <a href="" class="mdui-ripple">COUNTERS</a>
         </li>
         <li class="mdui-menu-item">
           <a href="https://vercount.one" target="_blank" class="mdui-ripple">
@@ -108,13 +80,13 @@
           </a>
         </li>
         <li class="mdui-menu-item">
-          <a href="javascript:;" class="mdui-ripple">
+          <a href="" class="mdui-ripple">
             <i class="mdui-menu-item-icon mdui-icon material-icons">timer</i>
             这坨屎山已经非常松弛地运行了
           </a>
         </li>
         <li class="mdui-menu-item">
-          <a href="javascript:;" class="mdui-ripple">
+          <a href="" class="mdui-ripple">
             <i class="mdui-menu-item-icon mdui-icon material-icons"></i>
             <span id="xf_runTime">?</span>
           </a>
@@ -133,12 +105,12 @@
         </li>
         <li class="mdui-divider"></li>
         <li class="mdui-menu-item">
-          <a href="javascript:;" class="mdui-ripple">
+          <a href="" class="mdui-ripple">
             COPYRIGHT
           </a>
         </li>
         <li class="mdui-menu-item">
-          <a href="javascript:;" class="mdui-ripple">
+          <a href="" class="mdui-ripple">
             <i class="mdui-menu-item-icon mdui-icon material-icons">copyright</i>
             洛狐XIAOLUOFOXINGTON 2025
           </a>
@@ -150,13 +122,13 @@
           </a>
         </li>
       </ul>
-      <a href="javascript:;" class="mdui-typo-title">FCL下载站</a>
+      <a href="" class="mdui-typo-title">FCL下载站</a>
       <div class="mdui-toolbar-spacer mdui-ripple"></div>
       <a mdui-menu="{target: '#toolbar-theme'}" class="mdui-btn mdui-btn-icon mdui-ripple" mdui-tooltip="{content: '样式'}"><i class="mdui-icon material-icons">style</i></a>
       <ul class="mdui-menu mdui-menu-cascade" id="toolbar-theme">
         <li class="mdui-menu-item">
-          <a href="javascript: toggleTheme();" class="mdui-ripple">
-            <i class="mdui-menu-item-icon mdui-icon material-icons">brightness_medium</i>
+          <a href="" class="mdui-ripple">
+            <i class="mdui-menu-item-icon mdui-icon material-icons"></i>
             占位
           </a>
         </li>
@@ -193,7 +165,7 @@
           </a>
         </li><!-- 主域名 -->
         <li class="mdui-menu-item">
-          <a href="javascript: location.reload(true);" class="mdui-ripple">
+          <a id="xf_refreshBtn" class="mdui-ripple">
             <i class="mdui-menu-item-icon mdui-icon material-icons">refresh</i>
             刷新
           </a>
@@ -206,8 +178,7 @@
         </li><!-- 反馈 -->
         <li class="mdui-divider"></li>
         <li class="mdui-menu-item">
-          <a href="javascript: document.getElementById('xf_fclIcon').click();
-  ;" class="mdui-ripple">
+          <a id="xf_websiteInfoLink" class="mdui-ripple">
             <i class="mdui-menu-item-icon mdui-icon material-icons">info</i>
             网站信息
           </a>
@@ -216,23 +187,23 @@
     </div>
     <!-- TAB栏 -->
     <div class="mdui-tab mdui-color-indigo mdui-color-theme" mdui-tab>
-      <a href="#tab1" class="mdui-ripple mdui-ripple-white mdui-ripple" id="tab1-link">
+      <a href="#tab1" class="mdui-ripple mdui-ripple-white mdui-ripple" id="tab1_link">
         <i class="mdui-icon material-icons">home</i>
         <label>主页</label>
       </a><!-- 主页 -->
-      <a href="#tab2" class="mdui-ripple mdui-ripple-white mdui-ripple" id="tab2-link">
+      <a href="#tab2" class="mdui-ripple mdui-ripple-white mdui-ripple" id="tab2_link">
         <i class="mdui-icon material-icons">file_download</i>
         <label>下载</label>
       </a><!-- 下载 -->
-      <a href="#tab3" class="mdui-ripple mdui-ripple-white mdui-ripple" id="tab3-link">
+      <a href="#tab3" class="mdui-ripple mdui-ripple-white mdui-ripple" id="tab3_link">
         <i class="mdui-icon material-icons">playlist_add_check</i>
         <label>校验</label>
       </a><!-- 校验 -->
-      <a href="#tab4" class="mdui-ripple mdui-ripple-white mdui-ripple" id="tab4-link">
+      <a href="#tab4" class="mdui-ripple mdui-ripple-white mdui-ripple" id="tab4_link">
         <i class="mdui-icon material-icons">card_giftcard</i>
         <label>赞助</label>
       </a><!-- 赞助 -->
-      <a href="#tab5" class="mdui-ripple mdui-ripple-white mdui-ripple" id="tab5-link">
+      <a href="#tab5" class="mdui-ripple mdui-ripple-white mdui-ripple" id="tab5_link">
         <i class="mdui-icon material-icons">people</i>
         <label>关于</label>
       </a><!-- 关于 -->
@@ -260,7 +231,7 @@
 
 
   <script src="/js/lib/mdui.min.js"></script>
-  <script src="/js/main.js"></script>
+  <script type="module" src="/js/main.js"></script>
   <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
 </body>
 

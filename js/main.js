@@ -1,51 +1,59 @@
-var loadContent;
+import { loadModule } from '/js/module/moduleLoader.js';
 
 document.addEventListener('DOMContentLoaded', async function () {
-  // 销毁提示
-  // xf_removeDownloadingTip();
-  // 添加事件监听
-  xf_addEventListeners();
-  // 加载loadContent模块
-  loadContent = await import('./modal/loadContent.js');
-  // 加载tab1
-  xf_loadTab1Content();
-  // 获取访问量
-  xf_loadWebsiteVisitCount();
+  const tab1 = await loadModule('/js/module/tab1.js'); // 加载tab1模块
+  xf_addEventListeners(); // 添加事件监听
+  tab1.xf_init(); // 初始化tab1内容
+  xf_loadWebsiteVisitCount(); // 获取访问量
 });
-
-/**
- * 销毁“网页正在下载”提示
- */
-function xf_removeDownloadingTip() {
-  try {
-    // 获取提示元素
-    tipElement = document.getElementById('xf_downloadingTip');
-    // 添加渐隐动画
-    tipElement.classList.add('scale-out');
-    // 等待动画结束
-    tipElement.addEventListener('transitionend', () => {
-      // 移除提示元素
-      tipElement.remove();
-    });
-  } catch (e) {
-    // 报错
-    console.error('销毁“网页正在下载”提示：', e);
-  }
-}
 
 /**
  * 添加事件监听
  */
 function xf_addEventListeners() {
-  document.getElementById('xf_fclIcon').addEventListener('click', () => {xf_loadWebsiteInfo();}, {once: true});
-  document.getElementById('tab1-link').addEventListener('click', () => {xf_loadTab1Content();});
+  document.getElementById('xf_fclIcon').addEventListener('click', xf_xf_fclIcon_Click, {once: true});
+  document.getElementById('tab1_link').addEventListener('click', xf_tab1_link_Click);
+  document.getElementById('xf_refreshBtn').addEventListener('click', xf_refreshBtn_Click);
+  document.getElementById('xf_websiteInfoLink').addEventListener('click', xf_websiteInfoLink_Click);
 }
+
+/**
+ * 工具栏上的FCL图标的click
+ */
+function xf_xf_fclIcon_Click() {
+  xf_loadWebsiteInfo(); // 加载网站信息
+}
+
+/**
+ * TAB栏上的tab1链接的click
+ */
+async function xf_tab1_link_Click() {
+  const tab1 = await loadModule('/js/module/tab1.js')
+  tab1.xf_init();
+}
+
+/**
+ * 工具栏三点菜单中的刷新按钮的click
+ */
+function xf_refreshBtn_Click() {
+  location.reload(true); // 刷新页面
+}
+
+/**
+ * 工具栏三点菜单中的网站信息按钮的click
+ */
+function xf_websiteInfoLink_Click() {
+  console.log('xf_websiteInfoLink_Click()');
+  document.getElementById('xf_fclIcon').click();
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
  * 加载网站信息
  */
 async function xf_loadWebsiteInfo() {
-  const websiteInfo = await import('./modal/websiteInfo.js');
+  const websiteInfo = await loadModule('/js/module/websiteInfo.js');
   websiteInfo.loadAll();
 }
 
@@ -53,24 +61,8 @@ async function xf_loadWebsiteInfo() {
  * 获取访问量
  */
 function xf_loadWebsiteVisitCount() {
-  // 获取访问量（创建一个<script>并设置src为https://vercount.one/js）
   const scriptElement = document.createElement('script');
   scriptElement.src = 'https://vercount.one/js';
   document.head.appendChild(scriptElement);
 }
 
-/**
- * 加载tab1内容
- */
-function xf_loadTab1Content() {
-  // 加载tab1内容
-  loadContent.xf_loadHtmlContentFromUrl('/page/tab1.html', document.getElementById('tab1'));
-}
-
-/**
- * 加载介绍FCL内容
- */
-function xf_loadIntroFcl() {
-  // 加载介绍FCL内容
-  loadContent.xf_loadHtmlContentFromUrl('/page/introFcl.html', document.getElementById('introFcl'));
-}
