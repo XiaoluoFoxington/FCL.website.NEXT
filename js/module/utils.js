@@ -3,7 +3,7 @@
  * @param {number} bytes - 字节数
  * @returns {string} - 格式化后的字符串
  */
-export function formatBytes(bytes) {
+export function xf_formatBytes(bytes) {
   if (bytes === 0) return '0 Bytes';
   
   const k = 1024;
@@ -13,3 +13,18 @@ export function formatBytes(bytes) {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
 }
 
+/**
+ * 将多个Uint8Array合并为一个将多个Uint8Array合并为一个
+ */
+export function xf_concatChunks(chunks) {
+  const totalLength = chunks.reduce((acc, chunk) => acc + chunk.length, 0);
+  const result = new Uint8Array(totalLength);
+  let offset = 0;
+  
+  for (const chunk of chunks) {
+    result.set(chunk, offset);
+    offset += chunk.length;
+  }
+  
+  return result;
+}
