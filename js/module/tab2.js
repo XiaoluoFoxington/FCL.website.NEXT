@@ -25,7 +25,7 @@ export function xf_loadSelectors() {
   // 获取 DOM 元素
   const selectorsContainer = document.getElementById('xf_selectors');
   const downloadDiv = document.getElementById('xf_download');
-  const downloadLink = document.getElementById('xf_download-link');
+  const downloadLink = document.getElementById('xf_download_link');
 
   // 初始加载根数据
   loadLevel('/data/down/root.json', 0);
@@ -110,7 +110,7 @@ export function xf_loadSelectors() {
       if (selectedItem.description) {
         descDiv.textContent = selectedItem.description;
       } else {
-        descDiv.textContent = '没有描述。';
+        descDiv.textContent = '';
       }
 
       // 优先处理 children 数据，其次处理 nextUrl

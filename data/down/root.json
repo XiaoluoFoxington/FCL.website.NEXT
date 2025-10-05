@@ -4,6 +4,10 @@
   },
   {
     "name": "Fold Craft Launcher",
-    "nextUrl": "/data/down/fcl.json"
+    "nextUrl": "/data/down/fcl/index.json"
+  },
+  {
+    "name": "Zalith Launcher",
+    "nextUrl": "/data/down/zl/index.json"
   }
 ]
