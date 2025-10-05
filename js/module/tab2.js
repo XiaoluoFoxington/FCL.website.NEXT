@@ -82,10 +82,18 @@ export function xf_loadSelectors() {
     select.classList.add('mdui-select');
     select.classList.add('mdui-block');
 
+    // 查找默认选项的索引
+    let defaultIndex = -1;
     items.forEach((item, index) => {
       const option = document.createElement('option');
       option.value = index;
       option.textContent = item.name || '(无名称)';
+
+      // 检查是否有 default: true 字段
+      if (item.default === true && defaultIndex === -1) {
+        defaultIndex = index;
+      }
+
       select.appendChild(option);
     });
 
@@ -99,7 +107,7 @@ export function xf_loadSelectors() {
       const selectedIndex = select.value;
       descDiv.textContent = ''; // 先清空
 
-      if (selectedIndex === '') {
+      if (selectedIndex === '' || selectedIndex === null || selectedIndex === undefined) {
         downloadDiv.style.display = 'none';
         return;
       }
@@ -134,5 +142,25 @@ export function xf_loadSelectors() {
     // 添加到容器
     selectorsContainer.appendChild(select);
     selectorsContainer.appendChild(descDiv);
+
+    // 自动选择逻辑
+    if (items.length > 0) {
+      let autoSelectIndex;
+
+      // 如果有默认选项，优先选择默认选项；否则选择第一项
+      if (defaultIndex !== -1) {
+        autoSelectIndex = defaultIndex;
+        console.log(`tab2：加载选择器：层${level}：找到默认选项，索引：${defaultIndex}`);
+      } else {
+        autoSelectIndex = 0;
+        console.log(`tab2：加载选择器：层${level}：无默认选项，选择第一项，索引：0`);
+      }
+
+      select.value = autoSelectIndex.toString(); // 设置选中项
+
+      // 手动触发 change 事件以加载下一级
+      const event = new Event('change', { bubbles: true });
+      select.dispatchEvent(event);
+    }
   }
 }

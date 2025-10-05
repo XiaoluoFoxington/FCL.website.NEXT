@@ -1,0 +1,69 @@
+[
+  {
+    "name": "点击选择 版本"
+  },
+  {
+    "name": "1.4.0.8（此源最新）",
+    "nextUrl": "/data/down/zl/3/1.4.0.8（此源最新）/index.json"
+  },
+  {
+    "name": "1.4.0.7",
+    "nextUrl": "/data/down/zl/3/1.4.0.7/index.json"
+  },
+  {
+    "name": "1.4.0.6",
+    "nextUrl": "/data/down/zl/3/1.4.0.6/index.json"
+  },
+  {
+    "name": "1.4.0.5",
+    "nextUrl": "/data/down/zl/3/1.4.0.5/index.json"
+  },
+  {
+    "name": "1.4.0.4",
+    "nextUrl": "/data/down/zl/3/1.4.0.4/index.json"
+  },
+  {
+    "name": "1.4.0.3",
+    "nextUrl": "/data/down/zl/3/1.4.0.3/index.json"
+  },
+  {
+    "name": "1.4.0.3_rc2",
+    "nextUrl": "/data/down/zl/3/1.4.0.3_rc2/index.json"
+  },
+  {
+    "name": "1.4.0.3_rc1",
+    "nextUrl": "/data/down/zl/3/1.4.0.3_rc1/index.json"
+  },
+  {
+    "name": "1.4.0.2",
+    "nextUrl": "/data/down/zl/3/1.4.0.2/index.json"
+  },
+  {
+    "name": "1.4.0.2_rc3",
+    "nextUrl": "/data/down/zl/3/1.4.0.2_rc3/index.json"
+  },
+  {
+    "name": "1.4.0.2_rc2",
+    "nextUrl": "/data/down/zl/3/1.4.0.2_rc2/index.json"
+  },
+  {
+    "name": "1.4.0.2_rc1",
+    "nextUrl": "/data/down/zl/3/1.4.0.2_rc1/index.json"
+  },
+  {
+    "name": "1.4.0.1",
+    "nextUrl": "/data/down/zl/3/1.4.0.1/index.json"
+  },
+  {
+    "name": "1.4.0.1_rc1",
+    "nextUrl": "/data/down/zl/3/1.4.0.1_rc1/index.json"
+  },
+  {
+    "name": "1.4.0",
+    "nextUrl": "/data/down/zl/3/1.4.0/index.json"
+  },
+  {
+    "name": "1.4.0_pre-release",
+    "nextUrl": "/data/down/zl/3/1.4.0_pre-release/index.json"
+  }
+]

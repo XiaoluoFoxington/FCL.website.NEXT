@@ -1,13 +1,11 @@
 [
   {
-    "name": "点击选择 要下载的资源"
-  },
-  {
     "name": "↓启动器"
   },
   {
     "name": "Fold Craft Launcher",
-    "nextUrl": "/data/down/fcl/index.json"
+    "nextUrl": "/data/down/fcl/index.json",
+    "default": true
   },
   {
     "name": "Zalith Launcher",
