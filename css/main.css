@@ -38,9 +38,6 @@ img {
   height: 216px;
   width: 216px;
   text-shadow: 0 0 1rem #000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .xf-error-text {
