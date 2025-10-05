@@ -41,7 +41,11 @@
 }
 
 .mdui-select {
-  height: unset;
   font-size: unset;
   font-family: unset;
+}
+
+.mdui-block {
+  display: block;
+  width: 100%;
 }

@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 function xf_addEventListeners() {
   document.getElementById('xf_fclIcon').addEventListener('click', xf_xf_fclIcon_Click, {once: true});
   document.getElementById('tab1_link').addEventListener('click', xf_tab1_link_Click);
+  document.getElementById('tab2_link').addEventListener('click', xf_tab2_link_Click);
   document.getElementById('xf_refreshBtn').addEventListener('click', xf_refreshBtn_Click);
   document.getElementById('xf_websiteInfoLink').addEventListener('click', xf_websiteInfoLink_Click);
 }
@@ -30,6 +31,14 @@ function xf_xf_fclIcon_Click() {
 async function xf_tab1_link_Click() {
   const tab1 = await loadModule('/js/module/tab1.js')
   tab1.xf_init();
+}
+
+/**
+ * TAB栏上的tab2链接的click
+ */
+async function xf_tab2_link_Click() {
+  const tab2 = await loadModule('/js/module/tab2.js')
+  tab2.xf_init();
 }
 
 /**
