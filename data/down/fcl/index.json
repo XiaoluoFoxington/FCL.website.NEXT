@@ -2,5 +2,9 @@
   {
     "name": "线路1 [站长提供]",
     "nextUrl": "/data/down/fcl/1/index.json"
+  },
+  {
+    "name": "线路3 [fishcpy提供]",
+    "nextUrl": "/data/down/fcl/3/index.json"
   }
 ]
