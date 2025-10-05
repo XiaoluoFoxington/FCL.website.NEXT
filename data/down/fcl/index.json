@@ -6,5 +6,9 @@
   {
     "name": "线路3 [fishcpy提供]",
     "nextUrl": "/data/down/fcl/3/index.json"
+  },
+  {
+    "name": "线路4 [八蓝米提供]",
+    "nextUrl": "/data/down/fcl/4/index.json"
   }
 ]
