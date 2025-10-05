@@ -61,7 +61,16 @@ export function xf_loadSelectors() {
         throw new Error('返回数据不是数组');
       }
 
-      renderSelect(items, level);
+      // 检查当前数据是否为最底层（所有项目都包含url字段）
+      const isBottomLevel = items.every(item => item.url);
+
+      if (isBottomLevel) {
+        // 如果是底层，直接渲染下载按钮（在当前层级位置）
+        renderDownloadButtons(items, level);
+      } else {
+        // 否则渲染选择框
+        renderSelect(items, level);
+      }
     } catch (error) {
       console.error(`tab2：加载选择器：层${level}：出错：`, error);
       const errorEl = document.createElement('div');
@@ -104,10 +113,10 @@ export function xf_loadSelectors() {
 
     // 监听选择变化
     select.addEventListener('change', () => {
-      const selectedIndex = select.value;
+      const selectedIndex = parseInt(select.value); // 确保转换为整数
       descDiv.textContent = ''; // 先清空
 
-      if (selectedIndex === '' || selectedIndex === null || selectedIndex === undefined) {
+      if (isNaN(selectedIndex) || selectedIndex < 0) {
         downloadDiv.style.display = 'none';
         return;
       }
@@ -129,13 +138,16 @@ export function xf_loadSelectors() {
         // 使用源逻辑加载 nextUrl
         loadLevel(selectedItem.nextUrl, level + 1);
       } else if (selectedItem.url) {
-        // 处理下载
+        // 处理单个下载项（当前项有URL）
         downloadLink.href = selectedItem.url;
         downloadLink.textContent = `下载 ${selectedItem.name}`;
         downloadDiv.style.display = 'block';
+      } else if (selectedItem.items && Array.isArray(selectedItem.items)) {
+        // 当前项包含多个下载项
+        renderDownloadButtons(selectedItem.items, level + 1);
       } else {
         downloadDiv.style.display = 'none';
-        console.warn(`tab2：加载选择器：层${level}：选项既无 children、nextUrl 也无 url:`);
+        console.warn(`tab2：加载选择器：层${level}：选项既无 children、nextUrl 也无 url 或 items:`);
       }
     });
 
@@ -162,5 +174,42 @@ export function xf_loadSelectors() {
       const event = new Event('change', { bubbles: true });
       select.dispatchEvent(event);
     }
+  }
+
+  /**
+   * 渲染下载按钮列表
+   * @param {Array} items - 包含下载信息的项目列表
+   * @param {number} level - 当前层级（用于日志和清理）
+   */
+  function renderDownloadButtons(items, level) {
+    console.log(`tab2：渲染下载按钮：层${level}：共${items.length}个按钮`);
+
+    // 清除当前层级及之后的所有元素（每级包含 select + description）
+    while (selectorsContainer.children.length > level * 2) {
+      selectorsContainer.removeChild(selectorsContainer.lastChild);
+    }
+
+    // 创建一个容器来放置下载按钮
+    const buttonsContainer = document.createElement('div');
+    buttonsContainer.className = 'download-buttons-container';
+
+    // 遍历所有可下载项并创建按钮
+    items.forEach(item => {
+      if (item.url) {
+        // 创建单个下载链接
+        const link = document.createElement('a');
+        link.href = item.url;
+        link.textContent = `下载 ${item.name || '文件'}`;
+        link.className = 'mdui-btn mdui-btn-block mdui-btn-raised mdui-ripple';
+        link.target = '_blank'; // 可选：在新标签页打开
+        buttonsContainer.appendChild(link);
+      }
+    });
+
+    // 添加到容器（在当前层级位置）
+    selectorsContainer.appendChild(buttonsContainer);
+
+    // 隐藏下载链接区域，因为我们已经在当前层级显示了按钮
+    downloadDiv.style.display = 'none';
   }
 }
