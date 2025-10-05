@@ -199,7 +199,11 @@ export function xf_loadSelectors() {
         // 创建单个下载链接
         const link = document.createElement('a');
         link.href = item.url;
-        link.textContent = `下载 ${item.name || '文件'}`;
+        if (item.name === "all 架构") {
+          link.textContent = `下载 通用架构`;
+        } else {
+          link.textContent = `下载 ${item.name || '文件'}`;
+        }
         link.className = 'mdui-btn mdui-btn-block mdui-btn-raised mdui-ripple';
         link.target = '_blank'; // 可选：在新标签页打开
         buttonsContainer.appendChild(link);
