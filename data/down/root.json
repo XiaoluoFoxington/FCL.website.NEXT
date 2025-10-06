@@ -17,5 +17,9 @@
   {
     "name": "渲染器",
     "nextUrl": "/data/down/renderer/index.json"
+  },
+  {
+    "name": "JRE",
+    "nextUrl": "/data/down/jre/index.json"
   }
 ]
