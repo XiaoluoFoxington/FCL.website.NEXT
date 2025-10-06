@@ -21,5 +21,9 @@
   {
     "name": "JRE",
     "nextUrl": "/data/down/jre/index.json"
+  },
+  {
+    "name": "Pojav FFmpeg Plugin",
+    "nextUrl": "/data/down/ffmpeg/index.json"
   }
 ]
