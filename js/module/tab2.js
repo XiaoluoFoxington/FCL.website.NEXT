@@ -26,10 +26,10 @@ export function xf_loadSelectors() {
   const selectorsContainer = document.getElementById('xf_selectors');
   const downloadDiv = document.getElementById('xf_download');
   const downloadLink = document.getElementById('xf_download_link');
-  
+
   // 初始加载根数据
   loadLevel('/data/down/root.json', 0);
-  
+
   /**
    * 加载某一级的数据
    * @param {string|Array} source - JSON 数据的 URL 或直接的数组数据
@@ -39,15 +39,15 @@ export function xf_loadSelectors() {
     console.log(`tab2：加载选择器：层${level}：${source}`);
     clearLevelElements(level);
     downloadDiv.style.display = 'none';
-    
+
     let items;
     try {
       items = await fetchItems(source);
       validateItems(items);
-      
+
       // 检查当前数据是否为最底层（所有项目都包含url字段）
       const isBottomLevel = items.every(item => item.url);
-      
+
       if (isBottomLevel) {
         renderDownloadButtons(items, level);
       } else {
@@ -58,7 +58,7 @@ export function xf_loadSelectors() {
       renderError(error.message, level);
     }
   }
-  
+
   /**
    * 清除指定层级及之后的所有元素
    * @param {number} level - 当前层级
@@ -68,7 +68,7 @@ export function xf_loadSelectors() {
       selectorsContainer.removeChild(selectorsContainer.lastChild);
     }
   }
-  
+
   /**
    * 获取数据
    * @param {string|Array} source - JSON 数据的 URL 或直接的数组数据
@@ -87,7 +87,7 @@ export function xf_loadSelectors() {
       return source;
     }
   }
-  
+
   /**
    * 验证数据格式
    * @param {*} items - 待验证的数据
@@ -97,7 +97,7 @@ export function xf_loadSelectors() {
       throw new Error('返回数据不是数组');
     }
   }
-  
+
   /**
    * 渲染错误信息
    * @param {string} message - 错误信息
@@ -109,7 +109,7 @@ export function xf_loadSelectors() {
     errorEl.textContent = `出错：${message}`;
     selectorsContainer.appendChild(errorEl);
   }
-  
+
   /**
    * 渲染一个下拉选择框及其描述区域
    * @param {Array} items - 当前层级的选项列表
@@ -118,21 +118,21 @@ export function xf_loadSelectors() {
   function renderSelect(items, level) {
     // 创建下拉框
     const select = createSelectElement(items, level);
-    
+
     // 创建描述区域
     const descDiv = createDescriptionElement();
-    
+
     // 添加事件监听器
     addSelectEventListeners(select, items, level, descDiv);
-    
+
     // 添加到容器
     selectorsContainer.appendChild(select);
     selectorsContainer.appendChild(descDiv);
-    
+
     // 自动选择逻辑
     autoSelectOption(select, items, level);
   }
-  
+
   /**
    * 创建下拉选择框元素
    * @param {Array} items - 选项列表
@@ -142,25 +142,25 @@ export function xf_loadSelectors() {
   function createSelectElement(items, level) {
     const select = document.createElement('select');
     select.classList.add('mdui-select', 'mdui-block');
-    
+
     // 查找默认选项的索引
     let defaultIndex = -1;
     items.forEach((item, index) => {
       const option = document.createElement('option');
       option.value = index;
       option.textContent = item.name || '(无名称)';
-      
+
       // 检查是否有 default: true 字段
       if (item.default === true && defaultIndex === -1) {
         defaultIndex = index;
       }
-      
+
       select.appendChild(option);
     });
-    
+
     return select;
   }
-  
+
   /**
    * 创建描述区域元素
    * @returns {HTMLDivElement} 描述区域元素
@@ -170,7 +170,7 @@ export function xf_loadSelectors() {
     descDiv.className = 'description';
     return descDiv;
   }
-  
+
   /**
    * 为选择框添加事件监听器
    * @param {HTMLSelectElement} select - 选择框元素
@@ -179,31 +179,51 @@ export function xf_loadSelectors() {
    * @param {HTMLDivElement} descDiv - 描述区域元素
    */
   function addSelectEventListeners(select, items, level, descDiv) {
-    select.addEventListener('change', () => {
+    select.addEventListener('change', async () => { // 添加 async
       const selectedIndex = parseInt(select.value); // 确保转换为整数
       descDiv.textContent = ''; // 先清空
-      
+
       if (isNaN(selectedIndex) || selectedIndex < 0) {
         downloadDiv.style.display = 'none';
         return;
       }
-      
+
       const selectedItem = items[selectedIndex];
-      
+
       // 显示描述
       if (selectedItem.description) {
         descDiv.innerHTML = selectedItem.description;
       } else {
         descDiv.textContent = '';
       }
-      
+
       // 优先处理 children 数据，其次处理 nextUrl
       if (selectedItem.children && Array.isArray(selectedItem.children)) {
-        // 直接使用内联的 children 数据
-        loadLevel(selectedItem.children, level + 1);
+        // 检查是否存在 apiVer: "Way2old"
+        if (selectedItem.apiVer === "Way2old") {
+          // 使用线路2旧版解析逻辑转换 children 数据
+          const transformedChildren = transformWay2OldApiData(selectedItem.children);
+          loadLevel(transformedChildren, level + 1);
+        } else {
+          // 直接使用内联的 children 数据
+          loadLevel(selectedItem.children, level + 1);
+        }
       } else if (selectedItem.nextUrl) {
-        // 使用源逻辑加载 nextUrl
-        loadLevel(selectedItem.nextUrl, level + 1);
+        // 检查是否存在 apiVer: "Way2old"
+        if (selectedItem.apiVer === "Way2old") {
+          // 获取线路2旧版 API 数据并转换
+          try {
+            const oldApiData = await fetchItems(selectedItem.nextUrl);
+            const transformedData = transformWay2OldApiData(oldApiData);
+            loadLevel(transformedData, level + 1);
+          } catch (error) {
+            console.error(`tab2：加载选择器：层${level}：获取线路2旧版API数据：出错：`, error);
+            renderError(error.message, level + 1);
+          }
+        } else {
+          // 使用源逻辑加载 nextUrl
+          loadLevel(selectedItem.nextUrl, level + 1);
+        }
       } else if (selectedItem.url) {
         // 处理单个下载项（当前项有URL）
         downloadLink.href = selectedItem.url;
@@ -218,7 +238,7 @@ export function xf_loadSelectors() {
       }
     });
   }
-  
+
   /**
    * 自动选择选项
    * @param {HTMLSelectElement} select - 选择框元素
@@ -227,40 +247,40 @@ export function xf_loadSelectors() {
    */
   function autoSelectOption(select, items, level) {
     if (items.length === 0) return;
-    
+
     let autoSelectIndex;
-    
+
     // 如果有默认选项，优先选择默认选项；否则选择第一项
     const defaultIndex = items.findIndex(item => item.default === true);
     if (defaultIndex !== -1) {
       autoSelectIndex = defaultIndex;
-      console.log(`tab2：加载选择器：层${level}：找到默认选项，索引：${defaultIndex}`);
+      console.log(`tab2：加载选择器：层${level}：找到默认选项：索引：${defaultIndex}`);
     } else {
       autoSelectIndex = 0;
-      console.log(`tab2：加载选择器：层${level}：无默认选项，选择第一项，索引：0`);
+      console.log(`tab2：加载选择器：层${level}：无默认选项：选择第一项：索引：0`);
     }
-    
+
     select.value = autoSelectIndex.toString(); // 设置选中项
-    
+
     // 手动触发 change 事件以加载下一级
     const event = new Event('change', { bubbles: true });
     select.dispatchEvent(event);
   }
-  
+
   /**
    * 渲染下载按钮列表
    * @param {Array} items - 包含下载信息的项目列表
    * @param {number} level - 当前层级（用于日志和清理）
    */
   function renderDownloadButtons(items, level) {
-    console.log(`tab2：渲染下载按钮：层${level}：共${items.length}个按钮`);
-    
+    console.log(`tab2：渲染下载按钮：层${level}：按钮个数：${items.length}`);
+
     clearLevelElements(level);
-    
+
     // 创建一个容器来放置下载按钮
     const buttonsContainer = document.createElement('div');
     buttonsContainer.className = 'download-buttons-container';
-    
+
     // 遍历所有可下载项并创建按钮
     items.forEach(item => {
       if (item.url) {
@@ -268,14 +288,14 @@ export function xf_loadSelectors() {
         buttonsContainer.appendChild(link);
       }
     });
-    
+
     // 添加到容器（在当前层级位置）
     selectorsContainer.appendChild(buttonsContainer);
-    
+
     // 隐藏下载链接区域，因为已经在当前层级显示了按钮
     downloadDiv.style.display = 'none';
   }
-  
+
   /**
    * 创建下载链接元素
    * @param {Object} item - 下载项信息
@@ -284,15 +304,53 @@ export function xf_loadSelectors() {
   function createDownloadLink(item) {
     const link = document.createElement('a');
     link.href = item.url;
-    
+
     let displayName = item.name || '文件';
     if (displayName === "all 架构") {
       displayName = "通用架构";
     }
-    
+
     link.textContent = `下载 ${displayName}`;
     link.className = 'mdui-btn mdui-btn-block mdui-btn-raised mdui-ripple';
     link.target = '_blank';
     return link;
+  }
+
+  /**
+   * 转换线路2旧版数据源：将线路2旧版 API 数据结构转换为新版 API 结构
+   * @param {Array|Object} data - 线路2旧版 API 返回的原始数据（可能是根对象或 children 数组）
+   * @returns {Array} - 转换后的新版 API 结构数组
+   */
+  function transformWay2OldApiData(data) {
+    const result = [];
+
+    // 根对象通常包含 children，而数组直接是 children 内容
+    const itemsToProcess = Array.isArray(data) ? data : (data.children || []);
+
+    itemsToProcess.forEach(item => {
+      if (item.type === "directory") {
+        // 目录：转换为新版结构，保留 name, description, children
+        const newItem = {
+          name: item.name,
+          description: item.description || '', // 旧版可能没有 description
+          // 递归转换子目录/文件
+          children: item.children ? transformWay2OldApiData(item.children) : [],
+        };
+        result.push(newItem);
+      } else if (item.type === "file") {
+        // 文件：转换为新版结构，使用 download_link 作为 url
+        const newItem = {
+          name: item.arch + ' 架构',
+          url: item.download_link,
+          arch: item.arch || '' // 万一以后就用上了呢（）
+        };
+        result.push(newItem);
+      } else {
+        // 忽略未知类型的项
+        console.warn("tab2：转换旧版数据源：忽略未知类型项：", item);
+      }
+    });
+
+    return result;
   }
 }
