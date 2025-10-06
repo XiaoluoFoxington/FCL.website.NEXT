@@ -25,5 +25,13 @@
   {
     "name": "Pojav FFmpeg Plugin",
     "nextUrl": "/data/down/ffmpeg/index.json"
+  },
+  {
+    "name": "—— ↓ 工具"
+  },
+  {
+    "name": "FCL官方联机工具",
+    "nextUrl": "/data/down/fclConnectivityTool/index.json",
+    "description": "<div class=\"mdui-typo\"><p>这是FCL官方的联机工具，基于easytier，目前还在测试阶段，后续将会集成至FCL启动器中。可与HMCL和PCL2 CE一起联机。 </p></div>"
   }
 ]
