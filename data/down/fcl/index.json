@@ -10,5 +10,9 @@
   {
     "name": "线路4 [八蓝米提供]",
     "nextUrl": "/data/down/fcl/4/index.json"
+  },
+  {
+    "name": "线路9",
+    "nextUrl": "https://api.shiyanzhongxue666.top/file_tree.json"
   }
 ]
