@@ -19,8 +19,8 @@
     "name": "—— ↓ 插件"
   },
   {
-    "name": "渲染器",
-    "nextUrl": "/data/down/renderer/index.json"
+    "name": "Vulkan 驱动",
+    "nextUrl": "/data/down/vulkan/index.json"
   },
   {
     "name": "JRE",
