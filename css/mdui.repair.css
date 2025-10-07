@@ -45,6 +45,11 @@
   font-family: unset;
 }
 
+.mdui-typo hr {
+  height: 1px;
+  margin-bottom: 1.2rem;
+}
+
 .mdui-block {
   margin: 1rem 0;
   display: block;
