@@ -18,6 +18,11 @@
     "nextUrl": "/data/down/fcl/4/index.json"
   },
   {
+    "name": "线路5",
+    "nextUrl": "https://fcl.switch.api.072211.xyz/?from=foldcraftlauncher&isDev=1",
+    "apiVer": "Way2old"
+  },
+  {
     "name": "线路9",
     "nextUrl": "https://api.shiyanzhongxue666.top/file_tree.json"
   }
