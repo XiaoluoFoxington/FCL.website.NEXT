@@ -28,3 +28,17 @@ export function xf_concatChunks(chunks) {
   
   return result;
 }
+
+/**
+ * 计算字符串的校验值
+ * @param {string} str - 输入字符串
+ * @returns {number} - 校验值
+ */
+export function xf_calculateChecksum(str) {
+  let checksum = 0;
+  for (let i = 0; i < str.length; i++) {
+    checksum = (checksum << 5) - checksum + str.charCodeAt(i);
+    checksum |= 0; // 转换为32位整数
+  }
+  return checksum;
+}
