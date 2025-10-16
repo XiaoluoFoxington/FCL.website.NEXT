@@ -41,7 +41,7 @@ export async function xf_loadTab1Content() {
 export async function xf_loadAnnouncement() {
   const loadContent = await loadModule('/js/module/loadContent.js');
   const utils = await loadModule('/js/module/utils.js');
-  
+
   const CHECKSUM_STORAGE_KEY = 'xf_announcement_checksum';
 
   const savedChecksum = localStorage.getItem(CHECKSUM_STORAGE_KEY);
@@ -79,17 +79,12 @@ export async function xf_loadAnnouncement() {
     titleElement.innerHTML = '公告 <span style="color: #ff0;">●</span>';
   }
 
-  localStorage.setItem(CHECKSUM_STORAGE_KEY, currentChecksum.toString());
-
   const panelItem = document.getElementById('xf_announcement');
   if (panelItem) {
     if (!panelItem.dataset.xfAnnouncementListenerAdded) {
       panelItem.addEventListener('click', function () {
-        const isHeaderClick = this.querySelector('.mdui-panel-item-header').contains(event.target);
-        if (isHeaderClick) {
-          titleElement.innerHTML = '公告';
-          localStorage.setItem(CHECKSUM_STORAGE_KEY, currentChecksum.toString());
-        }
+        titleElement.innerHTML = '公告';
+        localStorage.setItem(CHECKSUM_STORAGE_KEY, currentChecksum.toString());
       });
       panelItem.dataset.xfAnnouncementListenerAdded = 'true';
     }
