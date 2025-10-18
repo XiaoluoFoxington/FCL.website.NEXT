@@ -17,6 +17,11 @@
     "description": "<div class=\"mdui-typo\"><p>站长（线路1）计划等待ZL2发行正式版后再提供下载。</p></div>"
   },
   {
+    "name": "Pojav Launcher",
+    "nextUrl": "/data/down/pl/index.json",
+    "description": "<div class=\"mdui-typo\"><p>PojavLauncher已于2025年5月17日宣布项目停止更新，GH代码仓库归档。这意味以后将不会再有任何更新。</p></div>"
+  },
+  {
     "name": "—— ↓ 插件"
   },
   {
