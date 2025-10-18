@@ -22,6 +22,10 @@
     "description": "<div class=\"mdui-typo\"><p>PojavLauncher已于2025年5月17日宣布项目停止更新，GH代码仓库归档。这意味以后将不会再有任何更新。</p></div>"
   },
   {
+    "name": "Amethyst",
+    "description": "<div class=\"mdui-typo\"><p>Amethyst还没有发行正式版（连预览版也没用）。</p></div>"
+  },
+  {
     "name": "—— ↓ 插件"
   },
   {
