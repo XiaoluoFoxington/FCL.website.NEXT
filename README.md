@@ -8,7 +8,7 @@
 
 这是一个静态网站，不需要后端。使用MDUI样式。适合部署在任意静态托管服务上。
 
-这是此网站的第3次重制。
+这是此网站的第3次重制。以下为网站旧版本，将不会有任何内容更新。
 
 第2次重制：[XiaoluoFoxington/FCL.website.mdui](https://github.com/XiaoluoFoxington/FCL.website.mdui)。
 
