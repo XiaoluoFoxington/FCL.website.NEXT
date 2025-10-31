@@ -178,7 +178,7 @@ export function xf_loadSelectors() {
   function addSelectEventListeners(select, items, level, descDiv) {
     select.addEventListener('change', async () => {
       const selectedIndex = parseInt(select.value);
-      descDiv.textContent = ''; // 先清空
+      descDiv.innerHTML = ''; // 先清空
       
       if (isNaN(selectedIndex) || selectedIndex < 0) {
         return;
@@ -226,7 +226,7 @@ export function xf_loadSelectors() {
         renderDownloadButtons(selectedItem.items, level + 1);
       } else {
         if (!selectedItem.description) {
-          descDiv.textContent = '此层级既无 nextUrl、children 下一层数据，也无 description 描述信息。';
+          descDiv.innerHTML = '<div class=\'mdui-typo\'><p>此层级既无 nextUrl、children 下一层数据，也无 description 描述信息。</p></div>';
         }
         clearLevelElements(level + 1);
       }
