@@ -33,7 +33,7 @@
 
 ### 赞助
 
-![微信赞赏码](/file/picture/微信赞赏码.png)
+![微信赞赏码](/media/img/微信赞赏码.webp)
 
 ### JavaScript 规范
 
