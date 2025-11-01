@@ -28,7 +28,7 @@ export function loadSelector(options) {
 
   const container = document.getElementById(containerId);
   if (!container) {
-    console.error(`容器 ${containerId} 未找到`);
+    console.error(`选择器模块：找不到：${containerId}`);
     return;
   }
 
@@ -60,12 +60,12 @@ export function loadSelector(options) {
   */
 
   /**
-   * 加载某一级的数据
+   * 加载一级：加载某一级的数据
    * @param {string|Array} source - JSON 数据的 URL 或直接的数组数据
    * @param {number} level - 当前层级（从 0 开始）
    */
   async function loadLevel(source, level) {
-    console.log(`加载选择器：层${level}：${source}`);
+    console.log(`选择器模块：加载一级：层${level}：`, source);
     clearLevelElements(level);
 
     try {
@@ -75,13 +75,15 @@ export function loadSelector(options) {
       // 检查当前数据是否为最底层（所有项目都包含url字段）
       const isBottomLevel = items.every(item => item.url);
 
+      console.log(`选择器模块：加载一级：层${level}：为最底层：`, isBottomLevel);
+
       if (isBottomLevel) {
         renderDownloadButtons(items, level);
       } else {
         renderSelect(items, level);
       }
     } catch (error) {
-      console.error(`加载选择器：层${level}：出错：`, error);
+      console.error(`选择器模块：加载一级：层${level}：出错：`, error);
       onRenderError(error.message, level, container);
     }
   }
@@ -149,7 +151,7 @@ export function loadSelector(options) {
   }
 
   /**
-   * 为选择框添加事件监听器
+   * 添加监听器：为选择框添加事件监听器
    * @param {HTMLSelectElement} select - 选择框元素
    * @param {Array} items - 选项列表
    * @param {number} level - 当前层级
@@ -165,6 +167,7 @@ export function loadSelector(options) {
       }
 
       const selectedItem = items[selectedIndex];
+      console.log('选择器模块：添加监听器：当前选择项名称：' + selectedItem.name);
 
       // 显示描述
       if (selectedItem.description) {
@@ -181,6 +184,7 @@ export function loadSelector(options) {
 
       // 优先处理 children 数据，其次处理 nextUrl
       if (selectedItem.children && Array.isArray(selectedItem.children)) {
+        console.log(`选择器模块：添加监听器：${selectedItem.name}：有children`);
         // 检查是否存在 apiVer: "Way2old"
         if (selectedItem.apiVer === Way2old) {
           // 使用线路2旧版解析逻辑转换 children 数据
@@ -191,6 +195,7 @@ export function loadSelector(options) {
           loadLevel(selectedItem.children, level + 1);
         }
       } else if (selectedItem.nextUrl) {
+        console.log(`选择器模块：添加监听器：${selectedItem.name}：有nextUrl`);
         // 检查是否存在 apiVer: "Way2old"
         if (selectedItem.apiVer === Way2old) {
           // 获取线路2旧版 API 数据并转换
@@ -199,7 +204,7 @@ export function loadSelector(options) {
             const transformedData = transformOldApiData(oldApiData);
             loadLevel(transformedData, level + 1);
           } catch (error) {
-            console.error(`加载选择器：层${level}：获取线路2旧版API数据：出错：`, error);
+            console.error(`选择器模块：加载一级：层${level}：获取Way2old版数据：出错：`, error);
             onRenderError(error.message, level + 1, container);
           }
         } else {
@@ -208,11 +213,11 @@ export function loadSelector(options) {
         }
       } else if (selectedItem.url) {
         // 处理单个下载项（当前项有URL）
-        console.log(`加载选择器：层${level}：处理单个下载项（当前项有URL）：`, selectedItem);
+        console.log(`选择器模块：添加监听器：层${level}：处理单个下载项（当前项有URL）：`, selectedItem);
         renderDownloadButtons([selectedItem], level + 1);
       } else if (selectedItem.items && Array.isArray(selectedItem.items)) {
         // 当前项包含多个下载项
-        console.log(`加载选择器：层${level}：处理多个下载项（当前项有items）：`, selectedItem);
+        console.log(`选择器模块：添加监听器：层${level}：处理多个下载项（当前项有items）：`, selectedItem);
         renderDownloadButtons(selectedItem.items, level + 1);
       } else {
         if (!selectedItem.description) {
@@ -229,7 +234,7 @@ export function loadSelector(options) {
   }
 
   /**
-   * 自动选择选项
+   * 自动选择
    * @param {HTMLSelectElement} select - 选择框元素
    * @param {Array} items - 选项列表
    * @param {number} level - 当前层级
@@ -243,10 +248,10 @@ export function loadSelector(options) {
     const defaultIndex = items.findIndex(item => item.default === true);
     if (defaultIndex !== -1) {
       autoSelectIndex = defaultIndex;
-      console.log(`加载选择器：层${level}：找到默认选项：索引：${defaultIndex}`);
+      console.log(`选择器模块：自动选择：层${level}：有默认选项：选择索引：${defaultIndex}`);
     } else {
       autoSelectIndex = 0;
-      console.log(`加载选择器：层${level}：无默认选项：选择第一项：索引：0`);
+      console.log(`选择器模块：自带选择：层${level}：无默认选项：选择索引：0`);
     }
 
     select.value = autoSelectIndex.toString();
@@ -257,12 +262,12 @@ export function loadSelector(options) {
   }
 
   /**
-   * 渲染下载按钮列表
+   * 渲染按钮：渲染下载按钮列表
    * @param {Array} items - 包含下载信息的项目列表
    * @param {number} level - 当前层级（用于日志和清理）
    */
   function renderDownloadButtons(items, level) {
-    console.log(`渲染下载按钮：层${level}：按钮个数：${items.length}`);
+    console.log(`选择器模块：渲染按钮：层${level}：按钮个数：${items.length}`);
 
     clearLevelElements(level);
 
@@ -367,7 +372,7 @@ export function loadSelector(options) {
         result.push(newItem);
       } else {
         // 忽略未知类型的项
-        console.warn("转换旧版数据源：忽略未知类型项：", item);
+        console.warn("选择器模块：转换Way2old：忽略未知类型项：", item);
       }
     });
 
