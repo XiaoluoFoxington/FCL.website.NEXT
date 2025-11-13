@@ -10,7 +10,7 @@
  * @param {Function} [options.onDownload] - 下载时的回调函数
  * @param {Function} [options.onRenderError] - 渲染错误时的回调函数
  * @param {Function} [options.onLevelChange] - 层级变化时的回调函数
- * @param {Function} [options.transformOldApiData] - 转换旧版 API 数据的回调函数
+ * @param {Function} [options.transformWay2oldApiData] - 转换“Way2old”版 API 数据的回调函数
  */
 export function loadSelector(options) {
   const {
@@ -23,7 +23,7 @@ export function loadSelector(options) {
     onDownload,
     onRenderError = defaultRenderError,
     onLevelChange,
-    transformOldApiData = defaultTransformOldApiData,
+    transformWay2oldApiData = defaulttransformWay2oldApiData,
   } = options;
 
   const container = document.getElementById(containerId);
@@ -188,7 +188,7 @@ export function loadSelector(options) {
         // 检查是否存在 apiVer: "Way2old"
         if (selectedItem.apiVer === Way2old) {
           // 使用线路2旧版解析逻辑转换 children 数据
-          const transformedChildren = transformOldApiData(selectedItem.children);
+          const transformedChildren = transformWay2oldApiData(selectedItem.children);
           loadLevel(transformedChildren, level + 1);
         } else {
           // 直接使用内联的 children 数据
@@ -201,7 +201,7 @@ export function loadSelector(options) {
           // 获取线路2旧版 API 数据并转换
           try {
             const oldApiData = await fetchItems(selectedItem.nextUrl);
-            const transformedData = transformOldApiData(oldApiData);
+            const transformedData = transformWay2oldApiData(oldApiData);
             loadLevel(transformedData, level + 1);
           } catch (error) {
             console.error(`选择器模块：加载一级：层${level}：获取Way2old版数据：出错：`, error);
@@ -346,7 +346,7 @@ export function loadSelector(options) {
     container.appendChild(errorEl);
   }
 
-  function defaultTransformOldApiData(data) {
+  function defaulttransformWay2oldApiData(data) {
     const result = [];
 
     // 根对象通常包含 children，而数组直接是 children 内容
@@ -359,7 +359,7 @@ export function loadSelector(options) {
           name: item.name,
           description: item.description || '',
           // 递归转换子目录/文件
-          children: item.children ? defaultTransformOldApiData(item.children) : [],
+          children: item.children ? defaulttransformWay2oldApiData(item.children) : [],
         };
         result.push(newItem);
       } else if (item.type === "file") {
