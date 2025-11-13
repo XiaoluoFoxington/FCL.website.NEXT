@@ -6,5 +6,10 @@
   {
     "name": "线路3",
     "nextUrl": "/data/down/zl/3/index.json"
+  },
+  {
+    "name": "线路10",
+    "nextUrl": "http://118.195.149.248:8080/api/status/zl",
+    "apiVer": "Lemwood"
   }
 ]

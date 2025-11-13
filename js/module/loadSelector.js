@@ -11,6 +11,7 @@
  * @param {Function} [options.onRenderError] - 渲染错误时的回调函数
  * @param {Function} [options.onLevelChange] - 层级变化时的回调函数
  * @param {Function} [options.transformWay2oldApiData] - 转换“Way2old”版 API 数据的回调函数
+ * @param {Function} [options.transformLemwoodApiData] - 转换“Lemwood”版 API 数据的回调函数
  */
 export function loadSelector(options) {
   const {
@@ -24,6 +25,7 @@ export function loadSelector(options) {
     onRenderError = defaultRenderError,
     onLevelChange,
     transformWay2oldApiData = defaulttransformWay2oldApiData,
+    transformLemwoodApiData = defaultTransformLemwoodApiData,
   } = options;
 
   const container = document.getElementById(containerId);
@@ -46,9 +48,15 @@ export function loadSelector(options) {
 - apiVer为Way2old
 - - 调用函数转换
 - - 加载一级
+- apiVer为Lemwood
+- - 调用函数转换
+- - 加载一级
 - 加载一级
 存在nextUrl
 - apiVer为Way2old
+- - 调用函数转换
+- - 加载一级
+- apiVer为Lemwood
 - - 调用函数转换
 - - 加载一级
 - 加载一级
@@ -181,6 +189,7 @@ export function loadSelector(options) {
       }
 
       const Way2old = "Way2old";
+      const Lemwood = "Lemwood";
 
       // 优先处理 children 数据，其次处理 nextUrl
       if (selectedItem.children && Array.isArray(selectedItem.children)) {
@@ -189,6 +198,10 @@ export function loadSelector(options) {
         if (selectedItem.apiVer === Way2old) {
           // 使用线路2旧版解析逻辑转换 children 数据
           const transformedChildren = transformWay2oldApiData(selectedItem.children);
+          loadLevel(transformedChildren, level + 1);
+        } else if (selectedItem.apiVer === Lemwood) {
+          // 使用Lemwood解析逻辑转换 children 数据
+          const transformedChildren = transformLemwoodApiData(selectedItem.children);
           loadLevel(transformedChildren, level + 1);
         } else {
           // 直接使用内联的 children 数据
@@ -205,6 +218,16 @@ export function loadSelector(options) {
             loadLevel(transformedData, level + 1);
           } catch (error) {
             console.error(`选择器模块：加载一级：层${level}：获取Way2old版数据：出错：`, error);
+            onRenderError(error.message, level + 1, container);
+          }
+        } else if (selectedItem.apiVer === Lemwood) {
+          // 获取Lemwood版 API 数据并转换
+          try {
+            const lemwoodApiData = await fetchItems(selectedItem.nextUrl);
+            const transformedData = transformLemwoodApiData(lemwoodApiData);
+            loadLevel(transformedData, level + 1);
+          } catch (error) {
+            console.error(`选择器模块：加载一级：层${level}：获取Lemwood版数据：出错：`, error);
             onRenderError(error.message, level + 1, container);
           }
         } else {
@@ -251,7 +274,7 @@ export function loadSelector(options) {
       console.log(`选择器模块：自动选择：层${level}：有默认选项：选择索引：${defaultIndex}`);
     } else {
       autoSelectIndex = 0;
-      console.log(`选择器模块：自带选择：层${level}：无默认选项：选择索引：0`);
+      console.log(`选择器模块：自动选择：层${level}：无默认选项：选择索引：0`);
     }
 
     select.value = autoSelectIndex.toString();
@@ -374,6 +397,27 @@ export function loadSelector(options) {
         // 忽略未知类型的项
         console.warn("选择器模块：转换Way2old：忽略未知类型项：", item);
       }
+    });
+
+    return result;
+  }
+
+  function defaultTransformLemwoodApiData(data) {
+    const result = [];
+
+    // Lemwood API 数据是一个数组，每个元素代表一个版本
+    data.forEach(item => {
+      // 每个版本项转换为一个目录结构
+      const versionItem = {
+        name: item.name,
+        // 将 assets 转换为 items 数组
+        items: item.assets.map(asset => ({
+          name: asset.name,
+          url: asset.url,
+          size: asset.size
+        }))
+      };
+      result.push(versionItem);
     });
 
     return result;

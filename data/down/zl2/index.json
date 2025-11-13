@@ -3,5 +3,10 @@
     "name": "线路2",
     "nextUrl": "https://frostlynx.work/external/zl2/file_tree.json",
     "apiVer": "Way2old"
+  },
+  {
+    "name": "线路10",
+    "nextUrl": "http://118.195.149.248:8080/api/status/zl2",
+    "apiVer": "Lemwood"
   }
 ]
