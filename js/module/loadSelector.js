@@ -30,50 +30,20 @@ export function loadSelector(options) {
 
   const container = document.getElementById(containerId);
   if (!container) {
-    console.error(`选择器模块：找不到：${containerId}`);
+    console.error(`选择器模块：找不到容器：${containerId}`);
     return;
   }
 
   // 初始加载根数据
   loadLevel(dataSource, 0);
 
-  /*
-（是时进入横杠，否则继续往下，横杠执行完成后不会继续往下）
-
-当前层全部为url
-- 渲染按钮
-渲染选择器
-
-存在children数组
-- apiVer为Way2old
-- - 调用函数转换
-- - 加载一级
-- apiVer为Lemwood
-- - 调用函数转换
-- - 加载一级
-- 加载一级
-存在nextUrl
-- apiVer为Way2old
-- - 调用函数转换
-- - 加载一级
-- apiVer为Lemwood
-- - 调用函数转换
-- - 加载一级
-- 加载一级
-存在url
-- 渲染按钮
-存在items数组
-- 渲染按钮
-显示提示
-  */
-
   /**
-   * 加载一级：加载某一级的数据
+   * 加载某一级的数据
    * @param {string|Array} source - JSON 数据的 URL 或直接的数组数据
    * @param {number} level - 当前层级（从 0 开始）
    */
   async function loadLevel(source, level) {
-    console.log(`选择器模块：加载一级：层${level}：`, source);
+    console.log(`选择器模块：加载层级 ${level}：`, source);
     clearLevelElements(level);
 
     try {
@@ -83,7 +53,7 @@ export function loadSelector(options) {
       // 检查当前数据是否为最底层（所有项目都包含url字段）
       const isBottomLevel = items.every(item => item.url);
 
-      console.log(`选择器模块：加载一级：层${level}：为最底层：`, isBottomLevel);
+      console.log(`选择器模块：层级 ${level} 是否为最底层：`, isBottomLevel);
 
       if (isBottomLevel) {
         renderDownloadButtons(items, level);
@@ -91,7 +61,7 @@ export function loadSelector(options) {
         renderSelect(items, level);
       }
     } catch (error) {
-      console.error(`选择器模块：加载一级：层${level}：出错：`, error);
+      console.error(`选择器模块：加载层级 ${level} 出错：`, error);
       onRenderError(error.message, level, container);
     }
   }
@@ -101,6 +71,7 @@ export function loadSelector(options) {
    * @param {number} level - 当前层级
    */
   function clearLevelElements(level) {
+    // 移除当前层级及之后的所有元素
     while (container.children.length > level * 2) {
       container.removeChild(container.lastChild);
     }
@@ -113,16 +84,13 @@ export function loadSelector(options) {
    */
   async function fetchItems(source) {
     if (typeof source === 'string') {
-      // 如果 source 是 URL，发起请求
       const response = await fetch(source);
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
       return await response.json();
-    } else {
-      // 如果 source 是直接的数据，直接使用
-      return source;
     }
+    return source;
   }
 
   /**
@@ -136,30 +104,25 @@ export function loadSelector(options) {
   }
 
   /**
-   * 渲染一个下拉选择框及其描述区域
+   * 渲染选择器
    * @param {Array} items - 当前层级的选项列表
    * @param {number} level - 当前层级
    */
   function renderSelect(items, level) {
-    // 创建下拉框
     const select = onCreateSelectElement(items, level);
-
-    // 创建描述区域
     const descDiv = onCreateDescriptionElement();
 
-    // 添加事件监听器
     addSelectEventListeners(select, items, level, descDiv);
 
-    // 添加到容器
     container.appendChild(select);
     container.appendChild(descDiv);
 
-    // 自动选择逻辑
+    // 自动选择默认选项
     autoSelectOption(select, items, level);
   }
 
   /**
-   * 添加监听器：为选择框添加事件监听器
+   * 添加选择框事件监听器
    * @param {HTMLSelectElement} select - 选择框元素
    * @param {Array} items - 选项列表
    * @param {number} level - 当前层级
@@ -168,14 +131,14 @@ export function loadSelector(options) {
   function addSelectEventListeners(select, items, level, descDiv) {
     select.addEventListener('change', async () => {
       const selectedIndex = parseInt(select.value);
-      descDiv.innerHTML = ''; // 先清空
+      descDiv.innerHTML = '';
 
-      if (isNaN(selectedIndex) || selectedIndex < 0) {
+      if (isNaN(selectedIndex) || selectedIndex < 0 || selectedIndex >= items.length) {
         return;
       }
 
       const selectedItem = items[selectedIndex];
-      console.log('选择器模块：添加监听器：当前选择项名称：' + selectedItem.name);
+      console.log('选择器模块：当前选择项名称：' + selectedItem.name);
 
       // 显示描述
       if (selectedItem.description) {
@@ -188,66 +151,8 @@ export function loadSelector(options) {
         if (result) return; // 如果回调返回了结果，说明已经处理了，不再执行默认逻辑
       }
 
-      const Way2old = "Way2old";
-      const Lemwood = "Lemwood";
-
-      // 优先处理 children 数据，其次处理 nextUrl
-      if (selectedItem.children && Array.isArray(selectedItem.children)) {
-        console.log(`选择器模块：添加监听器：${selectedItem.name}：有children`);
-        // 检查是否存在 apiVer: "Way2old"
-        if (selectedItem.apiVer === Way2old) {
-          // 使用线路2旧版解析逻辑转换 children 数据
-          const transformedChildren = transformWay2oldApiData(selectedItem.children);
-          loadLevel(transformedChildren, level + 1);
-        } else if (selectedItem.apiVer === Lemwood) {
-          // 使用Lemwood解析逻辑转换 children 数据
-          const transformedChildren = transformLemwoodApiData(selectedItem.children);
-          loadLevel(transformedChildren, level + 1);
-        } else {
-          // 直接使用内联的 children 数据
-          loadLevel(selectedItem.children, level + 1);
-        }
-      } else if (selectedItem.nextUrl) {
-        console.log(`选择器模块：添加监听器：${selectedItem.name}：有nextUrl`);
-        // 检查是否存在 apiVer: "Way2old"
-        if (selectedItem.apiVer === Way2old) {
-          // 获取线路2旧版 API 数据并转换
-          try {
-            const oldApiData = await fetchItems(selectedItem.nextUrl);
-            const transformedData = transformWay2oldApiData(oldApiData);
-            loadLevel(transformedData, level + 1);
-          } catch (error) {
-            console.error(`选择器模块：加载一级：层${level}：获取Way2old版数据：出错：`, error);
-            onRenderError(error.message, level + 1, container);
-          }
-        } else if (selectedItem.apiVer === Lemwood) {
-          // 获取Lemwood版 API 数据并转换
-          try {
-            const lemwoodApiData = await fetchItems(selectedItem.nextUrl);
-            const transformedData = transformLemwoodApiData(lemwoodApiData);
-            loadLevel(transformedData, level + 1);
-          } catch (error) {
-            console.error(`选择器模块：加载一级：层${level}：获取Lemwood版数据：出错：`, error);
-            onRenderError(error.message, level + 1, container);
-          }
-        } else {
-          // 使用源逻辑加载 nextUrl
-          loadLevel(selectedItem.nextUrl, level + 1);
-        }
-      } else if (selectedItem.url) {
-        // 处理单个下载项（当前项有URL）
-        console.log(`选择器模块：添加监听器：层${level}：处理单个下载项（当前项有URL）：`, selectedItem);
-        renderDownloadButtons([selectedItem], level + 1);
-      } else if (selectedItem.items && Array.isArray(selectedItem.items)) {
-        // 当前项包含多个下载项
-        console.log(`选择器模块：添加监听器：层${level}：处理多个下载项（当前项有items）：`, selectedItem);
-        renderDownloadButtons(selectedItem.items, level + 1);
-      } else {
-        if (!selectedItem.description) {
-          descDiv.innerHTML = '<div class="mdui-typo"><p>此层级既无 nextUrl、children 下一层数据，也无 description 描述信息。</p></div>';
-        }
-        clearLevelElements(level + 1);
-      }
+      // 处理数据加载逻辑
+      await handleItemSelection(selectedItem, level + 1);
 
       // 调用层级变化回调
       if (onLevelChange) {
@@ -257,7 +162,62 @@ export function loadSelector(options) {
   }
 
   /**
-   * 自动选择
+   * 处理项目选择后的数据加载
+   * @param {Object} selectedItem - 选中的项目
+   * @param {number} nextLevel - 下一级层级
+   */
+  async function handleItemSelection(selectedItem, nextLevel) {
+    const { children, nextUrl, url, items: itemArray, apiVer } = selectedItem;
+
+    // 优先处理 children 数据，其次处理 nextUrl
+    if (children && Array.isArray(children)) {
+      console.log(`选择器模块：${selectedItem.name}：有children`);
+      const transformedData = transformDataIfNecessary(children, apiVer);
+      loadLevel(transformedData, nextLevel);
+    } else if (nextUrl) {
+      console.log(`选择器模块：${selectedItem.name}：有nextUrl`);
+      try {
+        const rawData = await fetchItems(nextUrl);
+        const transformedData = transformDataIfNecessary(rawData, apiVer);
+        loadLevel(transformedData, nextLevel);
+      } catch (error) {
+        console.error(`选择器模块：加载层级 ${nextLevel}：获取数据出错：`, error);
+        onRenderError(error.message, nextLevel, container);
+      }
+    } else if (url) {
+      // 处理单个下载项
+      console.log(`选择器模块：层级处理单个下载项：`, selectedItem);
+      renderDownloadButtons([selectedItem], nextLevel);
+    } else if (itemArray && Array.isArray(itemArray)) {
+      // 当前项包含多个下载项
+      console.log(`选择器模块：层级处理多个下载项：`, selectedItem);
+      renderDownloadButtons(itemArray, nextLevel);
+    } else {
+      // 没有下级数据时的处理
+      if (!selectedItem.description) {
+        descDiv.innerHTML = '<div class="mdui-typo"><p>此层级既无下一级数据，也无描述信息。</p></div>';
+      }
+      clearLevelElements(nextLevel);
+    }
+  }
+
+  /**
+   * 根据 apiVer 转换数据
+   * @param {Array} data - 原始数据
+   * @param {string} apiVer - API 版本
+   * @returns {Array} 转换后的数据
+   */
+  function transformDataIfNecessary(data, apiVer) {
+    if (apiVer === "Way2old") {
+      return transformWay2oldApiData(data);
+    } else if (apiVer === "Lemwood") {
+      return transformLemwoodApiData(data);
+    }
+    return data;
+  }
+
+  /**
+   * 自动选择选项
    * @param {HTMLSelectElement} select - 选择框元素
    * @param {Array} items - 选项列表
    * @param {number} level - 当前层级
@@ -265,17 +225,11 @@ export function loadSelector(options) {
   function autoSelectOption(select, items, level) {
     if (items.length === 0) return;
 
-    let autoSelectIndex;
-
-    // 如果有默认选项，优先选择默认选项；否则选择第一项
+    // 查找默认选项或选择第一项
     const defaultIndex = items.findIndex(item => item.default === true);
-    if (defaultIndex !== -1) {
-      autoSelectIndex = defaultIndex;
-      console.log(`选择器模块：自动选择：层${level}：有默认选项：选择索引：${defaultIndex}`);
-    } else {
-      autoSelectIndex = 0;
-      console.log(`选择器模块：自动选择：层${level}：无默认选项：选择索引：0`);
-    }
+    const autoSelectIndex = defaultIndex !== -1 ? defaultIndex : 0;
+
+    console.log(`选择器模块：层级 ${level} 自动选择索引：${autoSelectIndex}`);
 
     select.value = autoSelectIndex.toString();
 
@@ -285,20 +239,18 @@ export function loadSelector(options) {
   }
 
   /**
-   * 渲染按钮：渲染下载按钮列表
+   * 渲染下载按钮
    * @param {Array} items - 包含下载信息的项目列表
-   * @param {number} level - 当前层级（用于日志和清理）
+   * @param {number} level - 当前层级
    */
   function renderDownloadButtons(items, level) {
-    console.log(`选择器模块：渲染按钮：层${level}：按钮个数：${items.length}`);
+    console.log(`选择器模块：渲染下载按钮，数量：${items.length}`);
 
     clearLevelElements(level);
 
-    // 创建一个容器来放置下载按钮
     const buttonsContainer = document.createElement('div');
     buttonsContainer.className = 'download-buttons-container';
 
-    // 遍历所有可下载项并创建按钮
     items.forEach(item => {
       if (item.url) {
         const link = onCreateDownloadElement(item, onDownload);
@@ -306,7 +258,6 @@ export function loadSelector(options) {
       }
     });
 
-    // 添加到容器（在当前层级位置）
     container.appendChild(buttonsContainer);
   }
 
@@ -315,19 +266,10 @@ export function loadSelector(options) {
     const select = document.createElement('select');
     select.classList.add('mdui-select', 'mdui-block');
 
-    // 查找默认选项的索引
-    let defaultIndex = -1;
-
     items.forEach((item, index) => {
       const option = document.createElement('option');
       option.value = index;
       option.textContent = item.name || '(无名称)';
-
-      // 检查是否有 default: true 字段
-      if (item.default === true && defaultIndex === -1) {
-        defaultIndex = index;
-      }
-
       select.appendChild(option);
     });
 
@@ -371,30 +313,22 @@ export function loadSelector(options) {
 
   function defaulttransformWay2oldApiData(data) {
     const result = [];
-
-    // 根对象通常包含 children，而数组直接是 children 内容
     const itemsToProcess = Array.isArray(data) ? data : (data.children || []);
 
     itemsToProcess.forEach(item => {
       if (item.type === "directory") {
-        // 目录：转换为新版结构，保留 name, description, children
-        const newItem = {
+        result.push({
           name: item.name,
           description: item.description || '',
-          // 递归转换子目录/文件
           children: item.children ? defaulttransformWay2oldApiData(item.children) : [],
-        };
-        result.push(newItem);
+        });
       } else if (item.type === "file") {
-        // 文件：转换为新版结构，使用 download_link 作为 url
-        const newItem = {
+        result.push({
           name: item.arch + ' 架构',
           url: item.download_link,
           arch: item.arch || ''
-        };
-        result.push(newItem);
+        });
       } else {
-        // 忽略未知类型的项
         console.warn("选择器模块：转换Way2old：忽略未知类型项：", item);
       }
     });
@@ -403,24 +337,13 @@ export function loadSelector(options) {
   }
 
   function defaultTransformLemwoodApiData(data) {
-    const result = [];
-
-    // Lemwood API 数据是一个数组，每个元素代表一个版本
-    data.forEach(item => {
-      // 每个版本项转换为一个目录结构
-      const versionItem = {
-        name: item.name,
-        // 将 assets 转换为 items 数组
-        items: item.assets.map(asset => ({
-          name: asset.name,
-          url: asset.url,
-          size: asset.size
-        }))
-      };
-      result.push(versionItem);
-    });
-
-    return result;
+    return data.map(item => ({
+      name: item.name,
+      items: item.assets?.map(asset => ({
+        name: asset.name,
+        url: asset.url,
+        size: asset.size
+      })) || []
+    }));
   }
-
 }
