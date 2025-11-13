@@ -209,7 +209,7 @@ export function loadSelector(options) {
    */
   function transformDataIfNecessary(data, apiVer) {
     if (apiVer === "Way2old") {
-      return transformWay2oldApiData(data);
+      return transformWay2oldApiData(data, data.latest);
     } else if (apiVer === "Lemwood") {
       return transformLemwoodApiData(data);
     }
@@ -229,7 +229,8 @@ export function loadSelector(options) {
     const defaultIndex = items.findIndex(item => item.default === true);
     const autoSelectIndex = defaultIndex !== -1 ? defaultIndex : 0;
 
-    console.log(`选择器模块：层级 ${level} 自动选择索引：${autoSelectIndex}`);
+    console.log(`选择器模块：层级 ${level}：原始索引：${defaultIndex}`);
+    console.log(`选择器模块：层级 ${level}：自动选择索引：${autoSelectIndex}`);
 
     select.value = autoSelectIndex.toString();
 
@@ -311,16 +312,19 @@ export function loadSelector(options) {
     container.appendChild(errorEl);
   }
 
-  function defaulttransformWay2oldApiData(data) {
+  function defaulttransformWay2oldApiData(data, latest) {
     const result = [];
     const itemsToProcess = Array.isArray(data) ? data : (data.children || []);
+
+    console.log(`选择器模块：转换Way2old：latest：${latest}`);
 
     itemsToProcess.forEach(item => {
       if (item.type === "directory") {
         result.push({
           name: item.name,
           description: item.description || '',
-          children: item.children ? defaulttransformWay2oldApiData(item.children) : [],
+          children: item.children ? defaulttransformWay2oldApiData(item.children, latest) : [],
+          default: item.name === latest
         });
       } else if (item.type === "file") {
         result.push({
@@ -336,9 +340,10 @@ export function loadSelector(options) {
     return result;
   }
 
-  function defaultTransformLemwoodApiData(data) {
+  function defaultTransformLemwoodApiData(data, latest) {
     return data.map(item => ({
       name: item.name,
+      default: item.name === latest,
       items: item.assets?.map(asset => ({
         name: asset.name,
         url: asset.url,
