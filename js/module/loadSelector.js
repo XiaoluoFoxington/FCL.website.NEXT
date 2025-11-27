@@ -12,6 +12,7 @@
  * @param {Function} [options.onLevelChange] - 层级变化时的回调函数
  * @param {Function} [options.transformWay2oldApiData] - 转换“Way2old”版 API 数据的回调函数
  * @param {Function} [options.transformLemwoodApiData] - 转换“Lemwood”版 API 数据的回调函数
+ * @param {Function} [options.transformLemwoodLatestApiData] - 转换“LemwoodLatest”版 API 数据的回调函数
  */
 export function loadSelector(options) {
   const {
@@ -26,6 +27,7 @@ export function loadSelector(options) {
     onLevelChange,
     transformWay2oldApiData = defaulttransformWay2oldApiData,
     transformLemwoodApiData = defaultTransformLemwoodApiData,
+    transformLemwoodLatestApiData = defaultTransformLemwoodLatestApiData,
   } = options;
 
   const container = document.getElementById(containerId);
@@ -152,7 +154,7 @@ export function loadSelector(options) {
       }
 
       // 处理数据加载逻辑
-      await handleItemSelection(selectedItem, level + 1);
+      await handleItemSelection(selectedItem, level + 1, descDiv);
 
       // 调用层级变化回调
       if (onLevelChange) {
@@ -165,8 +167,9 @@ export function loadSelector(options) {
    * 处理项目选择后的数据加载
    * @param {Object} selectedItem - 选中的项目
    * @param {number} nextLevel - 下一级层级
+   * @param {HTMLDivElement} descDiv - 描述区域元素
    */
-  async function handleItemSelection(selectedItem, nextLevel) {
+  async function handleItemSelection(selectedItem, nextLevel, descDiv) {
     const { children, nextUrl, url, items: itemArray, apiVer } = selectedItem;
 
     // 优先处理 children 数据，其次处理 nextUrl
@@ -212,8 +215,11 @@ export function loadSelector(options) {
       const latestName = getWay2oldApiLatestVersion(data);
       return transformWay2oldApiData(data, latestName);
     } else if (apiVer === "Lemwood") {
-      const latestName = await getLemwoodApiLatestVersion();
-      return transformLemwoodApiData(data, latestName);
+      // const latestName = await getLemwoodApiLatestVersion();
+      // return transformLemwoodApiData(data, latestName);
+      return transformLemwoodApiData(data);
+    } else if (apiVer === "LemwoodLatest") {
+      return transformLemwoodLatestApiData(data);
     }
     return data;
   }
@@ -370,5 +376,9 @@ export function loadSelector(options) {
         size: asset.size
       })) || []
     }));
+  }
+
+  function defaultTransformLemwoodLatestApiData(data) {
+    return defaultTransformLemwoodApiData([data]);
   }
 }
