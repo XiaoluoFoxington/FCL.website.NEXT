@@ -207,11 +207,12 @@ export function loadSelector(options) {
    * @param {string} apiVer - API 版本
    * @returns {Array} 转换后的数据
    */
-  function transformDataIfNecessary(data, apiVer) {
+  async function transformDataIfNecessary(data, apiVer) {
     if (apiVer === "Way2old") {
-      return transformWay2oldApiData(data, data.latest);
+      const latestName = getWay2oldApiLatestVersion(data);
+      return transformWay2oldApiData(data, latestName);
     } else if (apiVer === "Lemwood") {
-      const latestName = getLemwoodApiLatestVersion();
+      const latestName = await getLemwoodApiLatestVersion();
       return transformLemwoodApiData(data, latestName);
     }
     return data;
@@ -261,6 +262,16 @@ export function loadSelector(options) {
     });
 
     container.appendChild(buttonsContainer);
+  }
+
+  /**
+   * 获取Way2old API最新版本
+   * @param {Object} data - 原始数据
+   * @returns {string} 最新版本名称
+   */
+  function getWay2oldApiLatestVersion(data) {
+    console.log(`选择器模块：Way2old线：latest：${data.latest}`);
+    return data.latest;
   }
 
   /**
@@ -326,8 +337,6 @@ export function loadSelector(options) {
   function defaulttransformWay2oldApiData(data, latest) {
     const result = [];
     const itemsToProcess = Array.isArray(data) ? data : (data.children || []);
-
-    console.log(`选择器模块：转换Way2old：latest：${latest}`);
 
     itemsToProcess.forEach(item => {
       if (item.type === "directory") {
