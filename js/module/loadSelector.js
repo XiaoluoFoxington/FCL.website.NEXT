@@ -211,7 +211,8 @@ export function loadSelector(options) {
     if (apiVer === "Way2old") {
       return transformWay2oldApiData(data, data.latest);
     } else if (apiVer === "Lemwood") {
-      return transformLemwoodApiData(data);
+      const latestName = getLemwoodApiLatestVersion();
+      return transformLemwoodApiData(data, latestName);
     }
     return data;
   }
@@ -260,6 +261,16 @@ export function loadSelector(options) {
     });
 
     container.appendChild(buttonsContainer);
+  }
+
+  /**
+   * 获取Lemwood API最新版本
+   * @returns {string} 最新版本名称
+   */
+  async function getLemwoodApiLatestVersion() {
+    const latest = await fetchItems("https://mirror.lemwood.icu/api/latest/fcl");
+    console.log(`选择器模块：Lemwood线：latest：${latest.name}`);
+    return latest.name;
   }
 
   // 默认实现函数
