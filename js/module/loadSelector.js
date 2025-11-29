@@ -52,12 +52,12 @@ export function loadSelector(options) {
       const items = await fetchItems(source);
       validateItems(items);
 
-      // 检查当前数据是否为最底层（所有项目都包含url字段）
-      const isBottomLevel = items.every(item => item.url);
+      // 检查当前数据是否为最底层
+      const isBottom = isBottomLevel(items);
 
-      console.log(`选择器模块：层级 ${level} 是否为最底层：`, isBottomLevel);
+      console.log(`选择器模块：层级 ${level} 是否为最底层：`, isBottom);
 
-      if (isBottomLevel) {
+      if (isBottom) {
         renderDownloadButtons(items, level);
       } else {
         renderSelect(items, level);
@@ -66,6 +66,29 @@ export function loadSelector(options) {
       console.error(`选择器模块：加载层级 ${level} 出错：`, error);
       onRenderError(error.message, level, container);
     }
+  }
+
+  /**
+   * 检查当前数据是否为最底层
+   * @param {Array} items - 当前层级的选项列表
+   * @returns {boolean} 是否为最底层
+   */
+  function isBottomLevel(items) {
+    // 如果没有项目，则认为是底层
+    if (!items || items.length === 0) {
+      return true;
+    }
+    
+    // 检查是否有任何项目具有子项或下一URL
+    return !items.some(item => {
+      // 检查是否有children属性且不为空
+      const hasChildren = item.children && Array.isArray(item.children) && item.children.length > 0;
+      // 检查是否有nextUrl属性
+      const hasNextUrl = item.nextUrl && typeof item.nextUrl === 'string';
+      
+      // 如果有children或nextUrl，则不是最底层
+      return hasChildren || hasNextUrl;
+    });
   }
 
   /**
