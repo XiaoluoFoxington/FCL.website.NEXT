@@ -25,7 +25,7 @@ export function loadSelector(options) {
     onDownload,
     onRenderError = defaultRenderError,
     onLevelChange,
-    transformWay2oldApiData = defaulttransformWay2oldApiData,
+    transformWay2oldApiData = defaultTransformWay2oldApiData,
     transformLemwoodApiData = defaultTransformLemwoodApiData,
     transformLemwoodLatestApiData = defaultTransformLemwoodLatestApiData,
   } = options;
@@ -75,19 +75,14 @@ export function loadSelector(options) {
    */
   function isBottomLevel(items) {
     // 如果没有项目，则认为是底层
-    if (!items || items.length === 0) {
+    if (!items || !Array.isArray(items) || items.length === 0) {
       return true;
     }
     
     // 检查是否有任何项目具有子项或下一URL
     return !items.some(item => {
-      // 检查是否有children属性且不为空
-      const hasChildren = item.children && Array.isArray(item.children) && item.children.length > 0;
-      // 检查是否有nextUrl属性
-      const hasNextUrl = item.nextUrl && typeof item.nextUrl === 'string';
-      
-      // 如果有children或nextUrl，则不是最底层
-      return hasChildren || hasNextUrl;
+      return (item.children && Array.isArray(item.children) && item.children.length > 0) ||
+             (item.nextUrl && typeof item.nextUrl === 'string');
     });
   }
 
@@ -110,11 +105,19 @@ export function loadSelector(options) {
    */
   async function fetchItems(source, responseType = 'json') {
     if (typeof source === 'string') {
-      const response = await fetch(source);
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      try {
+        const response = await fetch(source);
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        return await response[responseType]();
+      } catch (error) {
+        if (error.name === 'TypeError') {
+          // 网络错误处理
+          throw new Error(`网络错误：${error.message}`);
+        }
+        throw error;
       }
-      return await response[responseType]();
     }
     return source;
   }
@@ -235,16 +238,18 @@ export function loadSelector(options) {
    * @returns {Array} 转换后的数据
    */
   async function transformDataIfNecessary(data, apiVer) {
-    if (apiVer === "Way2old") {
-      const latestName = getWay2oldApiLatestVersion(data);
-      return transformWay2oldApiData(data, latestName);
-    } else if (apiVer === "Lemwood") {
-      const latestName = await getLemwoodApiLatestVersion();
-      return transformLemwoodApiData(data, latestName);
-    } else if (apiVer === "LemwoodLatest") {
-      return transformLemwoodLatestApiData(data);
+    switch (apiVer) {
+      case "Way2old":
+        const latestWay2old = getWay2oldApiLatestVersion(data);
+        return transformWay2oldApiData(data, latestWay2old);
+      case "Lemwood":
+        const latestLemwood = await getLemwoodApiLatestVersion();
+        return transformLemwoodApiData(data, latestLemwood);
+      case "LemwoodLatest":
+        return transformLemwoodLatestApiData(data);
+      default:
+        return data;
     }
-    return data;
   }
 
   /**
@@ -308,7 +313,13 @@ export function loadSelector(options) {
    * @returns {string} 最新版本名称
    */
   async function getLemwoodApiLatestVersion() {
-    var selectName = container.firstElementChild.selectedOptions[0].innerText; // 获取选择器容器的第一个选择器（软件选择）的当前选中项的文本
+    // 获取选择器容器的第一个选择器（软件选择）的当前选中项的文本
+    const firstSelect = container.firstElementChild;
+    if (!firstSelect || !firstSelect.selectedOptions || firstSelect.selectedOptions.length === 0) {
+      console.error('选择器模块：Lemwood线：无法获取第一个选择器的选中项');
+      return null;
+    }
+    let selectName = firstSelect.selectedOptions[0].innerText;
     switch (selectName) {
       case 'Fold Craft Launcher':
         selectName = 'fcl';
@@ -337,13 +348,19 @@ export function loadSelector(options) {
     const select = document.createElement('select');
     select.classList.add('mdui-select', 'mdui-block');
 
+    // 使用 DocumentFragment 批量添加选项，减少 DOM 操作次数
+    const fragment = document.createDocumentFragment();
+    
     items.forEach((item, index) => {
       const option = document.createElement('option');
       option.value = index;
       option.textContent = item.name || '(无名称)';
-      select.appendChild(option);
+      fragment.appendChild(option);
     });
 
+    // 一次性将所有选项添加到 select 元素中
+    select.appendChild(fragment);
+    
     return select;
   }
 
@@ -382,7 +399,7 @@ export function loadSelector(options) {
     container.appendChild(errorEl);
   }
 
-  function defaulttransformWay2oldApiData(data, latest) {
+  function defaultTransformWay2oldApiData(data, latest) {
     const result = [];
     const itemsToProcess = Array.isArray(data) ? data : (data.children || []);
 
@@ -391,7 +408,7 @@ export function loadSelector(options) {
         result.push({
           name: item.name,
           description: item.description || '',
-          children: item.children ? defaulttransformWay2oldApiData(item.children, latest) : [],
+          children: item.children ? defaultTransformWay2oldApiData(item.children, latest) : [],
           default: item.name === latest
         });
       } else if (item.type === "file") {
