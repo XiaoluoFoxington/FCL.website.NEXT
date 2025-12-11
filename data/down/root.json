@@ -26,6 +26,10 @@
     "nextUrl": "/data/down/hmcl/index.json"
   },
   {
+    "name": "HMCL-PE",
+    "nextUrl": "/data/down/hmclpe/index.json"
+  },
+  {
     "name": "Amethyst",
     "description": "<div class=\"mdui-typo\"><p>Amethyst还没有发行正式版（连预览版也没有）。</p></div>"
   },
