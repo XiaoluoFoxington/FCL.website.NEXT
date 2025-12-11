@@ -105,15 +105,16 @@ export function loadSelector(options) {
   /**
    * 获取数据
    * @param {string|Array} source - JSON 数据的 URL 或直接的数组数据
+   * @param {string} [responseType='json'] - 响应类型，默认是 'json'，也可以是 'text'
    * @returns {Promise<Array>} 数据数组
    */
-  async function fetchItems(source) {
+  async function fetchItems(source, responseType = 'json') {
     if (typeof source === 'string') {
       const response = await fetch(source);
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
-      return await response.json();
+      return await response[responseType]();
     }
     return source;
   }
@@ -238,9 +239,8 @@ export function loadSelector(options) {
       const latestName = getWay2oldApiLatestVersion(data);
       return transformWay2oldApiData(data, latestName);
     } else if (apiVer === "Lemwood") {
-      // const latestName = await getLemwoodApiLatestVersion();
-      // return transformLemwoodApiData(data, latestName);
-      return transformLemwoodApiData(data);
+      const latestName = await getLemwoodApiLatestVersion();
+      return transformLemwoodApiData(data, latestName);
     } else if (apiVer === "LemwoodLatest") {
       return transformLemwoodLatestApiData(data);
     }
@@ -308,9 +308,28 @@ export function loadSelector(options) {
    * @returns {string} 最新版本名称
    */
   async function getLemwoodApiLatestVersion() {
-    const latest = await fetchItems("https://mirror.lemwood.icu/api/latest/fcl");
-    console.log(`选择器模块：Lemwood线：latest：${latest.name}`);
-    return latest.name;
+    var selectName = container.firstElementChild.selectedOptions[0].innerText; // 获取选择器容器的第一个选择器（软件选择）的当前选中项的文本
+    switch (selectName) {
+      case 'Fold Craft Launcher':
+        selectName = 'fcl';
+        break;
+      case 'Zalith Launcher':
+        selectName = 'zl';
+        break;
+      case 'Zalith Launcher 2':
+        selectName = 'zl2';
+        break;
+      case 'HMCL':
+        selectName = 'hmcl';
+        break;
+      default:
+        console.warn(`选择器模块：Lemwood线：未知选择器名称：${selectName}`);
+        selectName = 'fcl';
+        break;
+    }
+    const latest = await fetchItems(`https://mirror.lemwood.icu/api/latest/${selectName}`, 'text');
+    console.log(`选择器模块：Lemwood线：latest：${latest}`);
+    return latest;
   }
 
   // 默认实现函数
@@ -393,7 +412,7 @@ export function loadSelector(options) {
     return data.map(item => ({
       name: item.name,
       default: item.name === latest,
-      items: item.assets?.map(asset => ({
+      children: item.assets?.map(asset => ({
         name: asset.name,
         url: asset.url,
         size: asset.size

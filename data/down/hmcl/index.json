@@ -1,7 +1,7 @@
 [
   {
     "name": "线路10",
-    "nextUrl": "http://118.195.149.248:8080/api/latest/hmcl",
-    "apiVer": "LemwoodLatest"
+    "nextUrl": "https://mirror.lemwood.icu/api/status/hmcl",
+    "apiVer": "Lemwood"
   }
 ]

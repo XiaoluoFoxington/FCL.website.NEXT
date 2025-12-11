@@ -9,7 +9,7 @@
   },
   {
     "name": "线路10",
-    "nextUrl": "https://mirror.lemwood.icu/api/latest/zl",
-    "apiVer": "LemwoodLatest"
+    "nextUrl": "https://mirror.lemwood.icu/api/status/zl",
+    "apiVer": "Lemwood"
   }
 ]
