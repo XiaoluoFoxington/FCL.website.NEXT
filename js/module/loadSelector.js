@@ -335,8 +335,7 @@ export function loadSelector(options) {
         break;
       default:
         console.warn(`选择器模块：Lemwood线：未知选择器名称：${selectName}`);
-        selectName = 'fcl';
-        break;
+        return null;
     }
     const latest = await fetchItems(`https://mirror.lemwood.icu/api/latest/${selectName}`, 'text');
     console.log(`选择器模块：Lemwood线：latest：${latest}`);
