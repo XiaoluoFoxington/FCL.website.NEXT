@@ -1,5 +1,6 @@
 import { loadModule } from '/js/module/moduleLoader.js';
 let sysInfoPanelEle;
+let sysInfo;
 
 /**
  * 加载tab2内容并初始化
@@ -8,6 +9,7 @@ export async function xf_init() {
   await xf_loadTab2Content();
   xf_loadSysInfoPanelClass();
   xf_addEventListeners();
+  xf_showSysInfo();
   xf_loadSelectors();
 }
 
@@ -36,6 +38,7 @@ export async function xf_loadTab2Content() {
   const loadContent = await loadModule('/js/module/loadContent.js');
   await loadContent.xf_loadHtmlContentFromUrl('/page/tab2.html', document.getElementById('tab2')); // 加载tab2内容
   sysInfoPanelEle = document.getElementById('xf_sysInfoPanel');
+  sysInfo = document.getElementById('xf_sysInfo');
 }
 
 /**
@@ -53,6 +56,15 @@ export async function xf_writeSysInfoPanelClass() {
   const utils = await loadModule('/js/module/utils.js');
   utils.xf_writeLocalStorage('xf_sysInfoPanelClass', sysInfoPanelEle.className);
 }
+
+/**
+ * 展示系统信息
+ */
+export async function xf_showSysInfo() {
+  const sysInfoJs = await loadModule('/js/module/sysInfo.js');
+  sysInfoJs.show(sysInfo);
+}
+
 
 /**
  * 加载选择器
