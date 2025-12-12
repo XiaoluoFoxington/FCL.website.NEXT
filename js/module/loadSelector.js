@@ -3,6 +3,8 @@
  * @param {Object} options - 配置选项
  * @param {string} options.containerId - 选择器容器的 ID
  * @param {string|Array} options.dataSource - 初始数据源（URL 或数组）
+ * @param {boolean} options.disableDebounce - 是否禁用下载按钮点击防抖
+ * @param {number} options.debounceDelay - 防抖延迟时间（秒）
  * @param {Function} [options.onCreateSelectElement] - 创建选择元素的回调函数
  * @param {Function} [options.onCreateDescriptionElement] - 创建描述元素的回调函数
  * @param {Function} [options.onCreateDownloadElement] - 创建下载元素的回调函数
@@ -18,6 +20,8 @@ export function loadSelector(options) {
   const {
     containerId,
     dataSource,
+    disableDebounce = false,
+    debounceDelay = 10,
     onCreateSelectElement = defaultCreateSelectElement,
     onCreateDescriptionElement = defaultCreateDescriptionElement,
     onCreateDownloadElement = defaultCreateDownloadElement,
@@ -290,7 +294,9 @@ export function loadSelector(options) {
 
     items.forEach(item => {
       if (item.url) {
-        const link = onCreateDownloadElement(item, onDownload);
+        // 根据 disableDebounce 决定是否传递倒计时延迟
+        const delayToUse = disableDebounce ? 0 : debounceDelay;
+        const link = onCreateDownloadElement(item, onDownload, delayToUse);
         buttonsContainer.appendChild(link);
       }
     });
@@ -369,7 +375,7 @@ export function loadSelector(options) {
     return descDiv;
   }
 
-  function defaultCreateDownloadElement(item, onDownload) {
+  function defaultCreateDownloadElement(item, onDownload, debounceDelay) {
     const link = document.createElement('a');
     link.href = item.url;
 
@@ -378,17 +384,88 @@ export function loadSelector(options) {
       displayName = "通用架构";
     }
 
-    link.textContent = `下载 ${displayName}`;
+    const originalText = `下载 ${displayName}`;
+    link.textContent = originalText;
     link.className = 'mdui-btn mdui-btn-block mdui-btn-raised mdui-ripple';
     link.target = '_blank';
-
-    if (onDownload) {
-      link.addEventListener('click', (e) => {
+    
+    // 存储原始文本和倒计时延迟时间
+    link.dataset.originalText = originalText;
+    link.dataset.debounceDelay = debounceDelay;
+    
+    // 处理点击事件
+    const handleClick = (e) => {
+      if (link.disabled) {
+        e.preventDefault();
+        return;
+      }
+      
+      // 调用原始的 onDownload 回调
+      if (onDownload) {
         onDownload(item, e);
-      });
-    }
-
+      }
+      
+      // 开始倒计时
+      startCountdown(link);
+    };
+    
+    link.addEventListener('click', handleClick);
+    
     return link;
+  }
+  
+  /**
+   * 开始下载按钮的倒计时
+   * @param {HTMLAnchorElement} link - 下载按钮元素
+   */
+  function startCountdown(link) {
+    const debounceDelay = parseInt(link.dataset.debounceDelay) || 3;
+    
+    // 如果 debounceDelay 为 0，则不执行倒计时
+    if (debounceDelay <= 0) {
+      return;
+    }
+    
+    let remainingTime = debounceDelay;
+    
+    // 禁用按钮
+    link.disabled = true;
+    link.style.opacity = '0.5';
+    link.style.cursor = 'not-allowed';
+    
+    // 更新按钮文本
+    link.textContent = `请勿重复点击：${remainingTime}秒`;
+    
+    // 开始倒计时
+    const timer = setInterval(() => {
+      remainingTime--;
+      
+      if (remainingTime > 0) {
+        link.textContent = `请勿重复点击：${remainingTime}秒`;
+      } else {
+        // 倒计时结束，恢复按钮
+        clearInterval(timer);
+        link.disabled = false;
+        link.style.opacity = '1';
+        link.style.cursor = 'pointer';
+        link.textContent = link.dataset.originalText;
+      }
+    }, 1000);
+  }
+
+  /**
+   * 创建一个防抖函数
+   * @param {Function} func - 要执行的函数
+   * @param {number} delay - 延迟时间（秒）
+   * @returns {Function} 防抖处理后的函数
+   */
+  function debounce(func, delay) {
+    let timeoutId;
+    return function(...args) {
+      const context = this;
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => func.apply(context, args), delay * 1000);
+    };
   }
 
   function defaultRenderError(message, level, container) {
