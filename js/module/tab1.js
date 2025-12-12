@@ -44,7 +44,7 @@ export async function xf_loadAnnouncement() {
 
   const CHECKSUM_STORAGE_KEY = 'xf_announcement_checksum';
 
-  const savedChecksum = localStorage.getItem(CHECKSUM_STORAGE_KEY);
+  const savedChecksum = utils.xf_readLocalStorage(CHECKSUM_STORAGE_KEY);
   console.log('tab1：加载公告内容：已存校验值：', savedChecksum);
 
   const contentElement = await loadContent.xf_getHtmlContent('/data/content/announcement.html');
@@ -84,7 +84,7 @@ export async function xf_loadAnnouncement() {
     if (!panelItem.dataset.xfAnnouncementListenerAdded) {
       panelItem.addEventListener('click', function () {
         titleElement.innerHTML = '公告';
-        localStorage.setItem(CHECKSUM_STORAGE_KEY, currentChecksum.toString());
+        utils.xf_writeLocalStorage(CHECKSUM_STORAGE_KEY, currentChecksum.toString());
       });
       panelItem.dataset.xfAnnouncementListenerAdded = 'true';
     }

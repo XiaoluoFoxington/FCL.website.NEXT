@@ -49,8 +49,9 @@ export function xf_calculateChecksum(str) {
  * @returns {string|null} - 对应的值
  */
 export function xf_readLocalStorage(key) {
-  console.log('工具：读取本地存储', key);
-  return localStorage.getItem(key);
+  const value = localStorage.getItem(key);
+  console.log(`工具：读取本地存储：键：${key}：读到值：${value}`);
+  return value;
 }
 
 /**
