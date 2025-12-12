@@ -42,3 +42,23 @@ export function xf_calculateChecksum(str) {
   }
   return checksum;
 }
+
+/**
+ * 读取本地存储
+ * @param {string} key - 本地存储的键
+ * @returns {string|null} - 对应的值
+ */
+export function xf_readLocalStorage(key) {
+  console.log('工具：读取本地存储', key);
+  return localStorage.getItem(key);
+}
+
+/**
+ * 写入本地存储
+ * @param {string} key - 本地存储的键
+ * @param {string} value - 对应的值
+ */
+export function xf_writeLocalStorage(key, value) {
+  console.log(`工具：写入本地存储：键：${key}，值：${value}`);
+  localStorage.setItem(key, value);
+}
