@@ -62,7 +62,7 @@
   {
     "name": "FCL官方联机工具",
     "nextUrl": "/data/down/fclConnectivityTool/index.json",
-    "description": "<div class=\"mdui-typo\"><p>这是FCL官方的联机工具，基于easytier，目前还在测试阶段，后续将会集成至FCL启动器中。可与HMCL和PCL2 CE一起联机。</p></div>"
+    "description": "<div class=\"mdui-typo\"><p>此工具已集成于FCL 1.2.7.1及以上版本中，基于easytier，可与HMCL和PCL2 CE一起联机。不再推荐额外下载此工具。</p></div>"
   },
   {
     "name": "astral联机工具",
