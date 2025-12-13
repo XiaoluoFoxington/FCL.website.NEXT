@@ -132,19 +132,23 @@ function isAndroidQQInnerWebView(userAgent) {
   // 转为小写，避免大小写匹配问题（部分UA可能存在大写/混合写）
   const ua = userAgent.toLowerCase();
 
-  // 核心判断条件：
-  // 包含安卓标识（android）
-  // （貌似不是每个都有）包含QQ内置浏览器内核标识（mqqbrowser）
-  // 包含QQ主题标识（qqtheme）
-  // 包含QQ版本标识（qq/）
-  // 包含WebView标识（wv）（区别于独立版QQ浏览器）
+  /*
+  核心判断条件：
+  包含安卓标识（android）
+  包含某些特殊标识（v1_and_sq_）
+  （貌似不是每个都有）包含QQ内置浏览器内核标识（mqqbrowser）
+  包含QQ主题标识（qqtheme）
+  包含QQ版本标识（qq/）
+  包含WebView标识（wv）（区别于独立版QQ浏览器）
+  */
   const hasAndroid = ua.includes('android');
+  const hasVAS = ua.includes('v1_and_sq_');
   // const hasMQQBrowser = ua.includes('mqqbrowser');
-  const hasQQTheme = ua.includes('qqtheme');
+  const hasQQTheme = ua.includes('qqtheme/');
   const hasQQVersion = ua.includes('qq/');
   const hasWebView = ua.includes('wv');
 
-  const isQQInnerWebView = hasAndroid && hasQQTheme && hasQQVersion && hasWebView;
+  const isQQInnerWebView = hasAndroid && hasVAS && hasQQTheme && hasQQVersion && hasWebView;
   console.log('系统检测：是安卓版QQ内置WebView：', isQQInnerWebView);
   return isQQInnerWebView;
 }
