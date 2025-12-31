@@ -1,0 +1,125 @@
+name: 自动压缩代码并推送至min分支
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  minify-and-deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -euo pipefail {0}
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 配置Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: 安装压缩工具
+        run: |
+          npm install -g html-minifier-terser@7.2.0 clean-css-cli@5.6.3 terser@5.26.0
+          echo "✅ 压缩工具安装完成"
+
+      - name: 初始化dist目录
+        run: |
+          rm -rf dist && mkdir -p dist
+          echo "✅ 清理并重建dist目录完成"
+
+      - name: 处理所有文件
+        run: |
+          find . -type f \
+            ! -path "./node_modules/*" \
+            ! -path "./dist/*" \
+            ! -path "./.git/*" | while IFS= read -r file; do
+              output="dist/${file#./}"
+              mkdir -p "$(dirname "$output")"
+
+              case "$file" in
+                *.html)
+                  echo "🔧 压缩HTML: $file"
+                  html-minifier-terser \
+                    --collapse-whitespace \
+                    --remove-comments \
+                    --remove-redundant-tags \
+                    --no-minify-css \
+                    --no-minify-js \
+                    -o "$output" "$file"
+                  ;;
+                *.css)
+                  echo "🔧 压缩CSS: $file"
+                  cleancss --level 0 -o "$output" "$file"
+                  ;;
+                *.js)
+                  echo "🔧 压缩JS: $file"
+                  terser "$file" \
+                    --compress "drop_console=false,drop_debugger=false" \
+                    --mangle "keep_fnames=true" \
+                    --comments false \
+                    -o "$output"
+                  ;;
+                *.json)
+                  echo "🔧 压缩JSON: $file"
+                  node -e "
+                    const fs = require('fs');
+                    try {
+                      const data = JSON.parse(fs.readFileSync('$file', 'utf8'));
+                      fs.writeFileSync('$output', JSON.stringify(data));
+                    } catch (e) {
+                      console.error('❌ JSON解析失败:', '$file', e.message);
+                      process.exit(1);
+                    }
+                  "
+                  ;;
+                *)
+                  echo "📤 复制静态资源: $file"
+                  cp -f "$file" "$output"
+                  ;;
+              esac
+            done
+          echo "✅ 所有文件处理完成"
+
+      - name: 推送至min分支
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
+          if ! git show-ref --verify --quiet refs/heads/min; then
+            echo "⚠️ min分支不存在，创建空分支"
+            git checkout --orphan min
+            git rm -rf .
+            git commit --allow-empty -m "Initial min branch"
+            git push origin min
+          fi
+
+          git checkout min
+          git pull origin min --rebase
+
+          git clean -fdx --exclude=.git
+          echo "✅ min分支工作区清理完成"
+
+          cp -rf dist/* .
+          rm -rf dist
+
+          git add -A
+          if git diff --staged --quiet; then
+            echo "ℹ️ 无代码变更，无需提交"
+            exit 0
+          fi
+
+          commit_msg="Auto minify code: $(git log main -1 --pretty=format:'%s (%h)')"
+          git commit -m "$commit_msg"
+          git push origin min
+          echo "✅ 压缩代码已推送至min分支"
