@@ -63,7 +63,7 @@ jobs:
                   ;;
                 *.css)
                   echo "🔧 压缩CSS: $file"
-                  cleancss --level 0 -o "$output" "$file"
+                  cleancss -O0 -o "$output" "$file"
                   ;;
                 *.js)
                   echo "🔧 压缩JS: $file"
