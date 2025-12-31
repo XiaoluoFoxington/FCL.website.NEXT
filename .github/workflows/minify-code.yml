@@ -53,7 +53,12 @@ jobs:
                   html-minifier-terser \
                     --collapse-whitespace \
                     --remove-comments \
-                    --remove-redundant-tags \
+                    --remove-optional-tags \
+                    --remove-redundant-attributes \
+                    --remove-empty-elements \
+                    --remove-empty-attributes \
+                    --remove-script-type-attributes \
+                    --remove-style-link-type-attributes \
                     --no-minify-css \
                     --no-minify-js \
                     -o "$output" "$file"
