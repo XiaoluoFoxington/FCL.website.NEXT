@@ -98,17 +98,21 @@ jobs:
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
+          
+          # 确保本地有最新的远程分支信息
+          git fetch origin
 
-          if ! git show-ref --verify --quiet refs/heads/min; then
-            echo "⚠️ min分支不存在，创建空分支"
+          # 检查min分支是否存在于远程
+          if ! git show-ref --verify --quiet refs/remotes/origin/min; then
+            echo "⚠️ 远程min分支不存在，创建空分支"
             git checkout --orphan min
             git rm -rf .
             git commit --allow-empty -m "Initial min branch"
             git push origin min
+          else
+            # 拉取最新的min分支
+            git checkout -B min origin/min
           fi
-
-          git checkout min
-          git pull origin min --rebase
 
           git clean -fdx --exclude=.git
           echo "✅ min分支工作区清理完成"
@@ -124,5 +128,7 @@ jobs:
 
           commit_msg="Auto minify code: $(git log main -1 --pretty=format:'%s (%h)')"
           git commit -m "$commit_msg"
-          git push origin min
+          
+          # 使用--force-with-lease确保安全推送
+          git push origin min --force-with-lease
           echo "✅ 压缩代码已推送至min分支"
