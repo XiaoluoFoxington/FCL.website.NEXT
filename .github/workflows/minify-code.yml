@@ -33,15 +33,14 @@ jobs:
           npm install -g html-minifier-terser@7.2.0 clean-css-cli@5.6.3 terser@5.26.0
           echo "✅ 压缩工具安装完成"
 
-      - name: 初始化git配置和分支
+      - name: 初始化git配置
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           
-          # 确保本地有最新的远程分支信息
+      - name: 检查并创建min分支（如果不存在）
+        run: |
           git fetch origin
-
-          # 检查min分支是否存在于远程
           if ! git show-ref --verify --quiet refs/remotes/origin/min; then
             echo "⚠️ 远程min分支不存在，创建空分支"
             git checkout --orphan min
@@ -51,13 +50,18 @@ jobs:
             git checkout main
           fi
 
-      - name: 初始化dist目录
+      - name: 切换到main分支并确保最新
         run: |
+          git checkout main
+          git pull origin main
+
+      - name: 在main分支上生成压缩文件
+        run: |
+          # 初始化dist目录
           rm -rf dist && mkdir -p dist
           echo "✅ 清理并重建dist目录完成"
-
-      - name: 处理所有文件
-        run: |
+          
+          # 处理所有文件
           find . -type f \
             ! -path "./node_modules/*" \
             ! -path "./dist/*" \
@@ -112,17 +116,33 @@ jobs:
             done
           echo "✅ 所有文件处理完成"
 
-      - name: 推送至min分支
+      - name: 保存dist目录到临时位置
         run: |
-          # 切换到min分支并确保是最新的
+          cp -rf dist /tmp/
+          echo "✅ dist目录已保存到临时位置"
+
+      - name: 切换到min分支并更新
+        run: |
           git checkout -B min origin/min
-
           git clean -fdx --exclude=.git
-          echo "✅ min分支工作区清理完成"
+          echo "✅ 切换到min分支并清理完成"
 
-          # 复制dist目录内容到min分支
-          cp -rf dist/* .
+      - name: 恢复dist目录并复制到min分支
+        run: |
+          # 恢复dist目录
+          cp -rf /tmp/dist .
+          echo "✅ dist目录已从临时位置恢复"
           
+          # 复制dist目录内容到min分支根目录
+          cp -rf dist/* .
+          rm -rf dist
+          
+          # 检查是否有文件被复制
+          echo "📋 复制完成后的文件列表："
+          ls -la
+
+      - name: 提交并推送更新
+        run: |
           git add -A
           if git diff --staged --quiet; then
             echo "ℹ️ 无代码变更，无需提交"
