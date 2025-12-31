@@ -1,15 +1,1 @@
-[
-  {
-    "name": "线路1",
-    "nextUrl": "/data/down/renderer/1/index.json"
-  },
-  {
-    "name": "线路3",
-    "nextUrl": "/data/down/renderer/3/index.json"
-  },
-  {
-    "name": "线路10",
-    "nextUrl": "https://mirror.lemwood.icu/api/status/MG",
-    "apiVer": "Lemwood"
-  }
-]
+[{"name":"线路1","nextUrl":"/data/down/renderer/1/index.json"},{"name":"线路3","nextUrl":"/data/down/renderer/3/index.json"},{"name":"线路10","nextUrl":"https://mirror.lemwood.icu/api/status/MG","apiVer":"Lemwood"}]

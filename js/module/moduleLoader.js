@@ -1,9 +1,1 @@
-const moduleCache = new Map();
-
-export async function loadModule(modulePath) {
-  if (!moduleCache.has(modulePath)) {
-    const module = await import(modulePath);
-    moduleCache.set(modulePath, module);
-  }
-  return moduleCache.get(modulePath);
-}
+const moduleCache=new Map;export async function loadModule(e){if(!moduleCache.has(e)){const o=await import(e);moduleCache.set(e,o)}return moduleCache.get(e)}

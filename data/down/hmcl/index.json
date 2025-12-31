@@ -1,7 +1,1 @@
-[
-  {
-    "name": "线路10",
-    "nextUrl": "https://mirror.lemwood.icu/api/status/hmcl",
-    "apiVer": "Lemwood"
-  }
-]
+[{"name":"线路10","nextUrl":"https://mirror.lemwood.icu/api/status/hmcl","apiVer":"Lemwood"}]
