@@ -33,6 +33,24 @@ jobs:
           npm install -g html-minifier-terser@7.2.0 clean-css-cli@5.6.3 terser@5.26.0
           echo "✅ 压缩工具安装完成"
 
+      - name: 初始化git配置和分支
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          
+          # 确保本地有最新的远程分支信息
+          git fetch origin
+
+          # 检查min分支是否存在于远程
+          if ! git show-ref --verify --quiet refs/remotes/origin/min; then
+            echo "⚠️ 远程min分支不存在，创建空分支"
+            git checkout --orphan min
+            git rm -rf .
+            git commit --allow-empty -m "Initial min branch"
+            git push origin min
+            git checkout main
+          fi
+
       - name: 初始化dist目录
         run: |
           rm -rf dist && mkdir -p dist
@@ -96,30 +114,15 @@ jobs:
 
       - name: 推送至min分支
         run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
-          
-          # 确保本地有最新的远程分支信息
-          git fetch origin
-
-          # 检查min分支是否存在于远程
-          if ! git show-ref --verify --quiet refs/remotes/origin/min; then
-            echo "⚠️ 远程min分支不存在，创建空分支"
-            git checkout --orphan min
-            git rm -rf .
-            git commit --allow-empty -m "Initial min branch"
-            git push origin min
-          else
-            # 拉取最新的min分支
-            git checkout -B min origin/min
-          fi
+          # 切换到min分支并确保是最新的
+          git checkout -B min origin/min
 
           git clean -fdx --exclude=.git
           echo "✅ min分支工作区清理完成"
 
+          # 复制dist目录内容到min分支
           cp -rf dist/* .
-          rm -rf dist
-
+          
           git add -A
           if git diff --staged --quiet; then
             echo "ℹ️ 无代码变更，无需提交"
