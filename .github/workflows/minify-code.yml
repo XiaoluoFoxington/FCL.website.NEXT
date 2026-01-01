@@ -55,6 +55,12 @@ jobs:
           git checkout main
           git pull origin main
 
+      - name: 输出帮助
+        run: |
+          html-minifier-terser --help
+          clean-css-cli --help
+          terser --help
+
       - name: 在main分支上生成压缩文件
         run: |
           # 初始化dist目录
@@ -76,8 +82,6 @@ jobs:
                   html-minifier-terser \
                     --collapse-whitespace \
                     --remove-comments \
-                    --no-remove-optional-tags \
-                    --no-remove-empty-elements \
                     --remove-script-type-attributes \
                     --remove-style-link-type-attributes \
                     -o "$output" "$file"
