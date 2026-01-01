@@ -91,9 +91,6 @@ jobs:
                 *.js)
                   echo "🔧 压缩JS: $file"
                   terser "$file" \
-                    --compress "drop_console=false,drop_debugger=false" \
-                    --no-mangle \
-                    --comments false \
                     -o "$output"
                   ;;
                 *.json)
