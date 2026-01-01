@@ -58,7 +58,7 @@ jobs:
       - name: 输出帮助
         run: |
           html-minifier-terser --help
-          clean-css-cli --help
+          cleancss --help
           terser --help
 
       - name: 在main分支上生成压缩文件
