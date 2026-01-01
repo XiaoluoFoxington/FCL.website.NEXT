@@ -64,7 +64,7 @@ export async function loadReleaseHistory(repoFullName, targetElementId) {
             <div class="mdui-panel-item-summary">${new Date(release.published_at).toLocaleString()}</div>
             <i class="mdui-panel-item-arrow mdui-icon material-icons">keyboard_arrow_down</i>
           </div>
-          <div class="mdui-panel-item-body">
+          <div class="mdui-panel-item-body mdui-typo">
             ${marked.parse(release.body || '无发布说明')}
           </div>
         </div>`;
