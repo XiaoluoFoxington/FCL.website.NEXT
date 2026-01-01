@@ -6,7 +6,8 @@
   {
     "name": "线路2",
     "nextUrl": "https://frostlynx.work/external/zl2/file_tree.json",
-    "apiVer": "Way2old"
+    "apiVer": "Way2old",
+    "default": true
   },
   {
     "name": "线路10",
