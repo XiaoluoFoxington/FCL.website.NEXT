@@ -356,12 +356,30 @@ export function loadSelector(options) {
     // 使用 DocumentFragment 批量添加选项，减少 DOM 操作次数
     const fragment = document.createDocumentFragment();
     
+    const groupOptions = {};
+
     items.forEach((item, index) => {
       const option = document.createElement('option');
       option.value = index;
       option.textContent = item.name || '(无名称)';
-      fragment.appendChild(option);
-    });
+      const groupName = item.type || '';
+      if (!groupOptions[groupName]) {
+        groupOptions[groupName] = [];
+      }
+      groupOptions[groupName].push(option);
+    });// 把选项先分类存储在 groupOptions 对象中
+
+    // 创建并添加分组选项
+    for (const [groupName, options] of Object.entries(groupOptions)) {
+      if(groupName) {
+        const optgroup = document.createElement('optgroup');
+        optgroup.label = groupName;
+        options.forEach(option => optgroup.appendChild(option));
+        fragment.appendChild(optgroup);
+      } else {
+        options.forEach(option => fragment.appendChild(option));
+      }
+    }
 
     // 一次性将所有选项添加到 select 元素中
     select.appendChild(fragment);
