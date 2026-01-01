@@ -92,7 +92,7 @@ jobs:
                   echo "🔧 压缩JS: $file"
                   terser "$file" \
                     --compress "drop_console=false,drop_debugger=false" \
-                    --mangle "keep_fnames=true" \
+                    --mangle false \
                     --comments false \
                     -o "$output"
                   ;;
