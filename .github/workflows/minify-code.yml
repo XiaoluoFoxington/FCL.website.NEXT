@@ -74,14 +74,12 @@ jobs:
                 *.html)
                   echo "🔧 压缩HTML: $file"
                   html-minifier-terser \
-                    --collapse-whitespace \
-                    --remove-comments \
-                    --remove-optional-tags \
-                    --remove-redundant-attributes \
-                    --remove-empty-elements \
-                    --remove-empty-attributes \
-                    --remove-script-type-attributes \
-                    --remove-style-link-type-attributes \
+                    --collapse-whitespace \               # 合并空白字符
+                    --remove-comments \                   # 删除注释
+                    --no-remove-optional-tags \           # 不移除可选标签
+                    --no-remove-empty-elements \          # 不移除空元素
+                    --remove-script-type-attributes \     # 移除脚本类型属性
+                    --remove-style-link-type-attributes \ # 移除样式链接类型属性
                     -o "$output" "$file"
                   ;;
                 *.css)
