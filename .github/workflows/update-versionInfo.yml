@@ -1,0 +1,60 @@
+name: 更新 versionInfo.json
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-version-info:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -euo pipefail {0}
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 初始化git配置
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
+      - name: 获取当前Git提交哈希
+        id: get-git-hash
+        run: |
+          GIT_HASH=$(git rev-parse HEAD)
+          echo "git_hash=$GIT_HASH" >> $GITHUB_OUTPUT
+          echo "✅ 当前Git提交哈希: $GIT_HASH"
+
+      - name: 更新versionInfo.json
+        run: |
+          # 创建或更新versionInfo.json文件
+          cat > versionInfo.json << EOF
+          {
+            "git": "${{ steps.get-git-hash.outputs.git_hash }}"
+          }
+          EOF
+          echo "✅ versionInfo.json已更新"
+          cat versionInfo.json
+
+      - name: 提交并推送更新
+        run: |
+          git add versionInfo.json
+          if git diff --staged --quiet; then
+            echo "ℹ️ versionInfo.json无变更，无需提交"
+            exit 0
+          fi
+
+          commit_msg="[Actions]更新：versionInfo.json ($(git rev-parse --short HEAD))"
+          git commit -m "$commit_msg"
+          
+          # 使用--force-with-lease确保安全推送
+          git push origin main --force-with-lease
+          echo "✅ versionInfo.json已推送至main分支"

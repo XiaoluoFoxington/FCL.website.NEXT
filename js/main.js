@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   xf_addEventListeners(); // 添加事件监听
   tab1.xf_init(); // 初始化tab1内容
   xf_loadWebsiteVisitCount(); // 获取访问量
+  xf_loadWebsiteVerInfo(); // 加载网站版本信息
 });
 
 /**
@@ -102,3 +103,11 @@ function xf_loadWebsiteVisitCount() {
   document.head.appendChild(scriptElement);
 }
 
+/**
+ * 加载网站版本信息
+ */
+async function xf_loadWebsiteVerInfo() {
+  const response = await fetch('/versionInfo.json');
+  const data = await response.json();
+  document.getElementById('xf_websiteVer_git').textContent = data.git;
+}

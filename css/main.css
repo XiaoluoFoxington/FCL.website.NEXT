@@ -43,3 +43,10 @@ img {
 .xf-error-text {
   color: #f80;
 }
+
+#xf_websiteVer {
+  position: fixed;
+  bottom: 0;
+  color: #808080;
+  opacity: 0.5;
+}
