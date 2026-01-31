@@ -149,7 +149,7 @@ jobs:
             exit 0
           fi
 
-          commit_msg="[Actions]修改：压缩：$(git log main -1 --pretty=format:'%s (%h)')"
+          commit_msg="[GHA] 修改：压缩：$(git log main -1 --pretty=format:'%s (%h)')"
           git commit -m "$commit_msg"
           
           # 使用--force-with-lease确保安全推送

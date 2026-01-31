@@ -52,7 +52,7 @@ jobs:
             exit 0
           fi
 
-          commit_msg="[Actions]更新：versionInfo.json ($(git rev-parse --short HEAD))"
+          commit_msg="[GHA] 内容：更新：versionInfo.json：$(git rev-parse --short HEAD)"
           git commit -m "$commit_msg"
           
           # 使用--force-with-lease确保安全推送
