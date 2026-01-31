@@ -1,4 +1,23 @@
 <div class="mdui-panel" mdui-panel>
+  <div class="mdui-panel-item">
+    <div class="mdui-panel-item-header mdui-ripple">
+      <div>自定义仓库</div>
+      <i class="mdui-panel-item-arrow mdui-icon material-icons">keyboard_arrow_down</i>
+    </div>
+    <div class="mdui-panel-item-body">
+      <div class="mdui-typo">
+        <p>此页面使用GH官方API查看仓库Release信息。如不愿访问GH的Release页面，这里或许是个不错的选择。<del>不过谁会那么无聊在这里看Release信息。</del></p>
+      </div>
+      <div class="mdui-textfield mdui-textfield-floating-label">
+        <label class="mdui-textfield-label">请在这里输入完整GH仓库名，例如：“XiaoluoFoxington/FCL.website.NEXT”。</label>
+        <input class="mdui-textfield-input" type="text" id="tab5CustomRepoInput" />
+      </div>
+      <button id="tab5CustomRepoSubmit" class="mdui-btn mdui-btn-block mdui-btn-raised mdui-ripple">查询</button>
+      <div id="tab5CustomRepoResult"></div>
+    </div>
+  </div>
+
+
   <div class="mdui-panel-item" id="tab5FclPanelEle">
     <div class="mdui-panel-item-header mdui-ripple">
       <div>Fold Craft Launcher</div>

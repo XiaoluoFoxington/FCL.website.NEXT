@@ -12,9 +12,18 @@ export async function xf_init() {
  * 添加事件监听
  */
 export function xf_addEventListeners() {
+  document.getElementById('tab5CustomRepoSubmit').addEventListener('click', xf_tab5CustomRepoSubmit_click);
   document.getElementById('tab5FclPanelEle').addEventListener('click', xf_tab5FclPanelEle_click, { once: true });
   document.getElementById('tab5ZlPanelEle').addEventListener('click', xf_tab5ZlPanelEle_click, { once: true });
   document.getElementById('tab5Zl2PanelEle').addEventListener('click', xf_tab5Zl2PanelEle_click, { once: true });
+}
+
+/**
+ * 自定义仓库查询按钮的click
+ */
+export async function xf_tab5CustomRepoSubmit_click() {
+  const loadRelease = await loadModule('/js/module/loadRelease.js');
+  await loadRelease.loadReleaseHistory(document.getElementById('tab5CustomRepoInput').value, 'tab5CustomRepoResult');
 }
 
 /**
