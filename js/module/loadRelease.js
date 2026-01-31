@@ -64,8 +64,33 @@ export async function loadReleaseHistory(repoFullName, targetElementId) {
             <div class="mdui-panel-item-summary">${new Date(release.published_at).toLocaleString()}</div>
             <i class="mdui-panel-item-arrow mdui-icon material-icons">keyboard_arrow_down</i>
           </div>
-          <div class="mdui-panel-item-body mdui-typo">
-            ${marked.parse(release.body || '无发布说明')}
+          <div class="mdui-panel-item-body">
+            <div class="mdui-panel" mdui-panel>
+              <div class="mdui-panel-item mdui-panel-item-open">
+                <div class="mdui-panel-item-header mdui-ripple">
+                  <div class="mdui-panel-item-title">内容</div>
+                  <i class="mdui-panel-item-arrow mdui-icon material-icons">keyboard_arrow_down</i>
+                </div>
+                <div class="mdui-panel-item-body">
+                  <div class="mdui-typo">
+                    ${marked.parse(release.body || '无发布说明')}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mdui-panel" mdui-panel>
+              <div class="mdui-panel-item">
+                <div class="mdui-panel-item-header mdui-ripple">
+                  <div class="mdui-panel-item-title">资源（${release.assets.length}）</div>
+                  <i class="mdui-panel-item-arrow mdui-icon material-icons">keyboard_arrow_down</i>
+                </div>
+                <div class="mdui-panel-item-body">
+                  <div class="mdui-typo">
+                    ${renderReleasesAssets(release.assets)}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>`;
 
@@ -79,6 +104,43 @@ export async function loadReleaseHistory(repoFullName, targetElementId) {
     container.appendChild(panelContainer);
 
     mdui.mutation();
+  }
+
+  /**
+   * 渲染Release资源
+   * @param {Array} assets - Release资源数组
+   * @returns {string} - 渲染后的HTML字符串
+   */
+  function renderReleasesAssets(assets) {
+    if (assets.length === 0) {
+      return '<div class="mdui-typo">无资源</div>';
+    }
+    
+    return assets.map(asset => `
+      <div class="mdui-table-fluid">
+        <table class="mdui-table">
+          <thead>
+            <tr>
+              <th colspan="2">${asset.name}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>大小</td>
+              <td>${asset.size}字节</td>
+            </tr>
+            <tr>
+              <td>校验</td>
+              <td>${asset.digest}</td>
+            </tr>
+            <tr>
+              <td>原始下载URL</td>
+              <td><a href="${asset.browser_download_url}" target="_blank">${asset.browser_download_url}</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      `).join('');
   }
 
   /**

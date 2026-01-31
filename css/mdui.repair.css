@@ -55,3 +55,23 @@
   display: block;
   width: 100%;
 }
+
+.mdui-table {
+  border-left: none;
+}
+
+.mdui-table th,
+.mdui-table td {
+  border-right: 1px solid rgba(255, 255, 255, .12);
+}
+
+.mdui-table td:first-child,
+.mdui-table th:first-child {
+  padding-right: 24px;
+  padding-left: 24px;
+}
+
+.mdui-table td:last-child,
+.mdui-table th:last-child {
+  border-right: none;
+}
