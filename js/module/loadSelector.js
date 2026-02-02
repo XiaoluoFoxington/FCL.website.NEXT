@@ -1,3 +1,6 @@
+import { loadModule } from '/js/module/moduleLoader.js';
+const loadContent = await loadModule('/js/module/loadContent.js');
+
 /**
  * 通用级联选择器
  * @param {Object} options - 配置选项
@@ -53,7 +56,7 @@ export function loadSelector(options) {
     clearLevelElements(level);
 
     try {
-      const items = await fetchItems(source);
+      const items = await loadContent.fetchItems(source);
       validateItems(items);
 
       // 检查当前数据是否为最底层
@@ -99,31 +102,6 @@ export function loadSelector(options) {
     while (container.children.length > level * 2) {
       container.removeChild(container.lastChild);
     }
-  }
-
-  /**
-   * 获取数据
-   * @param {string|Array} source - JSON 数据的 URL 或直接的数组数据
-   * @param {string} [responseType='json'] - 响应类型，默认是 'json'，也可以是 'text'
-   * @returns {Promise<Array>} 数据数组
-   */
-  async function fetchItems(source, responseType = 'json') {
-    if (typeof source === 'string') {
-      try {
-        const response = await fetch(source);
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-        return await response[responseType]();
-      } catch (error) {
-        if (error.name === 'TypeError') {
-          // 网络错误处理
-          throw new Error(`网络错误：${error.message}`);
-        }
-        throw error;
-      }
-    }
-    return source;
   }
 
   /**
@@ -211,7 +189,7 @@ export function loadSelector(options) {
     } else if (nextUrl) {
       console.log(`选择器模块：${selectedItem.name}：有nextUrl`);
       try {
-        const rawData = await fetchItems(nextUrl);
+        const rawData = await loadContent.fetchItems(nextUrl);
         const transformedData = transformDataIfNecessary(rawData, apiVer);
         loadLevel(transformedData, nextLevel);
       } catch (error) {
@@ -343,7 +321,7 @@ export function loadSelector(options) {
         console.warn(`选择器模块：Lemwood线：未知选择器名称：${selectName}`);
         return null;
     }
-    const latest = await fetchItems(`https://mirror.lemwood.icu/api/latest/${selectName}`, 'text');
+    const latest = await loadContent.fetchItems(`https://mirror.lemwood.icu/api/latest/${selectName}`, 'text');
     console.log(`选择器模块：Lemwood线：latest：${latest}`);
     return latest;
   }
