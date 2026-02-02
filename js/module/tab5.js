@@ -1,80 +1,20 @@
 import { loadModule } from '/js/module/moduleLoader.js';
 
 /**
- * 仓库配置数组
- */
-export const repoConfig = [
-  {
-    id: 'Fcl',
-    name: 'Fold Craft Launcher',
-    repoFullName: 'FCL-Team/FoldCraftLauncher',
-    containerId: 'tab5Fcl',
-    panelId: 'tab5FclPanelEle'
-  },
-  {
-    id: 'Zl',
-    name: 'Zalith Launcher',
-    repoFullName: 'ZalithLauncher/ZalithLauncher',
-    containerId: 'tab5Zl',
-    panelId: 'tab5ZlPanelEle'
-  },
-  {
-    id: 'Zl2',
-    name: 'Zalith Launcher 2',
-    repoFullName: 'ZalithLauncher/ZalithLauncher2',
-    containerId: 'tab5Zl2',
-    panelId: 'tab5Zl2PanelEle'
-  },
-  {
-    id: 'Pojav',
-    name: 'Pojav Launcher',
-    repoFullName: 'PojavLauncherTeam/PojavLauncher',
-    containerId: 'tab5Pojav',
-    panelId: 'tab5PojavPanelEle'
-  },
-  {
-    id: 'Hmcl',
-    name: 'HMCL',
-    repoFullName: 'HMCL-dev/HMCL',
-    containerId: 'tab5Hmcl',
-    panelId: 'tab5HmclPanelEle'
-  },
-  {
-    id: 'HmclPe',
-    name: 'HMCL-PE',
-    repoFullName: 'HMCL-dev/HMCL-PE',
-    containerId: 'tab5HmclPe',
-    panelId: 'tab5HmclPePanelEle'
-  },
-  {
-    id: 'AmethystAndroid',
-    name: 'Amethyst-Android',
-    repoFullName: 'AngelAuraMC/Amethyst-Android',
-    containerId: 'tab5AmethystAndroid',
-    panelId: 'tab5AmethystAndroidPanelEle'
-  },
-  {
-    id: 'Mg',
-    name: 'MobileGlues',
-    repoFullName: 'MobileGL-Dev/MobileGlues-release',
-    containerId: 'tab5Mg',
-    panelId: 'tab5MgPanelEle'
-  }
-];
-
-/**
  * 加载tab5内容并初始化
  */
 export async function xf_init() {
   await xf_loadTab5Content();
-  await xf_generateRepoPanels();
-  xf_addEventListeners();
+  const repoConfig = await xf_getRepoConfig();
+  await xf_generateRepoPanels(repoConfig);
+  xf_addEventListeners(repoConfig);
 }
 
 /**
  * 添加事件监听
+ * @param {Array} repoConfig 仓库配置数组
  */
-export function xf_addEventListeners() {
+export function xf_addEventListeners(repoConfig) {
   // 自定义仓库查询按钮
   document.getElementById('tab5CustomRepoSubmit').addEventListener('click', xf_tab5CustomRepoSubmit_click);
   
@@ -100,6 +40,16 @@ export async function xf_tab5CustomRepoSubmit_click() {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
+ * 获取tab5仓库配置
+ * @returns {Array} 仓库配置数组
+ */
+export async function xf_getRepoConfig() {
+  const loadContent = await loadModule('/js/module/loadContent.js');
+  const repoConfig = await loadContent.fetchItems('/data/content/tab5RepoConfig.json');
+  return repoConfig;
+}
+
+/**
  * 加载仓库Release信息
  */
 export async function xf_loadRepoRelease(repoFullName, containerId) {
@@ -109,8 +59,9 @@ export async function xf_loadRepoRelease(repoFullName, containerId) {
 
 /**
  * 动态生成仓库面板HTML
+ * @param {Array} repoConfig 仓库配置数组
  */
-export function xf_generateRepoPanels() {
+export function xf_generateRepoPanels(repoConfig) {
   const panelContainer = document.getElementById('tab5RepoInfo');
   if (!panelContainer) return;
   

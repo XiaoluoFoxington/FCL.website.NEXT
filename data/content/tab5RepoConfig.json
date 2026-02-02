@@ -1,0 +1,58 @@
+[
+  {
+    "id": "Fcl",
+    "name": "Fold Craft Launcher",
+    "repoFullName": "FCL-Team/FoldCraftLauncher",
+    "containerId": "tab5Fcl",
+    "panelId": "tab5FclPanelEle"
+  },
+  {
+    "id": "Zl",
+    "name": "Zalith Launcher",
+    "repoFullName": "ZalithLauncher/ZalithLauncher",
+    "containerId": "tab5Zl",
+    "panelId": "tab5ZlPanelEle"
+  },
+  {
+    "id": "Zl2",
+    "name": "Zalith Launcher 2",
+    "repoFullName": "ZalithLauncher/ZalithLauncher2",
+    "containerId": "tab5Zl2",
+    "panelId": "tab5Zl2PanelEle"
+  },
+  {
+    "id": "Pojav",
+    "name": "Pojav Launcher",
+    "repoFullName": "PojavLauncherTeam/PojavLauncher",
+    "containerId": "tab5Pojav",
+    "panelId": "tab5PojavPanelEle"
+  },
+  {
+    "id": "Hmcl",
+    "name": "HMCL",
+    "repoFullName": "HMCL-dev/HMCL",
+    "containerId": "tab5Hmcl",
+    "panelId": "tab5HmclPanelEle"
+  },
+  {
+    "id": "HmclPe",
+    "name": "HMCL-PE",
+    "repoFullName": "HMCL-dev/HMCL-PE",
+    "containerId": "tab5HmclPe",
+    "panelId": "tab5HmclPePanelEle"
+  },
+  {
+    "id": "AmethystAndroid",
+    "name": "Amethyst-Android",
+    "repoFullName": "AngelAuraMC/Amethyst-Android",
+    "containerId": "tab5AmethystAndroid",
+    "panelId": "tab5AmethystAndroidPanelEle"
+  },
+  {
+    "id": "Mg",
+    "name": "MobileGlues",
+    "repoFullName": "MobileGL-Dev/MobileGlues-release",
+    "containerId": "tab5Mg",
+    "panelId": "tab5MgPanelEle"
+  }
+]
