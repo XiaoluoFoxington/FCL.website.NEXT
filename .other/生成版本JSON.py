@@ -15,9 +15,24 @@ def generate_architecture_json(output_dir):
         "x86_64"
     ]
     
-    # 1. 询问版本名（带非空校验）
+    # 1. 询问版本名（带非空校验）（自动展示当前目录下已有的最新版本）
     print("===== 生成架构URL JSON文件工具 =====")
     while True:
+        # 自动展示当前目录下已有的最新版本
+        existing_versions = [f.split(".json")[0] for f in os.listdir(output_dir) if f.endswith(".json")]
+        latest_version = None
+        if existing_versions:
+            # 定义版本号比较函数
+            def version_key(version):
+                # 提取版本号中的数字部分，转换为元组以便比较
+                import re
+                parts = re.findall(r'\d+', version)
+                return tuple(int(p) for p in parts) if parts else ()
+            
+            # 按版本号大小排序
+            existing_versions.sort(key=version_key, reverse=True)
+            latest_version = existing_versions[0]
+            print(f"当前最新版本：{latest_version}")
         version_name = input("请输入版本名（例如：1.1.4.5）：").strip()
         if version_name:
             break
