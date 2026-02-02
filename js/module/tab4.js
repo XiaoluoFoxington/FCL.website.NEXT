@@ -1,150 +1,34 @@
 import { loadModule } from '/js/module/moduleLoader.js';
 
-/**
- * 贡献者配置数组
- */
-export const contributors = [
-  {
-    id: 'XiaoluoFoxington',
-    name: '洛狐',
-    github: 'XiaoluoFoxington',
-    bilibili: '1561166904',
-    qq: '1MHMKdCWzS',
-    avatar: '/media/img/awatar/XiaoluoFoxington.avif',
-    contributions: [
-      '网站编写',
-      '提供下载线路1'
-    ],
-    lines: [1]
-  },
-  {
-    id: 'Lemwood',
-    name: '柠枺',
-    github: 'ning-g-mo',
-    bilibili: '3537106787896067',
-    avatar: '/media/img/awatar/Lemonwood.avif',
-    contributions: [
-      '提供下载线路10',
-      '提供域名'
-    ],
-    lines: [10]
-  },
-  {
-    id: 'LateDream',
-    name: '晚梦',
-    github: 'LateDreamXD',
-    bilibili: '1988506301',
-    homepage: 'https://about.latedream.cn',
-    avatar: 'https://assets.latedream.qzz.io/avatars/latedream/current.webp',
-    contributions: [
-      '代码贡献（初版与mdui版）'
-    ],
-    lines: []
-  },
-  {
-    id: 'YShenZe',
-    name: '梦泽',
-    github: 'YShenZe',
-    avatar: 'https://q2.qlogo.cn/headimg_dl?dst_uin=417158478&spec=640',
-    contributions: [
-      '提供下载线路7'
-    ],
-    lines: [7]
-  },
-  {
-    id: 'haha66623332',
-    name: '哈哈66623332',
-    github: 'haha252',
-    bilibili: '451017007',
-    avatar: 'https://frostlynx.work/images/haha.jpg',
-    contributions: [
-      '提供下载线路2'
-    ],
-    lines: [2]
-  },
-  {
-    id: 'fishcpy',
-    name: '咬一口的鱼py',
-    github: 'fishcpy',
-    bilibili: '1879898443',
-    homepage: 'https://www.fis.ink',
-    avatar: 'https://www.fis.ink/img/logo.png',
-    contributions: [
-      '提供下载线路3'
-    ],
-    lines: [3]
-  },
-  {
-    id: 'MLFKWMC',
-    name: 'MLFKWMC',
-    bilibili: '494958603',
-    qq: 'naMuNOEAXC',
-    homepage: 'https://www.mcddos.top',
-    avatar: 'https://mcddos.top/logo.jpg',
-    contributions: [
-      '提供下载线路8'
-    ],
-    lines: [8]
-  },
-  {
-    id: 'Linkong',
-    name: 'Linkong',
-    avatar: '/media/img/awatar/Linkong.svg',
-    contributions: [
-      '提供下载线路5'
-    ],
-    lines: [5]
-  },
-  {
-    id: '广告哥',
-    name: '广告哥',
-    github: 'cdyAI',
-    email: '153145404@qq.com',
-    avatar: '/media/img/awatar/广告哥.avif',
-    contributions: [
-      '提供下载线路6'
-    ],
-    lines: [6]
-  },
-  {
-    id: 'lisongyun',
-    name: 'lisongyun',
-    bilibili: '3493107991579439',
-    avatar: 'https://download.shiyanzhongxue666.top/?file=oip-c.png',
-    contributions: [
-      '提供下载线路9'
-    ],
-    lines: [9]
-  },
-  {
-    id: 'ongllluv',
-    name: 'ongllluv',
-    github: 'songllluv',
-    avatar: 'https://avatars.githubusercontent.com/u/197053278',
-    contributions: [
-      '代码贡献'
-    ],
-    lines: []
-  }
-];
-
 
 /**
  * 加载tab4内容
  */
 export async function xf_init() {
   await xf_loadTab4Content();
-  xf_generateContributors();
-  xf_generateDownloadLines();
+  const contributors = await getContributors();
+  xf_generateContributors(contributors);
+  xf_generateDownloadLines(contributors);
 
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * 获取所有线路信息
+ * 获取贡献者数据
+ * @returns {Array} 贡献者数组
  */
-export function getDownloadLines() {
+export async function getContributors() {
+  const loadContent = await loadModule('/js/module/loadContent.js');
+  return await loadContent.fetchItems('/data/content/contributors.json');
+}
+
+/**
+ * 获取所有线路信息
+ * @param {Array} contributors 贡献者数组
+ * @returns {Array} 线路数组
+ */
+export function getDownloadLines(contributors) {
   const lines = [];
   contributors.forEach(contributor => {
     if (contributor.lines && contributor.lines.length > 0) {
@@ -162,8 +46,9 @@ export function getDownloadLines() {
 
 /**
  * 动态生成贡献者HTML
+ * @param {Array} contributors 贡献者数组
  */
-export function xf_generateContributors() {
+export function xf_generateContributors(contributors) {
   const contributorsContainer = document.getElementById('contributorsPanel');
   if (!contributorsContainer) return;
 
@@ -238,8 +123,9 @@ export function xf_generateContributors() {
 
 /**
  * 动态生成线路对照表HTML
+ * @param {Array} contributors 贡献者数组
  */
-export function xf_generateDownloadLines() {
+export function xf_generateDownloadLines(contributors) {
   const linesContainer = document.getElementById('downloadLinesTableBody');
   if (!linesContainer) return;
 
@@ -247,7 +133,7 @@ export function xf_generateDownloadLines() {
   linesContainer.innerHTML = '';
 
   // 获取线路信息
-  const downloadLines = getDownloadLines();
+  const downloadLines = getDownloadLines(contributors);
 
   // 为每个线路生成行
   downloadLines.forEach(line => {

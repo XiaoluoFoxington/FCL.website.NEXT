@@ -119,3 +119,28 @@ export async function xf_loadHtmlContentFromUrl(url, container) {
     container.innerHTML = `<div class="xf-error-text">获取并加载 HTML 内容到指定容器：出错：${e.message}</div>`;
   }
 }
+
+/**
+ * 获取数据
+ * @param {string|Array} source - JSON 数据的 URL 或直接的数组数据
+ * @param {string} [responseType='json'] - 响应类型，默认是 'json'，也可以是 'text'
+ * @returns {Promise<Array>} 数据数组
+ */
+export async function fetchItems(source, responseType = 'json') {
+  if (typeof source === 'string') {
+    try {
+      const response = await fetch(source);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      return await response[responseType]();
+    } catch (error) {
+      if (error.name === 'TypeError') {
+        // 网络错误处理
+        throw new Error(`网络错误：${error.message}`);
+      }
+      throw error;
+    }
+  }
+  return source;
+}
