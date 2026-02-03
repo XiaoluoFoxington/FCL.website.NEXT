@@ -75,3 +75,7 @@
 .mdui-table th:last-child {
   border-right: none;
 }
+
+.mdui-select[disabled] {
+  opacity: .5;
+}

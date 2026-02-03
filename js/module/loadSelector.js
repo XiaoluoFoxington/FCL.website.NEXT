@@ -66,7 +66,10 @@ export function loadSelector(options) {
 
       if (isBottom) {
         renderDownloadButtons(items, level);
-      } else {
+
+        // 启用所有选择框
+        enableAllSelects();
+        } else {
         renderSelect(items, level);
       }
     } catch (error) {
@@ -141,6 +144,9 @@ export function loadSelector(options) {
    */
   function addSelectEventListeners(select, items, level, descDiv) {
     select.addEventListener('change', async () => {
+      // 禁用所有选择框
+      disableAllSelects();
+
       const selectedIndex = parseInt(select.value);
       descDiv.innerHTML = '';
 
@@ -154,6 +160,10 @@ export function loadSelector(options) {
       // 显示描述
       if (selectedItem.description) {
         descDiv.innerHTML = selectedItem.description;
+        if (isBottomLevel(items[selectedIndex])) {
+          // 启用所有选择框
+          enableAllSelects();
+        }
       }
 
       // 调用外部回调
@@ -340,6 +350,28 @@ export function loadSelector(options) {
     return latest;
   }
 
+  /**
+   * 禁用全部下拉选择框
+   */
+  function disableAllSelects() {
+    console.log('选择器模块：禁用全部下拉选择框');
+    const selects = container.querySelectorAll('select');
+    selects.forEach(select => {
+      select.disabled = true;
+    });
+  }
+
+  /**
+   * 启用全部下拉选择框
+   */
+  function enableAllSelects() {
+    console.log('选择器模块：启用全部下拉选择框');
+    const selects = container.querySelectorAll('select');
+    selects.forEach(select => {
+      select.disabled = false;
+    });
+  }
+
   // 默认实现函数
   function defaultCreateSelectElement(items, level) {
     const select = document.createElement('select');
@@ -479,6 +511,8 @@ export function loadSelector(options) {
   }
 
   function defaultRenderError(message, level, container) {
+    enableAllSelects();
+    clearLevelElements(level);
     const errorEl = document.createElement('div');
     errorEl.style.color = '#f00';
     errorEl.textContent = `出错：${message}`;
