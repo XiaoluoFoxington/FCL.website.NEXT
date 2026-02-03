@@ -318,7 +318,7 @@ export function loadSelector(options) {
         selectName = 'hmcl';
         break;
       case 'Vulkan 驱动':
-        selectName = 'FCL_Trunip';
+        selectName = 'FCL_Turnip';
         break;
       default:
         console.warn(`选择器模块：Lemwood线：未知选择器名称：${selectName}`);
