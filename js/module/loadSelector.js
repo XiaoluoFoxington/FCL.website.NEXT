@@ -222,7 +222,7 @@ export function loadSelector(options) {
   async function transformDataIfNecessary(data, apiVer) {
     switch (apiVer) {
       case "Way2old":
-        const latestWay2old = getWay2oldApiLatestVersion(data);
+        const latestWay2old = await getWay2oldApiLatestVersion(data);
         return transformWay2oldApiData(data, latestWay2old);
       case "Lemwood":
         const latestLemwood = await getLemwoodApiLatestVersion();
@@ -287,9 +287,31 @@ export function loadSelector(options) {
    * @param {Object} data - 原始数据
    * @returns {string} 最新版本名称
    */
-  function getWay2oldApiLatestVersion(data) {
-    console.log(`选择器模块：Way2old线：latest：${data.latest}`);
-    return data.latest;
+  async function getWay2oldApiLatestVersion(data) {
+    const repoMap = {
+      'Fold Craft Launcher': 'FCL-Team/FoldCraftLauncher',
+      'Zalith Launcher 2': 'ZalithLauncher/ZalithLauncher2',
+    };
+
+    console.log(`选择器模块：Way2Old线：latest：通过原始数据获取：${data.latest}`);
+
+    const firstSelect = container.firstElementChild;
+    if (!firstSelect || !firstSelect.selectedOptions || firstSelect.selectedOptions.length === 0) {
+      console.error('选择器模块：Way2Old线：无法获取第一个选择器的选中项');
+      return null;
+    }
+    let selectName = firstSelect.selectedOptions[0].innerText;
+    selectName = repoMap[selectName] || selectName;
+    const repoRelInfo = await loadContent.fetchItems(`https://api.github.com/repos/${selectName}/releases`, 'json');
+    const latest = repoRelInfo[0].tag_name;
+    if (latest) {
+      console.log(`选择器模块：Way2Old线：latest：通过GH获取成功，将忽略原始数据。`);
+      console.log(`选择器模块：Way2Old线：latest：通过GH获取：${latest}`);
+      return latest;
+    } else {
+      return data.latest;
+    }
+
   }
 
   /**
