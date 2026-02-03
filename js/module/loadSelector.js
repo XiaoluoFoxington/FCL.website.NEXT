@@ -319,6 +319,14 @@ export function loadSelector(options) {
    * @returns {string} 最新版本名称
    */
   async function getLemwoodApiLatestVersion() {
+    const apiMap = {
+      'Fold Craft Launcher': 'fcl',
+      'Zalith Launcher': 'zl',
+      'Zalith Launcher 2': 'zl2',
+      'HMCL': 'hmcl',
+      'Vulkan 驱动': 'FCL_Turnip',
+    };
+
     // 获取选择器容器的第一个选择器（软件选择）的当前选中项的文本
     const firstSelect = container.firstElementChild;
     if (!firstSelect || !firstSelect.selectedOptions || firstSelect.selectedOptions.length === 0) {
@@ -326,26 +334,7 @@ export function loadSelector(options) {
       return null;
     }
     let selectName = firstSelect.selectedOptions[0].innerText;
-    switch (selectName) {
-      case 'Fold Craft Launcher':
-        selectName = 'fcl';
-        break;
-      case 'Zalith Launcher':
-        selectName = 'zl';
-        break;
-      case 'Zalith Launcher 2':
-        selectName = 'zl2';
-        break;
-      case 'HMCL':
-        selectName = 'hmcl';
-        break;
-      case 'Vulkan 驱动':
-        selectName = 'FCL_Turnip';
-        break;
-      default:
-        console.warn(`选择器模块：Lemwood线：未知选择器名称：${selectName}`);
-        return null;
-    }
+    selectName = apiMap[selectName] || selectName;
     const latest = await loadContent.fetchItems(`https://mirror.lemwood.icu/api/latest/${selectName}`, 'text');
     console.log(`选择器模块：Lemwood线：latest：${latest}`);
     return latest;
