@@ -39,14 +39,14 @@ export function show(sysInfoEle) {
       addSysInfoItem(sysInfoEle, '请选择通用架构。');
     }
   }
-  if (!['Chrome', 'Mobile Chrome', 'Firefox', 'Mobile Firefox', 'Edge', 'Opera'].includes(bn)) {
-    addSysWarnItem(sysInfoEle, '当前浏览器不是常用浏览器。部分浏览器会识别下载内容并引流至下载其它软件。');
+  if (!['Chrome', 'Mobile Chrome', 'Firefox', 'Mobile Firefox', 'Edge', 'Opera', 'Safari', 'Mobile Safari'].includes(bn)) {
+    addSysWarnItem(sysInfoEle, '建议使用常用浏览器（例如 Chrome、Firefox、Edge），因为某些浏览器会“掉包”下载内容。');
   }
   if (bn === 'Vivo Browser') {
-    addSysErrItem(sysInfoEle, 'vivo品牌手机自带浏览器会识别下载内容并引流至下载其它软件。');
+    addSysErrItem(sysInfoEle, 'vivo品牌手机自带浏览器会“掉包”下载内容。');
   }
   if (bn === 'WeChat' || isAndroidQQInnerWebView(navigator.userAgent)) {
-    addSysErrItem(sysInfoEle, '请复制网址到浏览器中打开！');
+    addSysErrItem(sysInfoEle, '不建议使用微信/QQ自带浏览器，请复制网址到浏览器中打开！');
   }
 }
 
