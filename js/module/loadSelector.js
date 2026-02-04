@@ -165,6 +165,11 @@ export function loadSelector(options) {
       if (selectedItem.desUrl) {
         const content = await loadContent.fetchItems(selectedItem.desUrl, 'text');
         descDiv.innerHTML = content;
+        if (selectedItem.desJsUrl) {
+          const scriptEl = document.createElement('script');
+          scriptEl.src = selectedItem.desJsUrl;
+          descDiv.appendChild(scriptEl);
+        }
         bottomEnableAllSelects(items, selectedIndex);
       }
 
@@ -229,7 +234,7 @@ export function loadSelector(options) {
       renderDownloadButtons(itemArray, nextLevel);
     } else {
       // 没有下级数据时的处理
-      if (!selectedItem.description) {
+      if (!selectedItem.description && !selectedItem.desUrl) {
         descDiv.innerHTML = '<div class="mdui-typo"><p>此层级既无下一级数据，也无描述信息。</p></div>';
       }
       clearLevelElements(nextLevel);
