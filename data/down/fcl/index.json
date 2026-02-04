@@ -9,10 +9,6 @@
     "apiVer": "Way2old"
   },
   {
-    "name": "线路3",
-    "nextUrl": "/data/down/fcl/3/index.json"
-  },
-  {
     "name": "线路4",
     "nextUrl": "/data/down/fcl/4/index.json"
   },

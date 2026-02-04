@@ -1,5 +1,11 @@
 [
   {
+    "name": "线路3",
+    "type": "按线路分类",
+    "desUrl": "/data/down/3/index.html",
+    "desJsUrl": "/data/down/3/index.js"
+  },
+  {
     "name": "Fold Craft Launcher",
     "type": "启动器",
     "nextUrl": "/data/down/fcl/index.json",
