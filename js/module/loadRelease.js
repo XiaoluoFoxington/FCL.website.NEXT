@@ -46,7 +46,21 @@ export async function loadReleaseHistory(repoFullName, targetElementId) {
    */
   function renderReleasesToContainer(releases, container) {
     container.innerHTML = '';
-    
+
+    const containerHaderStr = `
+      <div class="mdui-panel-item-header mdui-ripple">
+        <div class="mdui-panel-item-title">版本名称</div>
+        <div class="mdui-panel-item-summary">版本Tag</div>
+        <div class="mdui-panel-item-summary">发布时间</div>
+        <i class="mdui-panel-item-arrow mdui-icon material-icons">keyboard_arrow_down</i>
+      </div>
+      <div class="mdui-panel-item-body mdui-typo">
+        <p>我是表头~</p>
+      </div>`;
+    const containerHader = document.createElement('div');
+    containerHader.classList.add('mdui-panel-item');
+    containerHader.innerHTML = containerHaderStr;
+
     const panelContainer = document.createElement('div');
     panelContainer.id = 'release-panel-container';
     panelContainer.classList.add('mdui-panel');
@@ -100,6 +114,7 @@ export async function loadReleaseHistory(repoFullName, targetElementId) {
       fragment.appendChild(panelElementWrapper.firstElementChild);
     });
     
+    panelContainer.appendChild(containerHader);
     panelContainer.appendChild(fragment);
     container.appendChild(panelContainer);
 
