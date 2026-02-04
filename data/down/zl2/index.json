@@ -6,12 +6,12 @@
   {
     "name": "线路2",
     "nextUrl": "https://frostlynx.work/external/zl2/file_tree.json",
-    "apiVer": "Way2old",
-    "default": true
+    "apiVer": "Way2old"
   },
   {
     "name": "线路10",
     "nextUrl": "https://mirror.lemwood.icu/api/status/zl2",
-    "apiVer": "Lemwood"
+    "apiVer": "Lemwood",
+    "default": true
   }
 ]

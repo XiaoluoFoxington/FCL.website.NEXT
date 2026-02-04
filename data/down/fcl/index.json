@@ -6,8 +6,7 @@
   {
     "name": "线路2",
     "nextUrl": "https://frostlynx.work/external/fcl/file_tree.json",
-    "apiVer": "Way2old",
-    "default": true
+    "apiVer": "Way2old"
   },
   {
     "name": "线路3",
@@ -29,6 +28,7 @@
   {
     "name": "线路10",
     "nextUrl": "https://mirror.lemwood.icu/api/status/fcl",
-    "apiVer": "Lemwood"
+    "apiVer": "Lemwood",
+    "default": true
   }
 ]
