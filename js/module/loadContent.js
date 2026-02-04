@@ -124,7 +124,7 @@ export async function xf_loadHtmlContentFromUrl(url, container) {
  * 获取数据
  * @param {string|Array} source - JSON 数据的 URL 或直接的数组数据
  * @param {string} [responseType='json'] - 响应类型，默认是 'json'，也可以是 'text'
- * @returns {Promise<Array>} 数据数组
+ * @returns {Promise<any>} 解析后的数据（传json则为JSON对象/数组，传text则为字符串，依类型而定）
  */
 export async function fetchItems(source, responseType = 'json') {
   if (typeof source === 'string') {

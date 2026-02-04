@@ -160,10 +160,12 @@ export function loadSelector(options) {
       // 显示描述
       if (selectedItem.description) {
         descDiv.innerHTML = selectedItem.description;
-        if (isBottomLevel(items[selectedIndex])) {
-          // 启用所有选择框
-          enableAllSelects();
-        }
+        bottomEnableAllSelects(items, selectedIndex);
+      }
+      if (selectedItem.desUrl) {
+        const content = await loadContent.fetchItems(selectedItem.desUrl, 'text');
+        descDiv.innerHTML = content;
+        bottomEnableAllSelects(items, selectedIndex);
       }
 
       // 调用外部回调
@@ -180,6 +182,17 @@ export function loadSelector(options) {
         onLevelChange(level + 1);
       }
     });
+  }
+
+  /**
+   * 判断是否为最底层并根据情况启用所有选择框
+   * @param {Array} items - 当前层级的选项列表
+   * @param {number} selectedIndex - 当前选中项的索引
+   */
+  function bottomEnableAllSelects(items, selectedIndex) {
+    if (isBottomLevel(items[selectedIndex])) {
+      enableAllSelects();
+    }
   }
 
   /**
