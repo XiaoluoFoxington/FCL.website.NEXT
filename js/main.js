@@ -13,11 +13,11 @@ document.addEventListener('DOMContentLoaded', async function () {
  */
 function xf_addEventListeners() {
   document.getElementById('xf_fclIcon').addEventListener('click', xf_xf_fclIcon_Click, {once: true});
-  document.getElementById('tab1_link').addEventListener('click', xf_tab1_link_Click);
-  document.getElementById('tab2_link').addEventListener('click', xf_tab2_link_Click);
-  document.getElementById('tab3_link').addEventListener('click', xf_tab3_link_Click);
-  document.getElementById('tab4_link').addEventListener('click', xf_tab4_link_Click);
-  document.getElementById('tab5_link').addEventListener('click', xf_tab5_link_Click);
+  document.getElementById('tab1_link').addEventListener('click', xf_tab1_link_Click, { once: true });
+  document.getElementById('tab2_link').addEventListener('click', xf_tab2_link_Click, { once: true });
+  document.getElementById('tab3_link').addEventListener('click', xf_tab3_link_Click, { once: true });
+  document.getElementById('tab4_link').addEventListener('click', xf_tab4_link_Click, { once: true });
+  document.getElementById('tab5_link').addEventListener('click', xf_tab5_link_Click, { once: true });
   document.getElementById('xf_refreshBtn').addEventListener('click', xf_refreshBtn_Click);
   document.getElementById('xf_websiteInfoLink').addEventListener('click', xf_websiteInfoLink_Click);
 }
