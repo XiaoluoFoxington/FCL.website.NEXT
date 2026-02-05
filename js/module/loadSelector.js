@@ -224,14 +224,14 @@ export function loadSelector(options) {
         console.error(`选择器模块：加载层级 ${nextLevel}：获取数据出错：`, error);
         onRenderError(error.message, nextLevel, container);
       }
-    } else if (url) {
-      // 处理单个下载项
-      console.log(`选择器模块：层级处理单个下载项：`, selectedItem);
-      renderDownloadButtons([selectedItem], nextLevel);
     } else if (itemArray && Array.isArray(itemArray)) {
       // 当前项包含多个下载项
       console.log(`选择器模块：层级处理多个下载项：`, selectedItem);
       renderDownloadButtons(itemArray, nextLevel);
+    } else if (url) {
+      // 处理单个下载项
+      console.log(`选择器模块：层级处理单个下载项：`, selectedItem);
+      renderDownloadButtons([selectedItem], nextLevel);
     } else {
       // 没有下级数据时的处理
       if (!selectedItem.description && !selectedItem.desUrl) {
