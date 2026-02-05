@@ -1,5 +1,4 @@
 import { loadModule } from '/js/module/moduleLoader.js';
-const loadContent = await loadModule('/js/module/loadContent.js');
 
 /**
  * 通用级联选择器
@@ -52,6 +51,8 @@ export function loadSelector(options) {
    * @param {number} level - 当前层级（从 0 开始）
    */
   async function loadLevel(source, level) {
+    const loadContent = await loadModule('/js/module/loadContent.js');
+
     console.log(`选择器模块：加载层级 ${level}：`, source);
     clearLevelElements(level);
 
@@ -142,11 +143,13 @@ export function loadSelector(options) {
    * @param {number} level - 当前层级
    * @param {HTMLDivElement} descDiv - 描述区域元素
    */
-  function addSelectEventListeners(select, items, level, descDiv) {
+  async function addSelectEventListeners(select, items, level, descDiv) {
+
     select.addEventListener('change', async () => {
       // 禁用所有选择框
       disableAllSelects();
 
+      const loadContent = await loadModule('/js/module/loadContent.js');
       const selectedIndex = parseInt(select.value);
       descDiv.innerHTML = '';
 
@@ -207,6 +210,8 @@ export function loadSelector(options) {
    * @param {HTMLDivElement} descDiv - 描述区域元素
    */
   async function handleItemSelection(selectedItem, nextLevel, descDiv) {
+    const loadContent = await loadModule('/js/module/loadContent.js');
+
     const { children, nextUrl, url, items: itemArray, apiVer } = selectedItem;
 
     // 优先处理 children 数据，其次处理 nextUrl
@@ -316,6 +321,8 @@ export function loadSelector(options) {
    * @returns {string} 最新版本名称
    */
   async function getWay2oldApiLatestVersion(data) {
+    const loadContent = await loadModule('/js/module/loadContent.js');
+
     const repoMap = {
       'Fold Craft Launcher': 'FCL-Team/FoldCraftLauncher',
       'Zalith Launcher 2': 'ZalithLauncher/ZalithLauncher2',
@@ -347,6 +354,8 @@ export function loadSelector(options) {
    * @returns {string} 最新版本名称
    */
   async function getLemwoodApiLatestVersion() {
+    const loadContent = await loadModule('/js/module/loadContent.js');
+
     const apiMap = {
       'Fold Craft Launcher': 'fcl',
       'Zalith Launcher': 'zl',
