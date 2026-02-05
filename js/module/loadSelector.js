@@ -362,6 +362,7 @@ export function loadSelector(options) {
       'Zalith Launcher 2': 'zl2',
       'HMCL': 'hmcl',
       'Vulkan 驱动': 'FCL_Turnip',
+      '渲染器': 'MG',
     };
 
     // 获取选择器容器的第一个选择器（软件选择）的当前选中项的文本
