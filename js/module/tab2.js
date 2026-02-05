@@ -21,6 +21,7 @@ export function xf_addEventListeners() {
   sysInfoPanelEle.addEventListener('click', xf_sysInfoPanel_Click);
   document.getElementById('tsb2CustomDataSrcSubmit').addEventListener('click', xf_tsb2CustomDataSrcSubmit_Click);
   document.getElementById('tsb2CustomDataSrcReset').addEventListener('click', xf_tsb2CustomDataSrcReset_Click);
+  document.getElementById('tsb2CustomDataSrcGuideItem').addEventListener('click', xf_tsb2CustomDataSrcGuideItem_Click);
 }
 
 /**
@@ -51,6 +52,16 @@ export function xf_tsb2CustomDataSrcReset_Click() {
   const customDataSrcInput = document.getElementById('tsb2CustomDataSrcInput');
   customDataSrcInput.value = defaultDataSource;
   xf_loadSelectors();
+}
+
+/**
+ * 自定义数据源开发接入指南的click
+ */
+export async function xf_tsb2CustomDataSrcGuideItem_Click() {
+  const loadContent = await loadModule('/js/module/loadContent.js');
+  const customDataSrcGuide = document.getElementById('tsb2CustomDataSrcGuide');
+  customDataSrcGuide.innerHTML = await loadContent.fetchItems('/data/content/tsb2CustomDataSrcGuide.html', 'text');
+  hljs.highlightAll();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

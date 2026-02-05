@@ -1,0 +1,169 @@
+<div class="mdui-typo">
+  <p>很高兴您能为FCL下载站添砖加瓦！您可根据下方指南开发第三方数据源。</p>
+  <p>此网站的数据源解析使用<code>loadSelector</code>模块，您可在<a href="https://github.com/XiaoluoFoxington/FCL.website.NEXT/blob/main/js/module/loadSelector.js" target="_blank">https://github.com/XiaoluoFoxington/FCL.website.NEXT/blob/main/js/module/loadSelector.js</a>中查看其实现源码。</p>
+  <hr>
+  <p>数据源使用JSON格式，提供时需提供根层级的JSON文件，一切从这里开始。</p>
+  <p>每个层级JSON数组，可包含多个选项。每个选项都是JSON对象，可包含以下键值：</p>
+  <div class="mdui-table-fluid">
+    <table class="mdui-table">
+      <thead>
+        <tr>
+          <th>键值</th>
+          <th>类型</th>
+          <th>必须</th>
+          <th>描述</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>name</td>
+          <td>String</td>
+          <td>是</td>
+          <td>当前选项或当前按钮的名称</td>
+        </tr>
+        <tr>
+          <td>description</td>
+          <td>String</td>
+          <td>否</td>
+          <td>当前选项的描述HTML</td>
+        </tr>
+        <tr>
+          <td>desUrl</td>
+          <td>String</td>
+          <td>否</td>
+          <td>当前选项的远程描述HTML URL。如果同时提供了<code>description</code>，则覆盖<code>description</code></td>
+        </tr>
+        <tr>
+          <td>desJsUrl</td>
+          <td>String</td>
+          <td>否</td>
+          <td>与当前选项的远程描述HTML相关的JavaScript URL</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>String</td>
+          <td>否</td>
+          <td>当前选项的类型，用于分组显示</td>
+        </tr>
+        <tr>
+          <td>default</td>
+          <td>Boolean</td>
+          <td>否</td>
+          <td>是否默认选中选项</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p>以下键值用于定义下一层级：</p>
+  <div class="mdui-table-fluid">
+    <table class="mdui-table">
+      <thead>
+        <tr>
+          <th>键值</th>
+          <th>类型</th>
+          <th>描述</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>nextUrl</td>
+          <td>String</td>
+          <td>下一层级的远程数组URL</td>
+        </tr>
+        <tr>
+          <td>children</td>
+          <td>Array</td>
+          <td>下一层级的数组，可为多个下载项或继续向下嵌套。如同时提供了<code>nextUrl</code>，则忽略<code>nextUrl</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p>以下键值用于定义下载按钮：</p>
+  <div class="mdui-table-fluid">
+    <table class="mdui-table">
+      <thead>
+        <tr>
+          <th>键值</th>
+          <th>类型</th>
+          <th>描述</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>url</td>
+          <td>String</td>
+          <td>单个下载项</td>
+        </tr>
+        <tr>
+          <td>items</td>
+          <td>Array</td>
+          <td>多个下载项，如同时提供了<code>url</code>，则忽略<code>url</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p><code>url</code>与<code>items</code>为最底层，将直接渲染为一个或多个按钮。<code>nextUrl</code>与<code>children</code>为下一层级，将通过判断是否为最底层来决定渲染下一层级还是按钮。</p>
+  <p>示例数据源1：</p>
+  <p>此示例为此站默认数据源的根层级。</p>
+
+  <pre><code class="language-json">[
+  {
+    "name": "线路3",
+    "type": "按线路分类",
+    "desUrl": "/data/down/3/index.html",
+    "desJsUrl": "/data/down/3/index.js"
+  },
+  {
+    "name": "Fold Craft Launcher",
+    "type": "启动器",
+    "nextUrl": "/data/down/fcl/index.json",
+    "default": true
+  },
+  {
+    "name": "Zalith Launcher",
+    "type": "启动器",
+    "nextUrl": "/data/down/zl/index.json"
+  },
+  {
+    "name": "Zalith Launcher 2",
+    "type": "启动器",
+    "nextUrl": "/data/down/zl2/index.json"
+  },
+......</code></pre>
+
+  <p>示例数据源2：</p>
+  <p>此示例为多层级嵌套。</p>
+
+  <pre><code class="language-json">[
+  {
+    "name": "访问官网",
+    "url": "https://www.example.com"
+  },
+  {
+    "name": "软件1",
+    "default": true,
+    "children": [
+      {
+        "name": "最新版本",
+        "children": [
+          {
+            "name": "all",
+            "url": "https://assets.example.com/software1/latest/all.7z"
+          },
+          {
+            "name": "arm64-v8a",
+            "url": "https://assets.example.com/software1/latest/arm64-v8a.7z"
+          }
+        ]
+      },
+      {
+        "name": "v11.4.5.14",
+        "description": "旧版不提供多架构版本，仅提供all架构。",
+        "url": "https://assets.example.com/software1/v11.4.5.14/all.7z"
+      }
+    ]
+  }
+]</code></pre>
+
+
+</div>
