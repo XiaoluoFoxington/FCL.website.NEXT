@@ -1,4 +1,5 @@
 import { loadModule } from '/js/module/moduleLoader.js';
+const defaultDataSource = '/data/down/root.json';
 let sysInfoPanelEle;
 let sysInfo;
 
@@ -18,6 +19,8 @@ export async function xf_init() {
  */
 export function xf_addEventListeners() {
   sysInfoPanelEle.addEventListener('click', xf_sysInfoPanel_Click);
+  document.getElementById('tsb2CustomDataSrcSubmit').addEventListener('click', xf_tsb2CustomDataSrcSubmit_Click);
+  document.getElementById('tsb2CustomDataSrcReset').addEventListener('click', xf_tsb2CustomDataSrcReset_Click);
 }
 
 /**
@@ -27,6 +30,27 @@ export function xf_sysInfoPanel_Click() {
   setTimeout(() => {
     xf_writeSysInfoPanelClass();
   }, 100); // 等待动画完成
+}
+
+/**
+ * 自定义数据源提交按钮的click
+ */
+export async function xf_tsb2CustomDataSrcSubmit_Click() {
+  const customDataSrcInput = document.getElementById('tsb2CustomDataSrcInput');
+  const loadSelector = await loadModule('/js/module/loadSelector.js');
+  loadSelector.loadSelector({
+    containerId: 'xf_selectors',
+    dataSource: customDataSrcInput.value,
+  });
+}
+
+/**
+ * 自定义数据源还原默认按钮的click
+ */
+export function xf_tsb2CustomDataSrcReset_Click() {
+  const customDataSrcInput = document.getElementById('tsb2CustomDataSrcInput');
+  customDataSrcInput.value = defaultDataSource;
+  xf_loadSelectors();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -73,6 +97,6 @@ export async function xf_loadSelectors() {
   const loadSelector = await loadModule('/js/module/loadSelector.js');
   loadSelector.loadSelector({
     containerId: 'xf_selectors',
-    dataSource: '/data/down/root.json',
+    dataSource: defaultDataSource,
   });
 }
