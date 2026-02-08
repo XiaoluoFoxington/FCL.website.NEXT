@@ -19,9 +19,8 @@ export async function xf_init() {
  */
 export function xf_addEventListeners() {
   sysInfoPanelEle.addEventListener('click', xf_sysInfoPanel_Click);
-  document.getElementById('tsb2CustomDataSrcSubmit').addEventListener('click', xf_tsb2CustomDataSrcSubmit_Click);
-  document.getElementById('tsb2CustomDataSrcReset').addEventListener('click', xf_tsb2CustomDataSrcReset_Click);
-  document.getElementById('tsb2CustomDataSrcGuideItem').addEventListener('click', xf_tsb2CustomDataSrcGuideItem_Click);
+  document.getElementById('tsb2CustomDataSrcUseItem').addEventListener('click', xf_tsb2CustomDataSrcUseItem_Click, { once: true });
+  document.getElementById('tsb2CustomDataSrcGuideItem').addEventListener('click', xf_tsb2CustomDataSrcGuideItem_Click, { once: true });
 }
 
 /**
@@ -34,24 +33,18 @@ export function xf_sysInfoPanel_Click() {
 }
 
 /**
- * 自定义数据源提交按钮的click
+ * 自定义数据源使用第三方源的click
  */
-export async function xf_tsb2CustomDataSrcSubmit_Click() {
-  const customDataSrcInput = document.getElementById('tsb2CustomDataSrcInput');
-  const loadSelector = await loadModule('/js/module/loadSelector.js');
-  loadSelector.loadSelector({
-    containerId: 'xf_selectors',
-    dataSource: customDataSrcInput.value,
-  });
-}
-
-/**
- * 自定义数据源还原默认按钮的click
- */
-export function xf_tsb2CustomDataSrcReset_Click() {
-  const customDataSrcInput = document.getElementById('tsb2CustomDataSrcInput');
-  customDataSrcInput.value = defaultDataSource;
-  xf_loadSelectors();
+export async function xf_tsb2CustomDataSrcUseItem_Click() {
+  const loadContent = await loadModule('/js/module/loadContent.js');
+  const customDataSrcUse = document.getElementById('tsb2CustomDataSrcUse');
+  const customDataSrcUseHtml = await loadContent.fetchItems('/data/content/tsb2CustomDataSrcUse.html', 'text');
+  const customDataSrcUseJs = document.createElement('script');
+  customDataSrcUse.innerHTML = customDataSrcUseHtml;
+  customDataSrcUseJs.src = '/data/content/tsb2CustomDataSrcUse.js';
+  customDataSrcUseJs.type = 'module';
+  customDataSrcUse.appendChild(customDataSrcUseJs);
+  mdui.mutation();
 }
 
 /**

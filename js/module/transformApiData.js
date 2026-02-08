@@ -56,11 +56,15 @@ export async function getLemwoodApiLatestVersion(container) {
   // 获取选择器容器的第一个选择器（软件选择）的当前选中项的文本
   const firstSelect = container.firstElementChild;
   if (!firstSelect || !firstSelect.selectedOptions || firstSelect.selectedOptions.length === 0) {
-    console.error('选择器模块：Lemwood线：无法获取第一个选择器的选中项');
+    console.warn('选择器模块：Lemwood线：无法获取第一个选择器的选中项');
     return null;
   }
   let selectName = firstSelect.selectedOptions[0].innerText;
-  selectName = apiMap[selectName] || selectName;
+  selectName = apiMap[selectName] || null;
+  if (selectName === null) {
+    console.warn('选择器模块：Lemwood线：latest：选择器的文本不在映射中');
+    return null;
+  }
   const latest = await loadContent.fetchItems(`https://mirror.lemwood.icu/api/latest/${selectName}`, 'text');
   console.log(`选择器模块：Lemwood线：latest：${latest}`);
   return latest;

@@ -5,6 +5,7 @@ import { loadModule } from '/js/module/moduleLoader.js';
  * @param {Object} options - 配置选项
  * @param {string} options.containerId - 选择器容器的 ID
  * @param {string|Array} options.dataSource - 初始数据源（URL 或数组）
+ * @param {string} options.sourceApiVer - 初始数据源的API Ver
  * @param {boolean} options.disableDebounce - 是否禁用下载按钮点击防抖
  * @param {number} options.debounceDelay - 防抖延迟时间（秒）
  * @param {Function} [options.onCreateSelectElement] - 创建选择元素的回调函数
@@ -15,10 +16,11 @@ import { loadModule } from '/js/module/moduleLoader.js';
  * @param {Function} [options.onRenderError] - 渲染错误时的回调函数
  * @param {Function} [options.onLevelChange] - 层级变化时的回调函数
  */
-export function loadSelector(options) {
+export async function loadSelector(options) {
   const {
     containerId,
     dataSource,
+    sourceApiVer,
     disableDebounce = false,
     debounceDelay = 10,
     onCreateSelectElement = defaultCreateSelectElement,
@@ -29,6 +31,8 @@ export function loadSelector(options) {
     onRenderError = defaultRenderError,
     onLevelChange,
   } = options;
+
+  let rootDataTransform = sourceApiVer;
 
   const container = document.getElementById(containerId);
   if (!container) {
@@ -51,8 +55,13 @@ export function loadSelector(options) {
     clearLevelElements(level);
 
     try {
-      const items = await loadContent.fetchItems(source);
-      validateItems(items);
+      const Sourceitems = await loadContent.fetchItems(source);
+      const items = await transformDataIfNecessary(Sourceitems, rootDataTransform);
+      rootDataTransform = undefined;
+
+
+
+      validateItems(items); 
 
       // 检查当前数据是否为最底层
       const isBottom = isBottomLevel(items);
@@ -105,11 +114,14 @@ export function loadSelector(options) {
   /**
    * 验证数据格式
    * @param {*} items - 待验证的数据
+   * @returns {boolean} 是否验证通过
    */
   function validateItems(items) {
     if (!Array.isArray(items)) {
-      throw new Error('返回数据不是数组');
+      console.warn('选择器模块：验证数据格式：数据不是数组');
+      return false;
     }
+    return true;
   }
 
   /**
@@ -211,13 +223,13 @@ export function loadSelector(options) {
     // 优先处理 children 数据，其次处理 nextUrl
     if (children && Array.isArray(children)) {
       console.log(`选择器模块：${selectedItem.name}：有children`);
-      const transformedData = transformDataIfNecessary(children, apiVer);
+      const transformedData = await transformDataIfNecessary(children, apiVer);
       loadLevel(transformedData, nextLevel);
     } else if (nextUrl) {
       console.log(`选择器模块：${selectedItem.name}：有nextUrl`);
       try {
         const rawData = await loadContent.fetchItems(nextUrl);
-        const transformedData = transformDataIfNecessary(rawData, apiVer);
+        const transformedData = await transformDataIfNecessary(rawData, apiVer);
         loadLevel(transformedData, nextLevel);
       } catch (error) {
         console.error(`选择器模块：加载层级 ${nextLevel}：获取数据出错：`, error);
@@ -247,6 +259,10 @@ export function loadSelector(options) {
    * @returns {Array} 转换后的数据
    */
   async function transformDataIfNecessary(data, apiVer) {
+    if (!validateItems(data) && !apiVer) {
+      console.warn('选择器模块：转换数据：补兑');
+      return data;
+    }
     const transformApiData = await loadModule('/js/module/transformApiData.js');
     switch (apiVer) {
       case "Way2old":
