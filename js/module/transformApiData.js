@@ -51,7 +51,7 @@ export function transformFrostlynxApiData(data, latest) {
 
   const result = Object.entries(versions).map(([versionNumber, itemList]) => {
     const children = (itemList || []).map(item => ({
-      name: `${item.arch || '未知'} 架构`,
+      name: `${item.arch || '通用'} 架构`,
       url: item.link || ''
     }));
 
