@@ -376,7 +376,7 @@ export async function loadSelector(options) {
 
     let displayName = item.name || '文件';
     if (displayName === "all 架构") {
-      displayName = "通用架构";
+      displayName = "通用 架构";
     }
 
     const originalText = `${displayName}`;
