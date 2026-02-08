@@ -1,6 +1,33 @@
 import { loadModule } from '/js/module/moduleLoader.js';
 
 /**
+ * 转换frostlynx数据
+ * @param {Object} data - 原始数据
+ * @param {string} latest - 最新版本名称
+ * @returns {Array} 转换后的数据
+ */
+export function transformFrostlynxApiData(data, latest) {
+  const versions = data?.versions || {};
+  // const latestVersion = data?.latest || '';
+  const latestVersion = latest;
+
+  const result = Object.entries(versions).map(([versionNumber, itemList]) => {
+    const children = (itemList || []).map(item => ({
+      name: `${item.arch || '未知'} 架构`,
+      url: item.link || ''
+    }));
+
+    return {
+      name: versionNumber,
+      default: versionNumber === latestVersion,
+      children: children
+    };
+  });
+
+  return result;
+}
+
+/**
  * 转换Way2old API数据
  * @param {Object} data - 原始数据
  * @param {string} latest - 最新版本名称
@@ -31,40 +58,40 @@ export function transformWay2oldApiData(data, latest) {
 
   return result;
 }
-  /**
-   * 获取Way2old API最新版本
-   * @param {Object} data - 原始数据
-   * @param {Object} container - 选择器容器元素
-   * @returns {string} 最新版本名称
-   */
-  export async function getWay2oldApiLatestVersion(data, container) {
-    const loadContent = await loadModule('/js/module/loadContent.js');
+/**
+ * 获取Way2old API最新版本
+ * @param {Object} data - 原始数据
+ * @param {Object} container - 选择器容器元素
+ * @returns {string} 最新版本名称
+ */
+export async function getWay2oldApiLatestVersion(data, container) {
+  const loadContent = await loadModule('/js/module/loadContent.js');
 
-    const repoMap = {
-      'Fold Craft Launcher': 'FCL-Team/FoldCraftLauncher',
-      'Zalith Launcher 2': 'ZalithLauncher/ZalithLauncher2',
-    };
+  const repoMap = {
+    'Fold Craft Launcher': 'FCL-Team/FoldCraftLauncher',
+    'Zalith Launcher 2': 'ZalithLauncher/ZalithLauncher2',
+  };
 
-    console.log(`选择器模块：Way2Old线：latest：通过原始数据获取：${data.latest}`);
+  console.log(`选择器模块：Way2Old线：latest：通过原始数据获取：${data.latest}`);
 
-    const firstSelect = container.firstElementChild;
-    if (!firstSelect || !firstSelect.selectedOptions || firstSelect.selectedOptions.length === 0) {
-      console.error('选择器模块：Way2Old线：无法获取第一个选择器的选中项');
-      return null;
-    }
-    let selectName = firstSelect.selectedOptions[0].innerText;
-    selectName = repoMap[selectName] || selectName;
-    const repoRelInfo = await loadContent.fetchItems(`https://api.github.com/repos/${selectName}/releases/latest`, 'json');
-    const latest = repoRelInfo.tag_name;
-    if (latest) {
-      console.log(`选择器模块：Way2Old线：latest：通过GH获取成功，将忽略原始数据。`);
-      console.log(`选择器模块：Way2Old线：latest：通过GH获取：${latest}`);
-      return latest;
-    } else {
-      return data.latest;
-    }
-
+  const firstSelect = container.firstElementChild;
+  if (!firstSelect || !firstSelect.selectedOptions || firstSelect.selectedOptions.length === 0) {
+    console.error('选择器模块：Way2Old线：无法获取第一个选择器的选中项');
+    return null;
   }
+  let selectName = firstSelect.selectedOptions[0].innerText;
+  selectName = repoMap[selectName] || selectName;
+  const repoRelInfo = await loadContent.fetchItems(`https://api.github.com/repos/${selectName}/releases/latest`, 'json');
+  const latest = repoRelInfo.tag_name;
+  if (latest) {
+    console.log(`选择器模块：Way2Old线：latest：通过GH获取成功，将忽略原始数据。`);
+    console.log(`选择器模块：Way2Old线：latest：通过GH获取：${latest}`);
+    return latest;
+  } else {
+    return data.latest;
+  }
+
+}
 
 /**
  * 转换Lemwood API数据
