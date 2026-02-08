@@ -50,16 +50,15 @@ export async function loadSelector(options) {
    */
   async function loadLevel(source, level) {
     const loadContent = await loadModule('/js/module/loadContent.js');
+    const transformApiData = await loadModule('/js/module/transformApiData.js');
 
     console.log(`选择器模块：加载层级 ${level}：`, source);
     clearLevelElements(level);
 
     try {
       const Sourceitems = await loadContent.fetchItems(source);
-      const items = await transformDataIfNecessary(Sourceitems, rootDataTransform);
+      const items = await transformApiData.transformDataIfNecessary(Sourceitems, rootDataTransform, container);
       rootDataTransform = undefined;
-
-
 
       validateItems(items); 
 
@@ -217,19 +216,20 @@ export async function loadSelector(options) {
    */
   async function handleItemSelection(selectedItem, nextLevel, descDiv) {
     const loadContent = await loadModule('/js/module/loadContent.js');
+    const transformApiData = await loadModule('/js/module/transformApiData.js');
 
     const { children, nextUrl, url, items: itemArray, apiVer } = selectedItem;
 
     // 优先处理 children 数据，其次处理 nextUrl
     if (children && Array.isArray(children)) {
       console.log(`选择器模块：${selectedItem.name}：有children`);
-      const transformedData = await transformDataIfNecessary(children, apiVer);
+      const transformedData = await transformApiData.transformDataIfNecessary(children, apiVer, container);
       loadLevel(transformedData, nextLevel);
     } else if (nextUrl) {
       console.log(`选择器模块：${selectedItem.name}：有nextUrl`);
       try {
         const rawData = await loadContent.fetchItems(nextUrl);
-        const transformedData = await transformDataIfNecessary(rawData, apiVer);
+        const transformedData = await transformApiData.transformDataIfNecessary(rawData, apiVer, container);
         loadLevel(transformedData, nextLevel);
       } catch (error) {
         console.error(`选择器模块：加载层级 ${nextLevel}：获取数据出错：`, error);
@@ -249,32 +249,6 @@ export async function loadSelector(options) {
         descDiv.innerHTML = '<div class="mdui-typo"><p>此层级既无下一级数据，也无描述信息。</p></div>';
       }
       clearLevelElements(nextLevel);
-    }
-  }
-
-  /**
-   * 根据 apiVer 转换数据
-   * @param {Array} data - 原始数据
-   * @param {string} apiVer - API 版本
-   * @returns {Array} 转换后的数据
-   */
-  async function transformDataIfNecessary(data, apiVer) {
-    if (!validateItems(data) && !apiVer) {
-      console.warn('选择器模块：转换数据：补兑');
-      return data;
-    }
-    const transformApiData = await loadModule('/js/module/transformApiData.js');
-    switch (apiVer) {
-      case "Way2old":
-        const latestWay2old = await transformApiData.getWay2oldApiLatestVersion(data, container);
-        return transformApiData.transformWay2oldApiData(data, latestWay2old);
-      case "Lemwood":
-        const latestLemwood = await transformApiData.getLemwoodApiLatestVersion(container);
-        return transformApiData.transformLemwoodApiData(data, latestLemwood);
-      case "LemwoodLatest":
-        return transformApiData.transformLemwoodLatestApiData(data);
-      default:
-        return data;
     }
   }
 

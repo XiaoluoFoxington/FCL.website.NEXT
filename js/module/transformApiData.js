@@ -1,6 +1,44 @@
 import { loadModule } from '/js/module/moduleLoader.js';
 
 /**
+ * 根据 apiVer 转换数据
+ * @param {Object || Array} data - 原始数据
+ * @param {string} apiVer - API 版本
+ * @param {string} container - 容器
+ * @returns {Object || Array} 转换后的数据
+ */
+export async function transformDataIfNecessary(data, apiVer, container) {
+  if (!validateItems(data) && !apiVer) {
+    console.warn('选择器模块：转换数据：补兑');
+    return data;
+  }
+  switch (apiVer) {
+    case "Way2old":
+      const latestWay2old = await getWay2oldApiLatestVersion(data, container);
+      return transformWay2oldApiData(data, latestWay2old);
+    case "frostlynx":
+      const latestFrostlynx = await getWay2oldApiLatestVersion(data, container);
+      return transformFrostlynxApiData(data, latestFrostlynx);
+    case "Lemwood":
+      const latestLemwood = await getLemwoodApiLatestVersion(container);
+      return transformLemwoodApiData(data, latestLemwood);
+    case "LemwoodLatest":
+      return transformLemwoodLatestApiData(data);
+    default:
+      return data;
+  }
+}
+
+/**
+ * 判断数据是否为对象或数组
+ * @param {Object || Array} data - 原始数据
+ * @returns {boolean} 是否为对象或数组
+ */
+function validateItems(data) {
+  return Array.isArray(data) || (data && typeof data === 'object');
+}
+
+/**
  * 转换frostlynx数据
  * @param {Object} data - 原始数据
  * @param {string} latest - 最新版本名称
