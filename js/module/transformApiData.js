@@ -1,5 +1,36 @@
 import { loadModule } from '/js/module/moduleLoader.js';
 
+/**
+ * 转换Way2old API数据
+ * @param {Object} data - 原始数据
+ * @param {string} latest - 最新版本名称
+ * @returns {Array} 转换后的数据
+ */
+export function transformWay2oldApiData(data, latest) {
+  const result = [];
+  const itemsToProcess = Array.isArray(data) ? data : (data.children || []);
+
+  itemsToProcess.forEach(item => {
+    if (item.type === "directory") {
+      result.push({
+        name: item.name,
+        description: item.description || '',
+        children: item.children ? transformWay2oldApiData(item.children, latest) : [],
+        default: item.name === latest
+      });
+    } else if (item.type === "file") {
+      result.push({
+        name: item.arch + ' 架构',
+        url: item.download_link,
+        arch: item.arch || ''
+      });
+    } else {
+      console.warn("选择器模块：转换Way2old：忽略未知类型项：", item);
+    }
+  });
+
+  return result;
+}
   /**
    * 获取Way2old API最新版本
    * @param {Object} data - 原始数据
@@ -35,6 +66,32 @@ import { loadModule } from '/js/module/moduleLoader.js';
 
   }
 
+/**
+ * 转换Lemwood API数据
+ * @param {Object} data - 原始数据
+ * @param {string} latest - 最新版本名称
+ * @returns {Array} 转换后的数据
+ */
+export function transformLemwoodApiData(data, latest) {
+  return data.map(item => ({
+    name: item.name,
+    default: item.name === latest,
+    children: item.assets?.map(asset => ({
+      name: asset.name,
+      url: asset.url,
+      size: asset.size
+    })) || []
+  }));
+}
+
+/**
+ * 转换Lemwood（只有最新条目）API数据
+ * @param {Object} data - 原始数据
+ * @returns {Array} 转换后的数据
+ */
+export function transformLemwoodLatestApiData(data) {
+  return transformLemwoodApiData([data]);
+}
 
 /**
  * 获取Lemwood API最新版本
@@ -68,63 +125,4 @@ export async function getLemwoodApiLatestVersion(container) {
   const latest = await loadContent.fetchItems(`https://mirror.lemwood.icu/api/latest/${selectName}`, 'text');
   console.log(`选择器模块：Lemwood线：latest：${latest}`);
   return latest;
-}
-
-/**
- * 转换Way2old API数据
- * @param {Object} data - 原始数据
- * @param {string} latest - 最新版本名称
- * @returns {Array} 转换后的数据
- */
-export function transformWay2oldApiData(data, latest) {
-  const result = [];
-  const itemsToProcess = Array.isArray(data) ? data : (data.children || []);
-
-  itemsToProcess.forEach(item => {
-    if (item.type === "directory") {
-      result.push({
-        name: item.name,
-        description: item.description || '',
-        children: item.children ? transformWay2oldApiData(item.children, latest) : [],
-        default: item.name === latest
-      });
-    } else if (item.type === "file") {
-      result.push({
-        name: item.arch + ' 架构',
-        url: item.download_link,
-        arch: item.arch || ''
-      });
-    } else {
-      console.warn("选择器模块：转换Way2old：忽略未知类型项：", item);
-    }
-  });
-
-  return result;
-}
-
-/**
- * 转换Lemwood API数据
- * @param {Object} data - 原始数据
- * @param {string} latest - 最新版本名称
- * @returns {Array} 转换后的数据
- */
-export function transformLemwoodApiData(data, latest) {
-  return data.map(item => ({
-    name: item.name,
-    default: item.name === latest,
-    children: item.assets?.map(asset => ({
-      name: asset.name,
-      url: asset.url,
-      size: asset.size
-    })) || []
-  }));
-}
-
-/**
- * 转换Lemwood（最有最新条目）API数据
- * @param {Object} data - 原始数据
- * @returns {Array} 转换后的数据
- */
-export function transformLemwoodLatestApiData(data) {
-  return transformLemwoodApiData([data]);
 }
