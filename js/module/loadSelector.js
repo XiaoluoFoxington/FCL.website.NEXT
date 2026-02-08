@@ -308,6 +308,8 @@ export function loadSelector(options) {
     });
 
     container.appendChild(buttonsContainer);
+
+    enableAllSelects();
   }
 
 
