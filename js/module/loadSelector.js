@@ -379,7 +379,7 @@ export async function loadSelector(options) {
       displayName = "通用架构";
     }
 
-    const originalText = `下载 ${displayName}`;
+    const originalText = `${displayName}`;
     link.textContent = originalText;
     link.className = 'mdui-btn mdui-btn-block mdui-btn-raised mdui-ripple';
     link.target = '_blank';
