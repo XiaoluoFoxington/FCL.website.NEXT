@@ -337,8 +337,8 @@ export function loadSelector(options) {
     }
     let selectName = firstSelect.selectedOptions[0].innerText;
     selectName = repoMap[selectName] || selectName;
-    const repoRelInfo = await loadContent.fetchItems(`https://api.github.com/repos/${selectName}/releases`, 'json');
-    const latest = repoRelInfo[0].tag_name;
+    const repoRelInfo = await loadContent.fetchItems(`https://api.github.com/repos/${selectName}/releases/latest`, 'json');
+    const latest = repoRelInfo.tag_name;
     if (latest) {
       console.log(`选择器模块：Way2Old线：latest：通过GH获取成功，将忽略原始数据。`);
       console.log(`选择器模块：Way2Old线：latest：通过GH获取：${latest}`);
