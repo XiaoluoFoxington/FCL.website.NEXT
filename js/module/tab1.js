@@ -7,6 +7,7 @@ export async function xf_init() {
   console.log('xf_init()');
   await xf_loadTab1Content(); // 加载tab1内容
   xf_addEventListeners(); // 添加事件监听
+  xf_loadImportantAnnouncement();
   xf_loadAnnouncement();
 }
 
@@ -34,6 +35,45 @@ export async function xf_loadTab1Content() {
   const loadContent = await loadModule('/js/module/loadContent.js');
   await loadContent.xf_loadHtmlContentFromUrl('/page/tab1.html', document.getElementById('tab1')); // 加载tab1内容
 }
+
+/**
+ * 加载重要公告内容
+ */
+export async function xf_loadImportantAnnouncement() {
+  const loadContent = await loadModule('/js/module/loadContent.js');
+  const utils = await loadModule('/js/module/utils.js');
+
+  const headEl = document.getElementById('xf_importantAnnouncementHead');
+  const contentEl = document.getElementById('xf_importantAnnouncementContent');
+  const closeBtnEl = document.getElementById('xf_importantAnnouncementCloseBtn');
+
+  if (!headEl || !contentEl || !closeBtnEl) {
+    return;
+  }
+
+  const CHECKSUM_STORAGE_KEY = 'xf_importantAnnouncement_checksum';
+
+  const savedChecksum = utils.xf_readLocalStorage(CHECKSUM_STORAGE_KEY);
+  console.log('tab1：加载重要公告内容：已存校验值：', savedChecksum);
+
+  const content = await loadContent.fetchItems('/data/content/importantAnnouncement.html', "text");
+
+  const currentChecksum = utils.xf_calculateChecksum(content);
+  console.log('tab1：加载重要公告内容：当前校验值：', currentChecksum);
+
+  if (parseInt(savedChecksum, 10) === currentChecksum) {
+    console.log('tab1：加载重要公告内容：公告为旧');
+    headEl.remove();
+  } else {
+    console.log('tab1：加载重要公告内容：公告为新');
+    contentEl.innerHTML = content;
+    closeBtnEl.addEventListener('click', function () {
+      utils.xf_writeLocalStorage(CHECKSUM_STORAGE_KEY, currentChecksum);
+      headEl.remove();
+    });
+  }
+}
+
 
 /**
  * 加载公告内容
