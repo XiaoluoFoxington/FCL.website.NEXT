@@ -218,18 +218,18 @@ export async function loadSelector(options) {
     const loadContent = await loadModule('/js/module/loadContent.js');
     const transformApiData = await loadModule('/js/module/transformApiData.js');
 
-    const { children, nextUrl, url, items: itemArray, apiVer } = selectedItem;
+    const { children, nextUrl, url, items: itemArray, apiVer, random } = selectedItem;
 
     // 优先处理 children 数据，其次处理 nextUrl
     if (children && Array.isArray(children)) {
       console.log(`选择器模块：${selectedItem.name}：有children`);
-      const transformedData = await transformApiData.transformDataIfNecessary(children, apiVer, container);
+      const transformedData = await transformApiData.transformDataIfNecessary(children, apiVer, container, random);
       loadLevel(transformedData, nextLevel);
     } else if (nextUrl) {
       console.log(`选择器模块：${selectedItem.name}：有nextUrl`);
       try {
         const rawData = await loadContent.fetchItems(nextUrl);
-        const transformedData = await transformApiData.transformDataIfNecessary(rawData, apiVer, container);
+        const transformedData = await transformApiData.transformDataIfNecessary(rawData, apiVer, container, random);
         loadLevel(transformedData, nextLevel);
       } catch (error) {
         console.error(`选择器模块：加载层级 ${nextLevel}：获取数据出错：`, error);

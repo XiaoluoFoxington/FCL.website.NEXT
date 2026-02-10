@@ -9,7 +9,8 @@
     "name": "Fold Craft Launcher",
     "type": "启动器",
     "nextUrl": "/data/down/fcl/index.json",
-    "default": true
+    "default": true,
+    "random": true
   },
   {
     "name": "Zalith Launcher",

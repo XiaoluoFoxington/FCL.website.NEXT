@@ -6,7 +6,8 @@
   {
     "name": "线路2旧",
     "nextUrl": "https://frostlynx.work/external/fcl/file_tree.json",
-    "apiVer": "Way2old"
+    "apiVer": "Way2old",
+    "notJoinRandom": true
   },
   {
     "name": "线路2",
@@ -15,7 +16,8 @@
   },
   {
     "name": "线路4",
-    "nextUrl": "/data/down/fcl/4/index.json"
+    "nextUrl": "/data/down/fcl/4/index.json",
+    "notJoinRandom": true
   },
   {
     "name": "线路5",

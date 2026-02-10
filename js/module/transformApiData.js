@@ -4,29 +4,43 @@ import { loadModule } from '/js/module/moduleLoader.js';
  * 根据 apiVer 转换数据
  * @param {Object || Array} data - 原始数据
  * @param {string} apiVer - API 版本
- * @param {string} container - 容器
- * @returns {Object || Array} 转换后的数据
+ * @param {string} container - 选择器容器元素
+ * @param {boolean} random - 是否随机为一个项设为默认值
+ * @returns {Array} 转换后的数据
  */
-export async function transformDataIfNecessary(data, apiVer, container) {
+export async function transformDataIfNecessary(data, apiVer, container, random) {
   if (!validateItems(data) && !apiVer) {
     console.warn('选择器模块：转换数据：补兑');
     return data;
   }
   switch (apiVer) {
-    case "Way2old":
+    case "Way2old": {
       const latestWay2old = await getWay2oldApiLatestVersion(data, container);
-      return transformWay2oldApiData(data, latestWay2old);
-    case "frostlynx":
+      data =  transformWay2oldApiData(data, latestWay2old);
+      break;
+    }
+    case "frostlynx": {
       const latestFrostlynx = await getWay2oldApiLatestVersion(data, container);
-      return transformFrostlynxApiData(data, latestFrostlynx);
-    case "Lemwood":
+      data = transformFrostlynxApiData(data, latestFrostlynx);
+      break;
+    }
+    case "Lemwood": {
       const latestLemwood = await getLemwoodApiLatestVersion(container);
-      return transformLemwoodApiData(data, latestLemwood);
-    case "LemwoodLatest":
-      return transformLemwoodLatestApiData(data);
-    default:
-      return data;
+      data = transformLemwoodApiData(data, latestLemwood);
+      break;
+    }
+    case "LemwoodLatest": {
+      data = transformLemwoodLatestApiData(data);
+      break;
+    }
+    default: {
+      break;
+    }
   }
+  if (random) {
+    data = randomSelect(data);
+  }
+  return data;
 }
 
 /**
@@ -36,6 +50,41 @@ export async function transformDataIfNecessary(data, apiVer, container) {
  */
 function validateItems(data) {
   return Array.isArray(data) || (data && typeof data === 'object');
+}
+
+/**
+ * 随机选择一个项设为默认值
+ * @param {Array} data - 原始数据
+ * @returns {Array} 转换后的数据
+ */
+function randomSelect(data) {
+  if (!Array.isArray(data) || data.length === 0) {
+    return data;
+  }
+
+  // 重置所有项的 default 为 false
+  data.forEach(item => {
+    item.default = false;
+  });
+
+  const availableItems = data.filter(item => {
+    // 只有 notJoinRandom 明确为 true 时，才排除；其他情况（undefined/null/false）都参与
+    return item.notJoinRandom !== true;
+  });
+
+  if (availableItems.length === 0) {
+    console.warn('选择器模块：随机选择：无可用参与随机的项');
+    return data;
+  }
+
+  const randomAvailableIndex = Math.floor(Math.random() * availableItems.length);
+  const selectedItem = availableItems[randomAvailableIndex];
+  const originalIndex = data.indexOf(selectedItem); // 获取原数组中的索引
+
+  console.log(`选择器模块：随机选择：项索引：${originalIndex}`);
+  selectedItem.default = true;
+
+  return data;
 }
 
 /**
