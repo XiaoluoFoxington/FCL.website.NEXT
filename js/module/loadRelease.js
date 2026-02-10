@@ -52,7 +52,6 @@ export async function loadReleaseHistory(repoFullName, targetElementId) {
         <div class="mdui-panel-item-title">版本名称</div>
         <div class="mdui-panel-item-summary">版本Tag</div>
         <div class="mdui-panel-item-summary">发布时间</div>
-        <i class="mdui-panel-item-arrow mdui-icon material-icons">keyboard_arrow_down</i>
       </div>
       <div class="mdui-panel-item-body mdui-typo">
         <p>我是表头~</p>
@@ -149,7 +148,7 @@ export async function loadReleaseHistory(repoFullName, targetElementId) {
               <td>${asset.digest}</td>
             </tr>
             <tr>
-              <td>原始下载URL</td>
+              <td>GH下载URL</td>
               <td><a href="${asset.browser_download_url}" target="_blank">${asset.browser_download_url}</a></td>
             </tr>
           </tbody>

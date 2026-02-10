@@ -8,6 +8,7 @@ export async function xf_init() {
   const repoConfig = await xf_getRepoConfig();
   await xf_generateRepoPanels(repoConfig);
   xf_addEventListeners(repoConfig);
+  mdui.mutation();
 }
 
 /**
