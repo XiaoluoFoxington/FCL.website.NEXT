@@ -1,0 +1,47 @@
+[
+  {
+    "name": "mdui",
+    "description": "基于 Material Design 的前端框架。",
+    "useDescription": "网站基本样式效果。",
+    "useVersion": "1.0.2",
+    "link": "https://github.com/zdhxiong/mdui",
+    "license": "MIT",
+    "licenseLink": "https://github.com/zdhxiong/mdui/blob/v1/LICENSE"
+  },
+  {
+    "name": "UAParser.js",
+    "description": "用户代理解析库。",
+    "useDescription": "下载页架构选择建议。",
+    "useVersion": "2.0.7",
+    "link": "https://github.com/faisalman/ua-parser-js",
+    "license": "AGPL-3.0",
+    "licenseLink": "https://github.com/faisalman/ua-parser-js/blob/master/LICENSE.md"
+  },
+  {
+    "name": "Marked",
+    "description": "Markdown 解析器。",
+    "useDescription": "详情页解析Release信息。",
+    "useVersion": "15.0.12",
+    "link": "https://github.com/markedjs/marked",
+    "license": "MIT",
+    "licenseLink": "https://github.com/markedjs/marked/blob/master/LICENSE.md"
+  },
+  {
+    "name": "Highlight.js",
+    "description": "代码语法高亮着色库。",
+    "useDescription": "下载页第三方数据源开发接入指南。",
+    "useVersion": "11.11.1",
+    "link": "https://github.com/highlightjs/highlight.js",
+    "license": "BSD-3-Clause",
+    "licenseLink": "https://github.com/highlightjs/highlight.js/blob/main/LICENSE"
+  },
+  {
+    "name": "Vercount",
+    "description": "网站计数器。",
+    "useDescription": "菜单栏网站详情网站访问计数。",
+    "useVersion": "?",
+    "link": "https://github.com/EvanNotFound/vercount",
+    "license": "GPL-3.0",
+    "licenseLink": "https://github.com/EvanNotFound/vercount/blob/main/LICENSE"
+  }
+]

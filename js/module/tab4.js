@@ -9,6 +9,8 @@ export async function xf_init() {
   const contributors = await getContributors();
   xf_generateContributors(contributors);
   xf_generateDownloadLines(contributors);
+  const useProjects = await xf_getUseProjects();
+  xf_generateUseProjects(useProjects);
 
 }
 
@@ -156,3 +158,39 @@ export async function xf_loadTab4Content() {
   await loadContent.xf_loadHtmlContentFromUrl('/page/tab4.html', document.getElementById('tab4')); // 加载tab4内容
 }
 
+/**
+ * 获取使用的开源项目数组
+ * @returns {Promise<Array>} 使用的开源项目数组
+ */
+export async function xf_getUseProjects() {
+  const loadContent = await loadModule('/js/module/loadContent.js');
+  return loadContent.fetchItems('/data/content/useProject.json');
+}
+
+/**
+ * 动态生成使用的开源项目HTML
+ * @param {Array} useProjects 使用的开源项目数组
+ */
+export function xf_generateUseProjects(useProjects) {
+  const useProjectsContainer = document.getElementById('useProjectTableBody');
+  if (!useProjectsContainer) return;
+
+  // 清空容器
+  useProjectsContainer.innerHTML = '';
+
+  // 为每个项目生成行
+  useProjects.forEach(project => {
+    const projectHtml = `
+      <tr>
+        <td>${project.name}</td>
+        <td>${project.description}</td>
+        <td>${project.useDescription}</td>
+        <td>${project.useVersion}</td>
+        <td><a href="${project.link}" target="_blank">${project.link}</a></td>
+        <td><a href="${project.licenseLink}" target="_blank">${project.license}</a></td>
+      </tr>
+    `;
+
+    useProjectsContainer.insertAdjacentHTML('beforeend', projectHtml);
+  });
+}
