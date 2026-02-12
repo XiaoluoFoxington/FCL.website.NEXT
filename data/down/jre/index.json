@@ -1,10 +1,10 @@
 [
   {
     "name": "线路1",
-    "nextUrl": "1.json"
+    "nextUrl": "/data/down/jre/1.json"
   },
   {
     "name": "线路8",
-    "nextUrl": "8.json"
+    "nextUrl": "/data/down/jre/8.json"
   }
 ]
