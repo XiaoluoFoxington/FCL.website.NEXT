@@ -1,0 +1,10 @@
+[
+  {
+    "name": "JRE22",
+    "url": "http://oss.mcddos.top/fcl/jre/jre22-arm64.tar.xz"
+  },
+  {
+    "name": "JRE25",
+    "url": "http://oss.mcddos.top/fcl/jre/jre25-arm64.tar.xz"
+  }
+]
