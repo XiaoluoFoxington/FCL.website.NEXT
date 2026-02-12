@@ -6,6 +6,7 @@ import { loadModule } from '/js/module/moduleLoader.js';
  */
 export async function xf_init() {
   await xf_loadTab4Content();
+  xf_loadTrafficInfo();
   const contributors = await getContributors();
   xf_generateContributors(contributors);
   xf_generateDownloadLines(contributors);
@@ -15,6 +16,34 @@ export async function xf_init() {
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * 获取所有线路流量信息
+ */
+export function xf_loadTrafficInfo() {
+  xf_loadWay2TrafficInfo('https://mirror.frostlynx.work/stats');
+}
+
+/**
+ * 获取线2流量信息
+ * @param {string} url 流量信息API URL
+ */
+export async function xf_loadWay2TrafficInfo(url = '/data/content/way2Traffic.json') {
+  const loadContent = await loadModule('/js/module/loadContent.js');
+
+  const trafficEl = document.getElementById('xf_fclWay2Traffic');
+  const totalEl = document.getElementById('xf_fclWay2Total');
+  try {
+    const apiData = await loadContent.fetchItems(url);
+    trafficEl.textContent = apiData.total_gigabytes_transferred + 'GiB' || 'N/A';
+    totalEl.textContent = apiData.total_downloads || 'N/A';
+  } catch (error) {
+    console.error('获取线2流量信息失败:', error);
+    trafficEl.textContent = error.message;
+    totalEl.textContent = error.message;
+    return;
+  }
+}
 
 /**
  * 获取贡献者数据

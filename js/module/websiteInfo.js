@@ -4,7 +4,6 @@
 export function loadAll() {
   loadRunTime(); // 获取建站时间
   setInterval(loadRunTime, 1000); // 每1秒更新一次建站时间
-  loadDownWay2Info(); // 获取线路2流量信息
 }
 
 /**
@@ -48,33 +47,4 @@ export function getRunTime() {
   }
 
   return parts.length > 0 ? parts.join('') : "0秒";
-}
-
-/**
- * 流量信息：获取并填充线路2的流量使用信息
- */
-export async function loadDownWay2Info() {
-  try {
-    const response = await fetch('https://frostlynx.work/external/fcl/file_tree.json');
-
-    if (!response.ok) {
-      throw new Error(`HTTP出错：${response.status}`);
-    }
-
-    const data = await response.json();
-
-    const targetElement = document.getElementById('xf_fclWay2Info');
-
-    if (targetElement) {
-      targetElement.textContent = data.traffic + 'GiB';
-    } else {
-      console.error('流量信息：未找到显示元素');
-    }
-  } catch (error) {
-    console.error('流量信息：', error);
-    const targetElement = document.getElementById('xf_fclWay2Info');
-    if (targetElement) {
-      targetElement.textContent = error;
-    }
-  }
 }
