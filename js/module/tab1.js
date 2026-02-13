@@ -9,6 +9,7 @@ export async function xf_init() {
   xf_addEventListeners(); // 添加事件监听
   xf_loadImportantAnnouncement();
   xf_loadAnnouncement();
+  xf_checkAndShowSponsorRemind();
 }
 
 /**
@@ -128,5 +129,42 @@ export async function xf_loadAnnouncement() {
       });
       panelItem.dataset.xfAnnouncementListenerAdded = 'true';
     }
+  }
+}
+
+/**
+ * 判断并显示赞助提醒
+ */
+export async function xf_checkAndShowSponsorRemind() {
+  const utils = await loadModule('/js/module/utils.js');
+  const main = await loadModule('/js/main.js');
+  const notShowSponsorRemind = utils.xf_readLocalStorage('notShowSponsorRemind') === 'true';
+  const visitCount = await main.xf_getUserVisitCount();
+  const sponsorRemindEl = document.getElementById('sponsorRemind');
+  if (!sponsorRemindEl || !utils.isMultipleOfTen(visitCount) || notShowSponsorRemind) {
+    return;
+  }
+  sponsorRemindEl.className = 'mdui-panel-item mdui-panel-item-open';
+  sponsorRemindEl.style.background = 'linear-gradient(135deg, #40ff8040 0%, #40ffff40 100%)';
+  sponsorRemindEl.innerHTML = `
+    <div class="mdui-panel-item-header mdui-ripple">
+      <div>我们需要您的赞助！</div>
+      <i class="mdui-panel-item-arrow mdui-icon material-icons">keyboard_arrow_down</i>
+    </div>
+    <div class="mdui-panel-item-body">
+      <div class="mdui-typo">
+        <p>您好，您已访问此网站 ${visitCount} 次！</p>
+        <p>下载流量高昂，网站运营困难，我们一直坚守开源、无广告，使此站保持公益性质。如果您觉得此站对您有帮助且您经济条件允许，欢迎赞助我们！您的赞助将帮助我们继续运营此站，非常感谢！</p>
+        <p>这不是强制要求，您完全可以选择不赞助。显示此提示仅仅是因为您的访问次数达到了10的倍数。如果您不点击“永久关闭”，此提示将会在您的访问次数再次达到10的倍数时显示。</p>
+      </div>
+      <a class="mdui-btn mdui-btn-block mdui-btn-raised mdui-ripple" id="xf_sponsorRemindCloseBtn">永久关闭</a>
+    </div>
+  `;
+  const closeBtnEl = document.getElementById('xf_sponsorRemindCloseBtn');
+  if (closeBtnEl) {
+    closeBtnEl.addEventListener('click', function () {
+      sponsorRemindEl.remove();
+      utils.xf_writeLocalStorage('notShowSponsorRemind', 'true');
+    });
   }
 }

@@ -63,3 +63,16 @@ export function xf_writeLocalStorage(key, value) {
   console.log(`工具：写入本地存储：键：${key}，值：${value}`);
   localStorage.setItem(key, value);
 }
+
+/**
+ * 判断一个数是否是10的倍数
+ * @param {number} num - 需要判断的数字
+ * @returns {boolean} 如果是10的倍数返回true，否则返回false
+ */
+export function isMultipleOfTen(num) {
+  if (typeof num !== 'number' || isNaN(num)) {
+    return false;
+  }
+
+  return num % 10 === 0;
+}

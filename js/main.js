@@ -199,7 +199,6 @@ export async function xf_getUserVisitCount() {
   const utils = await loadModule('/js/module/utils.js');
   const visitCount = utils.xf_readLocalStorage('visitCount') || 0;
   const visitCountInt = parseInt(visitCount);
-  console.log('用户访问次数：' + visitCountInt);
   return visitCountInt;
 }
 
