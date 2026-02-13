@@ -1,9 +1,24 @@
+import { loadModule } from '/js/module/moduleLoader.js';
+
 /**
  * 加载所有
  */
 export function loadAll() {
   loadRunTime(); // 获取建站时间
+  loadUserVisitCount(); // 加载用户访问次数
   setInterval(loadRunTime, 1000); // 每1秒更新一次建站时间
+}
+
+/**
+ * 加载用户访问次数
+ */
+export async function loadUserVisitCount() {
+  const main = await loadModule('/js/main.js');
+  const visitCountInt = await main.xf_getUserVisitCount();
+  const displayElement = document.getElementById('xf_visitCount');
+  if (displayElement) {
+    displayElement.textContent = visitCountInt;
+  }
 }
 
 /**

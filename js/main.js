@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   tab1.xf_init(); // 初始化tab1内容
   xf_loadWebsiteVisitCount(); // 获取访问量
   xf_loadWebsiteVerInfo(); // 加载网站版本信息
+  xf_increaseUserVisitCount();
 });
 
 /**
@@ -188,4 +189,25 @@ async function xf_loadWebsiteVerInfo() {
   const response = await fetch('/versionInfo.json');
   const data = await response.json();
   document.getElementById('xf_websiteVer_git').textContent = data.git;
+}
+
+/**
+ * 获取用户访问次数
+ * @returns {number} - 访问次数
+ */
+export async function xf_getUserVisitCount() {
+  const utils = await loadModule('/js/module/utils.js');
+  const visitCount = utils.xf_readLocalStorage('visitCount') || 0;
+  const visitCountInt = parseInt(visitCount);
+  console.log('用户访问次数：' + visitCountInt);
+  return visitCountInt;
+}
+
+/**
+ * 增加用户访问次数
+ */
+async function xf_increaseUserVisitCount() {
+  const visitCountInt = await xf_getUserVisitCount();
+  const utils = await loadModule('/js/module/utils.js');
+  utils.xf_writeLocalStorage('visitCount', (visitCountInt + 1).toString());
 }
