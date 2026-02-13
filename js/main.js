@@ -2,6 +2,7 @@ import { loadModule } from '/js/module/moduleLoader.js';
 
 document.addEventListener('DOMContentLoaded', async function () {
   const tab1 = await loadModule('/js/module/tab1.js'); // 加载tab1模块
+  xf_setThemeByLocalStorage(); // 根据本地存储设置主题
   xf_addEventListeners(); // 添加事件监听
   tab1.xf_init(); // 初始化tab1内容
   xf_loadWebsiteVisitCount(); // 获取访问量
@@ -18,6 +19,7 @@ function xf_addEventListeners() {
   document.getElementById('tab3_link').addEventListener('click', xf_tab3_link_Click, { once: true });
   document.getElementById('tab4_link').addEventListener('click', xf_tab4_link_Click, { once: true });
   document.getElementById('tab5_link').addEventListener('click', xf_tab5_link_Click, { once: true });
+  document.getElementById('xf_themeSwitchBtn').addEventListener('click', xf_themeSwitchBtn_Click);
   document.getElementById('xf_refreshBtn').addEventListener('click', xf_refreshBtn_Click);
   document.getElementById('xf_websiteInfoLink').addEventListener('click', xf_websiteInfoLink_Click);
 }
@@ -70,6 +72,15 @@ async function xf_tab5_link_Click() {
 }
 
 /**
+ * 工具栏三点菜单中的主题切换按钮的click
+ */
+async function xf_themeSwitchBtn_Click() {
+  const currentTheme = await xf_getCurrentTheme();
+  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  xf_setTheme(newTheme);
+}
+
+/**
  * 工具栏三点菜单中的刷新按钮的click
  */
 function xf_refreshBtn_Click() {
@@ -85,6 +96,73 @@ function xf_websiteInfoLink_Click() {
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * 获取当前主题
+ * @returns {string} - 当前主题，'dark'或'light'
+ */
+async function xf_getCurrentTheme() {
+  const isDarkTheme = document.body.classList.value.includes('mdui-theme-layout-dark');
+  const theme = isDarkTheme ? 'dark' : 'light';
+  console.log('主题：当前主题：' + theme);
+  return theme;
+}
+
+/**
+ * 获取本地存储主题
+ * @returns {string} - 本地存储中的主题，'dark'或'light'
+ */
+async function xf_getLocalStorageTheme() {
+  const utils = await loadModule('/js/module/utils.js');
+  const theme = utils.xf_readLocalStorage('theme') || 'dark';
+  console.log('主题：本地存储中主题：' + theme);
+  return theme;
+}
+
+/**
+ * 设置主题
+ * @param {string} theme - 要设置的主题，'dark'或'light'
+ */
+async function xf_setTheme(theme) {
+  if (theme !== 'dark' && theme !== 'light') {
+    console.error('主题：设置主题：参数错误');
+    return;
+  }
+  const utils = await loadModule('/js/module/utils.js');
+  const body = document.body;
+  const icon = document.getElementById('xf_themeSwitchBtn_icon');
+  const text = document.getElementById('xf_themeSwitchBtn_text');
+  utils.xf_writeLocalStorage('theme', theme);
+  console.log('主题：设置主题：' + theme);
+  switch (theme) {
+    case 'dark': {
+      body.classList.remove('mdui-theme-layout.auto');
+      body.classList.add('mdui-theme-layout-dark');
+      icon.textContent = 'brightness_6';
+      text.textContent = '切到浅色';
+      break;
+    }
+    case 'light': {
+      body.classList.remove('mdui-theme-layout-auto');
+      body.classList.remove('mdui-theme-layout-dark');
+      icon.textContent = 'brightness_2';
+      text.textContent = '切到深色';
+      break;
+    }
+  }
+}
+
+/**
+ * 根据本地存储设置主题
+ */
+async function xf_setThemeByLocalStorage() {
+  const localStorageTheme = await xf_getLocalStorageTheme();
+  const currentTheme = await xf_getCurrentTheme();
+  if (localStorageTheme !== currentTheme) {
+    console.log('主题：载入本地存储主题：' + localStorageTheme);
+    xf_setTheme(localStorageTheme);
+  }
+}
 
 /**
  * 加载网站信息
