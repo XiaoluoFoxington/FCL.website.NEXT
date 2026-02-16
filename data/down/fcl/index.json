@@ -1,7 +1,8 @@
 [
   {
     "name": "线路1",
-    "nextUrl": "/data/down/fcl/1/index.json"
+    "nextUrl": "/data/down/fcl/1/index.json",
+    "notJoinRandom": true
   },
   {
     "name": "线路2旧",
