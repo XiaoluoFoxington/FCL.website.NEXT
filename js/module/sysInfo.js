@@ -1,10 +1,20 @@
 import { loadModule } from '/js/module/moduleLoader.js';
 
+// 架构映射表，包含正则、架构名称和提示信息
+const ARCH_MAP = [
+  { reg: /aarch64|arm64|armv8/i, name: 'arm64-v8a', msg: '请选择通用架构或“arm64-v8a”架构。' },
+  { reg: /armeabi-v7a|(arm$)|armv7/i, name: 'armeabi-v7a', msg: '请选择通用架构或“armeabi-v7a”架构。' },
+  { reg: /x86_64|x64|amd64/i, name: 'x86_64', msg: '请选择通用架构或“x86_64”架构。' },
+  { reg: /x86|i[36]86/i, name: 'x86', msg: '请选择通用架构或“x86”架构。' }
+];
+
 /**
- * 展示系统信息
- * @param {HTMLElement} sysInfoEle - 系统信息元素
+ * 检测系统信息
+ * @returns {Object} 包含操作系统名称(osn)、版本(osv)、原始CPU架构(cpuarch)、
+ *                   浏览器名称(bn)、解析后的架构名称(matchedArch)、
+ *                   匹配的提示信息(matchedMsg)等
  */
-export function show(sysInfoEle) {
+export function detectSystemInfo() {
   const uap = new UAParser();
   const result = uap.getResult();
   console.log('系统检测：', result);
@@ -13,28 +23,40 @@ export function show(sysInfoEle) {
   const cpuarch = result.cpu.architecture || navigator.platform;
   const bn = result.browser.name;
 
+  // 匹配架构
+  let matchedArch = null;
+  let matchedMsg = null;
+  const matchItem = ARCH_MAP.find(item => item.reg.test(cpuarch));
+  if (matchItem) {
+    matchedArch = matchItem.name;
+    matchedMsg = matchItem.msg;
+  }
+
+  return { osn, osv, cpuarch, bn, matchedArch, matchedMsg, result };
+}
+
+/**
+ * 展示系统信息
+ * @param {HTMLElement} sysInfoEle - 系统信息元素
+ */
+export function show(sysInfoEle) {
+  const { osn, osv, cpuarch, bn, matchedArch, matchedMsg } = detectSystemInfo();
+
   sysInfoEle.innerHTML = '';
 
   addSysInfoItem(sysInfoEle, navigator.userAgent);
 
   if (osn !== 'Android') {
-    addSysErrItem(sysInfoEle, '当前系统不是安卓系统，无法运行。');
-  } else if (parseInt(osv) < 9) {
-    addSysErrItem(sysInfoEle, '当前系统版本过低，无法运行。');
+    addSysErrItem(sysInfoEle, '当前系统不是安卓系统。');
+  } else if (parseInt(osv) < 9 && osn === 'Android') {
+    addSysErrItem(sysInfoEle, '当前安卓系统版本过低。');
   } else if (cpuarch) {
-    const archMap = [
-      { reg: /aarch64|arm64|armv8/i, msg: '请选择通用架构或“arm64-v8a”架构。' },
-      { reg: /armeabi-v7a|(arm$)|armv7/i, msg: '请选择通用架构或“armeabi-v7a”架构。' },
-      { reg: /x86_64|x64|amd64/i, msg: '请选择通用架构或“x86_64”架构。' },
-      { reg: /x86|i[36]86/i, msg: '请选择通用架构或“x86”架构。' }
-    ];
     // windows 系统不要根据平台来判断架构!!!
     // windows 系统不管是 64 位还是 32 位始终为 win32 平台
     // 再乱改我就炸了!!!
     //                                            晚梦
-    const matchItem = archMap.find(item => item.reg.test(cpuarch));
-    if (matchItem) {
-      addSysGreenItem(sysInfoEle, matchItem.msg);
+    if (matchedArch) {
+      addSysGreenItem(sysInfoEle, matchedMsg);
     } else {
       addSysInfoItem(sysInfoEle, '请选择通用架构。');
     }

@@ -1,4 +1,5 @@
 import { loadModule } from '/js/module/moduleLoader.js';
+import { detectSystemInfo } from '/js/module/sysInfo.js';
 
 /**
  * 通用级联选择器
@@ -39,6 +40,8 @@ export async function loadSelector(options) {
     console.error(`选择器模块：找不到容器：${containerId}`);
     return;
   }
+
+  const sysInfo = detectSystemInfo();
 
   // 初始加载根数据
   loadLevel(dataSource, 0);
@@ -384,7 +387,7 @@ export async function loadSelector(options) {
     return descDiv;
   }
 
-  function defaultCreateDownloadElement(item, onDownload, debounceDelay) {
+  function defaultCreateDownloadElement(item, onDownload, debounceDelay) { // TODO:使按钮显示更多信息而不是仅一个文件名
     const link = document.createElement('a');
     link.href = item.url;
 
@@ -397,6 +400,12 @@ export async function loadSelector(options) {
     link.textContent = originalText;
     link.className = 'mdui-btn mdui-btn-block mdui-btn-raised mdui-ripple';
     link.target = '_blank';
+
+    if (item.arch === sysInfo.matchedArch || item.name === `${sysInfo.matchedArch} 架构` || item.name.includes(sysInfo.matchedArch)) {
+      link.textContent = `(当前架构) ${originalText}`;
+      link.style.color = '#00ff00';
+      console.log('选择器模块：创建下载按钮：发现当前架构（' + sysInfo.matchedArch + '）：按钮（' + link + '）');
+    }
     
     // 存储原始文本和倒计时延迟时间
     link.dataset.originalText = originalText;

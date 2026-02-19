@@ -1,4 +1,4 @@
-document.getElementById('tab2Way3historyBtn').addEventListener('click', async () => {
+document.getElementById('tab2Way3historyBtn').addEventListener('click', async () => { // TODO:默认选中当前架构
   const app = document.getElementById('tab2Way3historyApp').value;
   const tag = document.getElementById('tab2Way3historyTag').value || 'latest';
   const version = document.getElementById('tab2Way3historyVersion').value || tag;
