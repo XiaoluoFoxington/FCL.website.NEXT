@@ -54,5 +54,12 @@
     "repoFullName": "MobileGL-Dev/MobileGlues-release",
     "containerId": "tab5Mg",
     "panelId": "tab5MgPanelEle"
+  },
+  {
+    "id": "KW",
+    "name": "Krypton Wrapper",
+    "repoFullName": "BZLZHH/NGG-FCLRendererPlugin",
+    "containerId": "tab5KW",
+    "panelId": "tab5KryptonPanelEle"
   }
 ]
