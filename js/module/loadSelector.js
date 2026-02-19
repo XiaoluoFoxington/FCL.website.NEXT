@@ -304,24 +304,38 @@ export async function loadSelector(options) {
 
 
   /**
-   * 禁用全部下拉选择框
+   * 禁用全部下拉选择框和按钮
    */
   function disableAllSelects() {
-    console.log('选择器模块：禁用全部下拉选择框');
+    console.log('选择器模块：禁用全部下拉选择框和按钮');
     const selects = container.querySelectorAll('select');
+    const buttons = container.querySelectorAll('a');
+
     selects.forEach(select => {
       select.disabled = true;
+      select.classList.add('disabled');
+    });
+    buttons.forEach(button => {
+      button.disabled = true;
+      button.classList.add('disabled'); // 意义不明，虽然<a>没有disabled属性，但明明有样式，添加disabled属性后样式竟然没变。只好直接添加disabled类名了。
     });
   }
 
   /**
-   * 启用全部下拉选择框
+   * 启用全部下拉选择框和按钮
    */
   function enableAllSelects() {
-    console.log('选择器模块：启用全部下拉选择框');
+    console.log('选择器模块：启用全部下拉选择框和按钮');
     const selects = container.querySelectorAll('select');
+    const buttons = container.querySelectorAll('a');
+
     selects.forEach(select => {
       select.disabled = false;
+      select.classList.remove('disabled');
+    });
+    buttons.forEach(button => {
+      button.disabled = false;
+      button.classList.remove('disabled');
     });
   }
 

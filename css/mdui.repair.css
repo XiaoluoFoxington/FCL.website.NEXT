@@ -76,6 +76,8 @@
   border-right: none;
 }
 
-.mdui-select[disabled] {
+[disabled],
+.disabled {
   opacity: .5;
+  pointer-events: none;
 }
