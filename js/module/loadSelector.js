@@ -437,19 +437,15 @@ export async function loadSelector(options) {
     tdArch.innerText = item.arch || inferArchFromUrl(item.url);
 
     function inferArchFromUrl(url) {
-      if (url.includes('all')) {
-        return 'all';
-      } else if (url.includes('arm64-v8a')) {
-        return 'arm64-v8a';
-      } else if (url.includes('armeabi-v7a')) {
-        return 'armeabi-v7a';
-      } else if (url.includes('x86_64')) {
-        return 'x86_64';
-      } else if (url.includes('x86')) {
-        return 'x86';
-      } else {
-        return '（未知）';
-      }
+      const map = {
+        'all': 'all',
+        'arm64-v8a': 'arm64-v8a',
+        'armeabi-v7a': 'armeabi-v7a',
+        'x86_64': 'x86_64',
+        'x86': 'x86'
+      };
+      const key = Object.keys(map).find(k => url.includes(k));
+      return map[key] || '（未知）';
     }
 
     if (tdArch.innerText === sysInfo.matchedArch) {
