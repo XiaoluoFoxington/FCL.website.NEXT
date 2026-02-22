@@ -458,7 +458,14 @@ export async function loadSelector(options) {
 
     tdSize.innerText = xf_formatBytes(item.size) || '';
     tdName.innerText = item.name || '';
-    tdUrl.innerText = item.url || '';
+
+    const tdUrlA = document.createElement('a');
+    tdUrlA.innerText = item.url;
+    tdUrlA.href = item.url;
+    tdUrlA.target = '_blank';
+
+    tdUrl.appendChild(tdUrlA);
+    tdUrl.classList.value = 'mdui-typo';
 
     tr.appendChild(tdOperation);
     tr.appendChild(tdArch);
