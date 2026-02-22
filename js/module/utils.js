@@ -4,13 +4,14 @@
  * @returns {string} - 格式化后的字符串
  */
 export function xf_formatBytes(bytes) {
+  if (bytes === null || bytes === undefined) return '';
   if (bytes === 0) return '0 Bytes';
   
   const k = 1024;
   const sizes = ['Bytes', 'KiB', 'MiB', 'GiB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
 
 /**

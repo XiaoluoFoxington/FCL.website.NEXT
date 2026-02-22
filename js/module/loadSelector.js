@@ -1,5 +1,6 @@
 import { loadModule } from '/js/module/moduleLoader.js';
 import { detectSystemInfo } from '/js/module/sysInfo.js';
+import { xf_formatBytes } from '/js/module/utils.js';
 
 /**
  * 通用级联选择器
@@ -288,19 +289,50 @@ export async function loadSelector(options) {
 
     clearLevelElements(level);
 
-    const buttonsContainer = document.createElement('div');
-    buttonsContainer.className = 'download-buttons-container';
+    const buttonsContainerContainer = document.createElement('div');
+    buttonsContainerContainer.classList.value = 'mdui-table-fluid';
+
+    const buttonsContainer = document.createElement('table');
+    buttonsContainer.classList.value = 'mdui-table download-buttons-container';
+    buttonsContainerContainer.appendChild(buttonsContainer);
+
+    const buttonsContainerHead = document.createElement('thead');
+    buttonsContainerHead.innerHTML = '<tr><th>操作</th><th>架构</th><th>大小</th><th>显示名称</th><th>URL</th></tr>';
+    buttonsContainer.appendChild(buttonsContainerHead);
+
+    const buttonsContainerBody = document.createElement('tbody');
+    buttonsContainer.appendChild(buttonsContainerBody);
+
+    /* 最终结构：
+    <div class="mdui-table-fluid">
+      <table class="mdui-table download-buttons-container">
+        <thead>
+          <tr>
+            <th>操作</th>
+            <th>架构</th>
+            <th>大小</th>
+            <th>显示名称</th>
+            <th>URL</th>
+          </tr>
+        </thead>
+        <tbody>
+          （传给onCreateDownloadElement））
+        </tbody>
+      </table>
+    </div>
+    */
 
     items.forEach(item => {
       if (item.url) {
         // 根据 disableDebounce 决定是否传递倒计时延迟
         const delayToUse = disableDebounce ? 0 : debounceDelay;
         const link = onCreateDownloadElement(item, onDownload, delayToUse);
-        buttonsContainer.appendChild(link);
+        buttonsContainerBody.appendChild(link);
       }
     });
 
-    container.appendChild(buttonsContainer);
+    container.appendChild(buttonsContainerContainer);
+    mdui.mutation();
 
     enableAllSelects();
   }
@@ -387,33 +419,60 @@ export async function loadSelector(options) {
     return descDiv;
   }
 
-  function defaultCreateDownloadElement(item, onDownload, debounceDelay) { // TODO:使按钮显示更多信息而不是仅一个文件名
-    const link = document.createElement('a');
-    link.href = item.url;
+  function defaultCreateDownloadElement(item, onDownload, debounceDelay) {
+    const tr = document.createElement('tr');
+    const tdOperation = document.createElement('td');
+    const tdArch = document.createElement('td');
+    const tdSize = document.createElement('td');
+    const tdName = document.createElement('td');
+    const tdUrl = document.createElement('td');
 
-    let displayName = item.name || '文件';
-    if (displayName === "all 架构") {
-      displayName = "通用 架构";
+    const btnDl = document.createElement('a');
+    btnDl.innerText = "下载";
+    btnDl.href = item.url;
+    btnDl.target = '_blank';
+    btnDl.className = 'mdui-btn mdui-btn-raised mdui-ripple';
+    tdOperation.appendChild(btnDl);
+
+    tdArch.innerText = item.arch || inferArchFromUrl(item.url);
+
+    function inferArchFromUrl(url) {
+      if (url.includes('all')) {
+        return 'all';
+      } else if (url.includes('arm64-v8a')) {
+        return 'arm64-v8a';
+      } else if (url.includes('armeabi-v7a')) {
+        return 'armeabi-v7a';
+      } else if (url.includes('x86_64')) {
+        return 'x86_64';
+      } else if (url.includes('x86')) {
+        return 'x86';
+      } else {
+        return '（未知）';
+      }
     }
 
-    const originalText = `${displayName}`;
-    link.textContent = originalText;
-    link.className = 'mdui-btn mdui-btn-block mdui-btn-raised mdui-ripple';
-    link.target = '_blank';
-
-    if (item.arch === sysInfo.matchedArch || item.name === `${sysInfo.matchedArch} 架构` || item.name.includes(sysInfo.matchedArch)) {
-      link.textContent = `(当前架构) ${originalText}`;
-      link.style.color = '#00ff00';
-      console.log('选择器模块：创建下载按钮：发现当前架构（' + sysInfo.matchedArch + '）：按钮（' + link + '）');
+    if (tdArch.innerText === sysInfo.matchedArch) {
+      tdArch.style.color = '#00ff00';
     }
+
+    tdSize.innerText = xf_formatBytes(item.size) || '';
+    tdName.innerText = item.name || '';
+    tdUrl.innerText = item.url || '';
+
+    tr.appendChild(tdOperation);
+    tr.appendChild(tdArch);
+    tr.appendChild(tdSize);
+    tr.appendChild(tdName);
+    tr.appendChild(tdUrl);
     
     // 存储原始文本和倒计时延迟时间
-    link.dataset.originalText = originalText;
-    link.dataset.debounceDelay = debounceDelay;
+    btnDl.dataset.originalText = btnDl.innerText;
+    btnDl.dataset.debounceDelay = debounceDelay;
     
     // 处理点击事件
     const handleClick = (e) => {
-      if (link.disabled) {
+      if (btnDl.disabled) {
         e.preventDefault();
         return;
       }
@@ -424,12 +483,12 @@ export async function loadSelector(options) {
       }
       
       // 开始倒计时
-      startCountdown(link);
+      startCountdown(btnDl);
     };
     
-    link.addEventListener('click', handleClick);
+    btnDl.addEventListener('click', handleClick);
     
-    return link;
+    return tr;
   }
   
   /**
