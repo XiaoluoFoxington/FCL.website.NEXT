@@ -63,12 +63,23 @@
 .mdui-table th,
 .mdui-table td {
   border-right: 1px solid rgba(255, 255, 255, .12);
+  padding: 12px;
 }
 
 .mdui-table td:first-child,
 .mdui-table th:first-child {
-  padding-right: 24px;
-  padding-left: 24px;
+  padding-right: 12px;
+  padding-left: 12px;
+}
+
+.mdui-table td:last-child,
+.mdui-table th:last-child {
+  padding-right: 12px
+}
+
+.mdui-table td:nth-child(2),
+.mdui-table th:nth-child(2) {
+  padding-left: 12px
 }
 
 .mdui-table td:last-child,
