@@ -431,7 +431,7 @@ export async function loadSelector(options) {
     btnDl.innerText = "下载";
     btnDl.href = item.url;
     btnDl.target = '_blank';
-    btnDl.className = 'mdui-btn mdui-btn-raised mdui-ripple';
+    btnDl.className = 'mdui-btn mdui-btn-block mdui-btn-raised mdui-ripple';
     tdOperation.appendChild(btnDl);
 
     tdArch.innerText = item.arch || inferArchFromUrl(item.url);
