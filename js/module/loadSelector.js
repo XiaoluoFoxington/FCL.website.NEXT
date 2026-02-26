@@ -296,39 +296,72 @@ export async function loadSelector(options) {
     buttonsContainer.classList.value = 'mdui-table download-buttons-container';
     buttonsContainerContainer.appendChild(buttonsContainer);
 
-    const buttonsContainerHead = document.createElement('thead');
-    buttonsContainerHead.innerHTML = '<tr><th>操作</th><th>架构</th><th>大小</th><th>显示名称</th><th>URL</th></tr>';
-    buttonsContainer.appendChild(buttonsContainerHead);
-
-    const buttonsContainerBody = document.createElement('tbody');
-    buttonsContainer.appendChild(buttonsContainerBody);
-
-    /* 最终结构：
-    <div class="mdui-table-fluid">
-      <table class="mdui-table download-buttons-container">
-        <thead>
-          <tr>
-            <th>操作</th>
-            <th>架构</th>
-            <th>大小</th>
-            <th>显示名称</th>
-            <th>URL</th>
-          </tr>
-        </thead>
-        <tbody>
-          （传给onCreateDownloadElement））
-        </tbody>
-      </table>
-    </div>
-    */
+    // 创建临时tbody来收集所有行数据，用于分析列是否为空
+    const tempBody = document.createElement('tbody');
+    const rows = [];
 
     items.forEach(item => {
       if (item.url) {
-        // 根据 disableDebounce 决定是否传递倒计时延迟
         const delayToUse = disableDebounce ? 0 : debounceDelay;
-        const link = onCreateDownloadElement(item, onDownload, delayToUse);
-        buttonsContainerBody.appendChild(link);
+        const row = onCreateDownloadElement(item, onDownload, delayToUse);
+        rows.push(row);
+        tempBody.appendChild(row);
       }
+    });
+
+    // 分析哪些列是空的
+    const columnIndicesToKeep = [];
+    const columnHeaders = ['操作', '架构', '大小', '显示名称', 'URL'];
+    
+    // 检查每一列是否全部为空
+    for (let colIndex = 0; colIndex < 5; colIndex++) {
+      let hasContent = false;
+      
+      for (const row of rows) {
+        const cell = row.children[colIndex];
+        if (cell) {
+          const text = cell.textContent || cell.innerText || '';
+          if (text.trim() !== '') {
+            hasContent = true;
+            break;
+          }
+        }
+      }
+      
+      if (hasContent) {
+        columnIndicesToKeep.push(colIndex);
+      }
+    }
+
+    // 创建表头
+    const buttonsContainerHead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    
+    columnIndicesToKeep.forEach(colIndex => {
+      const th = document.createElement('th');
+      th.textContent = columnHeaders[colIndex];
+      headerRow.appendChild(th);
+    });
+    
+    buttonsContainerHead.appendChild(headerRow);
+    buttonsContainer.appendChild(buttonsContainerHead);
+
+    // 创建正式tbody并添加处理后的行
+    const buttonsContainerBody = document.createElement('tbody');
+    buttonsContainer.appendChild(buttonsContainerBody);
+
+    rows.forEach(row => {
+      const newRow = document.createElement('tr');
+      
+      columnIndicesToKeep.forEach(colIndex => {
+        const originalCell = row.children[colIndex];
+        if (originalCell) {
+          const newCell = originalCell.cloneNode(true);
+          newRow.appendChild(newCell);
+        }
+      });
+      
+      buttonsContainerBody.appendChild(newRow);
     });
 
     container.appendChild(buttonsContainerContainer);
