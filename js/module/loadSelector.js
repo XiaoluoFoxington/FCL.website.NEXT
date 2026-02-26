@@ -445,7 +445,7 @@ export async function loadSelector(options) {
         'x86': 'x86'
       };
       const key = Object.keys(map).find(k => url.includes(k));
-      return map[key] || '（未知）';
+      return map[key] || '';
     }
 
     if (tdArch.innerText === sysInfo.matchedArch) {
