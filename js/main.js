@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', async function () {
  * 添加事件监听
  */
 function xf_addEventListeners() {
-  document.getElementById('xf_fclIcon').addEventListener('click', xf_xf_fclIcon_Click, {once: true});
+  document.getElementById('xf_fclIcon').addEventListener('click', xf_xf_fclIcon_Click, { once: true });
   document.getElementById('tab1_link').addEventListener('click', xf_tab1_link_Click, { once: true });
   document.getElementById('tab2_link').addEventListener('click', xf_tab2_link_Click, { once: true });
   document.getElementById('tab3_link').addEventListener('click', xf_tab3_link_Click, { once: true });
@@ -23,6 +23,7 @@ function xf_addEventListeners() {
   document.getElementById('xf_themeSwitchBtn').addEventListener('click', xf_themeSwitchBtn_Click);
   document.getElementById('xf_refreshBtn').addEventListener('click', xf_refreshBtn_Click);
   document.getElementById('xf_websiteInfoLink').addEventListener('click', xf_websiteInfoLink_Click);
+  document.getElementById('easterEgg').addEventListener('click', openEasterEgg);
 }
 
 /**
@@ -209,4 +210,20 @@ async function xf_increaseUserVisitCount() {
   const visitCountInt = await xf_getUserVisitCount();
   const utils = await loadModule('/js/module/utils.js');
   utils.xf_writeLocalStorage('visitCount', (visitCountInt + 1).toString());
+}
+
+/**
+ * 彩蛋
+*/
+function openEasterEgg() {
+
+  mdui.dialog({
+    title: '',
+    content: '<img src="/media/img/NEXT.FCL下载站-彩蛋.avif" alt="一只面带微笑的Q版拟人狐狸，白色外套，竖起大拇指，神情得意。">',
+    buttons: [
+      {
+        text: '关闭'
+      }],
+    history: false
+  });
 }
