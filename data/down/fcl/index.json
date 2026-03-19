@@ -17,11 +17,13 @@
   {
     "name": "线路5",
     "nextUrl": "https://fcl.switch.api.072211.xyz/?from=foldcraftlauncher&isDev=1",
-    "apiVer": "Way2old"
+    "apiVer": "Way2old",
+    "notJoinRandom": true
   },
   {
     "name": "线路9",
-    "nextUrl": "https://api.lisongyun.top/file_tree.json"
+    "nextUrl": "https://api.lisongyun.top/file_tree.json",
+    "notJoinRandom": true
   },
   {
     "name": "线路10",
