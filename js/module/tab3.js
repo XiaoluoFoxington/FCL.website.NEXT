@@ -5,6 +5,7 @@ import { loadModule } from '/js/module/moduleLoader.js';
  */
 export async function xf_init() {
   await xf_loadTab3Content();
+  location.hash = '#tab3';
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

@@ -10,6 +10,7 @@ export async function xf_init() {
   xf_loadImportantAnnouncement();
   xf_loadAnnouncement();
   xf_checkAndShowSponsorRemind();
+  location.hash = '#tab1';
 }
 
 /**

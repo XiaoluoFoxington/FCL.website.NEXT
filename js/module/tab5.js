@@ -9,6 +9,7 @@ export async function xf_init() {
   await xf_generateRepoPanels(repoConfig);
   xf_addEventListeners(repoConfig);
   mdui.mutation();
+  location.hash = '#tab5';
 }
 
 /**

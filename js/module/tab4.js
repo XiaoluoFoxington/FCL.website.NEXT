@@ -12,7 +12,7 @@ export async function xf_init() {
   xf_generateDownloadLines(contributors);
   const useProjects = await xf_getUseProjects();
   xf_generateUseProjects(useProjects);
-
+  location.hash = '#tab4';
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

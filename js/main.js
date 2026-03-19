@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   const tab1 = await loadModule('/js/module/tab1.js'); // 加载tab1模块
   xf_setThemeByLocalStorage(); // 根据本地存储设置主题
   xf_addEventListeners(); // 添加事件监听
-  tab1.xf_init(); // 初始化tab1内容
+  xf_loadHashContent();
   xf_loadWebsiteVisitCount(); // 获取访问量
   xf_loadWebsiteVerInfo(); // 加载网站版本信息
   xf_increaseUserVisitCount();
@@ -98,6 +98,33 @@ function xf_websiteInfoLink_Click() {
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * 获取地址栏hash参数并加载内容
+ */
+function xf_loadHashContent() {
+  const hash = location.hash;
+  switch (hash) {
+    case '#tab1':
+      xf_tab1_link_Click();
+      break;
+    case '#tab2':
+      xf_tab2_link_Click();
+      break;
+    case '#tab3':
+      xf_tab3_link_Click();
+      break;
+    case '#tab4':
+      xf_tab4_link_Click();
+      break;
+    case '#tab5':
+      xf_tab5_link_Click();
+      break;
+    default:
+      xf_tab1_link_Click();
+      break;
+  }
+}
 
 /**
  * 获取当前主题
