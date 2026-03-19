@@ -1,9 +1,9 @@
 import { loadModule } from '/js/module/moduleLoader.js';
 
 document.addEventListener('DOMContentLoaded', async function () {
-  const tab1 = await loadModule('/js/module/tab1.js'); // 加载tab1模块
   xf_setThemeByLocalStorage(); // 根据本地存储设置主题
   xf_addEventListeners(); // 添加事件监听
+  xf_addHashEventListeners();
   xf_loadHashContent();
   xf_loadWebsiteVisitCount(); // 获取访问量
   xf_loadWebsiteVerInfo(); // 加载网站版本信息
@@ -27,6 +27,17 @@ function xf_addEventListeners() {
 }
 
 /**
+ * 添加哈希事件
+ */
+function xf_addHashEventListeners() {
+  document.getElementById('tab1_link').addEventListener('click', xf_tab1_link_Click_Hash);
+  document.getElementById('tab2_link').addEventListener('click', xf_tab2_link_Click_Hash);
+  document.getElementById('tab3_link').addEventListener('click', xf_tab3_link_Click_Hash);
+  document.getElementById('tab4_link').addEventListener('click', xf_tab4_link_Click_Hash);
+  document.getElementById('tab5_link').addEventListener('click', xf_tab5_link_Click_Hash);
+}
+
+/**
  * 工具栏上的FCL图标的click
  */
 function xf_xf_fclIcon_Click() {
@@ -41,12 +52,23 @@ async function xf_tab1_link_Click() {
   tab1.xf_init();
 }
 
+function xf_tab1_link_Click_Hash() {
+  location.hash = '#tab1';
+  document.title = '首页 - Fold Craft Launcher 下载站';
+}
+
+/**
 /**
  * TAB栏上的tab2链接的click
  */
 async function xf_tab2_link_Click() {
   const tab2 = await loadModule('/js/module/tab2.js')
   tab2.xf_init();
+}
+
+function xf_tab2_link_Click_Hash() {
+  location.hash = '#tab2';
+  document.title = '下载 - Fold Craft Launcher 下载站';
 }
 
 /**
@@ -57,6 +79,11 @@ async function xf_tab3_link_Click() {
   tab3.xf_init();
 }
 
+function xf_tab3_link_Click_Hash() {
+  location.hash = '#tab3';
+  document.title = '赞助 - Fold Craft Launcher 下载站';
+}
+
 /**
  * TAB栏上的tab4链接的click
  */
@@ -65,12 +92,22 @@ async function xf_tab4_link_Click() {
   tab4.xf_init();
 }
 
+function xf_tab4_link_Click_Hash() {
+  location.hash = '#tab4';
+  document.title = '关于 - Fold Craft Launcher 下载站';
+}
+
 /**
  * TAB栏上的tab5链接的click
  */
 async function xf_tab5_link_Click() {
   const tab5 = await loadModule('/js/module/tab5.js')
   tab5.xf_init();
+}
+
+function xf_tab5_link_Click_Hash() {
+  location.hash = '#tab5';
+  document.title = '详情 - Fold Craft Launcher 下载站';
 }
 
 /**
@@ -107,21 +144,27 @@ function xf_loadHashContent() {
   switch (hash) {
     case '#tab1':
       xf_tab1_link_Click();
+      xf_tab1_link_Click_Hash();
       break;
     case '#tab2':
       xf_tab2_link_Click();
+      xf_tab2_link_Click_Hash();
       break;
     case '#tab3':
       xf_tab3_link_Click();
+      xf_tab3_link_Click_Hash();
       break;
     case '#tab4':
       xf_tab4_link_Click();
+      xf_tab4_link_Click_Hash();
       break;
     case '#tab5':
       xf_tab5_link_Click();
+      xf_tab5_link_Click_Hash();
       break;
     default:
       xf_tab1_link_Click();
+      xf_tab1_link_Click_Hash();
       break;
   }
 }

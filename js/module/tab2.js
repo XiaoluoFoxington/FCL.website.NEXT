@@ -12,7 +12,6 @@ export async function xf_init() {
   xf_addEventListeners();
   xf_showSysInfo();
   xf_loadSelectors();
-  location.hash = '#tab2';
 }
 
 /**

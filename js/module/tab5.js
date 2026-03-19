@@ -10,6 +10,7 @@ export async function xf_init() {
   xf_addEventListeners(repoConfig);
   mdui.mutation();
   location.hash = '#tab5';
+  document.title = '详情 - Fold Craft Launcher 下载站';
 }
 
 /**
