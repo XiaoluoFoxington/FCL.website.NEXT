@@ -453,6 +453,14 @@ export async function loadSelector(options) {
   }
 
   function defaultCreateDownloadElement(item, onDownload, debounceDelay) {
+    const archMap = {
+      'all': 'all',
+      'arm64-v8a': 'arm64-v8a',
+      'armeabi-v7a': 'armeabi-v7a',
+      'x86_64': 'x86_64',
+      'x86': 'x86'
+    };
+  
     const tr = document.createElement('tr');
     const tdOperation = document.createElement('td');
     const tdArch = document.createElement('td');
@@ -467,18 +475,19 @@ export async function loadSelector(options) {
     btnDl.className = 'mdui-btn mdui-btn-block mdui-btn-raised mdui-ripple';
     tdOperation.appendChild(btnDl);
 
-    tdArch.innerText = item.arch || inferArchFromUrl(item.url);
+    tdArch.innerText = item.arch || inferArchFromStr(item.url) || inferArchFromStr(item.name) || inferArchForZL(item.url);
 
-    function inferArchFromUrl(url) {
-      const map = {
-        'all': 'all',
-        'arm64-v8a': 'arm64-v8a',
-        'armeabi-v7a': 'armeabi-v7a',
-        'x86_64': 'x86_64',
-        'x86': 'x86'
-      };
-      const key = Object.keys(map).find(k => url.includes(k));
-      return map[key] || '';
+    function inferArchFromStr(str) {
+      const key = Object.keys(archMap).find(k => str.includes(k));
+      return archMap[key] || '';
+    }
+
+    function inferArchForZL(url) {
+      // 如果链接中包含“ZalithLauncher”且没有匹配到archMap，返回all。
+      if (url.includes('ZalithLauncher') && !Object.values(archMap).includes(url)) {
+        return 'all';
+      }
+      return '';
     }
 
     if (tdArch.innerText === sysInfo.matchedArch) {
