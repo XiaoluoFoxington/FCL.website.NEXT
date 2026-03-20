@@ -190,6 +190,7 @@ export function xf_loadWay10BanInfo() {
  */
 export function xf_loadTrafficInfo() {
   xf_loadWay2TrafficInfo('https://mirror.frostlynx.work/stats');
+  xf_loadWay10TrafficInfo('https://mirror.lemwood.icu/api/stats');
 }
 
 /**
@@ -212,6 +213,25 @@ export async function xf_loadWay2TrafficInfo(url = '/data/content/way2Traffic.js
     return;
   }
 }
+
+/**
+ * 获取线10流量信息
+ * @param {string} url 流量信息API URL
+ */
+export async function xf_loadWay10TrafficInfo(url = 'https://mirror.lemwood.icu/api/stats') {
+  const loadContent = await loadModule('/js/module/loadContent.js');
+
+  const totalEl = document.getElementById('xf_fclWay10Total');
+  try {
+    const apiData = await loadContent.fetchItems(url);
+    totalEl.textContent = apiData.total_downloads || 'N/A';
+  } catch (error) {
+    console.error('获取线10流量信息失败:', error);
+    totalEl.textContent = error.message;
+    return;
+  }
+}
+
 
 /**
  * 获取贡献者数据
