@@ -1,4 +1,5 @@
 import { loadModule } from '/js/module/moduleLoader.js';
+import { xf_escapeHtml } from './utils.js';
 
 
 /**
@@ -20,6 +21,7 @@ export async function xf_init() {
  */
 export function xf_addEventListeners() {
   document.getElementById('xf_fclWay2BanInfo').addEventListener('click', xf_loadWay2BanInfo, { once: true });
+  document.getElementById('xf_fclWay10BanInfo').addEventListener('click', xf_loadWay10BanInfo, { once: true });
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -31,17 +33,6 @@ export function xf_loadWay2BanInfo() {
   const container = document.getElementById('xf_fclWay2BanInfoBody');
   const apiUrl = 'https://mirror.frostlynx.work/api/blocks/export';
   container.innerHTML = '<div class="mdui-spinner"></div>';
-
-  // HTML转义函数，防止XSS攻击
-  function escapeHtml(str) {
-    if (!str) return '';
-    return str.replace(/[&<>]/g, function (m) {
-      if (m === '&') return '&amp;';
-      if (m === '<') return '&lt;';
-      if (m === '>') return '&gt;';
-      return m;
-    });
-  }
 
   fetch(apiUrl)
     .then(response => {
@@ -76,8 +67,8 @@ export function xf_loadWay2BanInfo() {
       for (const item of items) {
         tbodyHtml += `
           <tr>
-            <td>${escapeHtml(item.ip)}</td>
-            <td>${escapeHtml(item.reason)}</td>
+            <td>${xf_escapeHtml(item.ip)}</td>
+            <td>${xf_escapeHtml(item.reason)}</td>
           </tr>
         `;
       }
@@ -105,9 +96,91 @@ export function xf_loadWay2BanInfo() {
     })
     .catch(error => {
       console.error('获取线路2封禁列表失败：', error);
-      container.innerHTML = `<div class="mdui-typo">${escapeHtml(error.message)}</div>`;
+      container.innerHTML = `<div class="mdui-typo">${xf_escapeHtml(error.message)}</div>`;
     });
 }
+
+/**
+ * 加载线路10封禁信息
+ */
+export function xf_loadWay10BanInfo() {
+  const container = document.getElementById('xf_fclWay10BanInfoBody');
+  const apiUrl = 'https://mirror.lemwood.icu/download/banned_ips.txt';
+  container.innerHTML = '<div class="mdui-spinner"></div>';
+
+  fetch(apiUrl)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(text => {
+      const lines = text.split('\n');
+      const rows = [];
+
+      for (const line of lines) {
+        const trimmed = line.trim();
+        // 跳过空行和注释行
+        if (trimmed === '' || trimmed.startsWith('#')) continue;
+
+        // 按 " | " 分割，兼容空格情况
+        const parts = trimmed.split('|').map(part => part.trim());
+        if (parts.length >= 4) {
+          rows.push({
+            ip: parts[0],
+            time: parts[1],
+            reason: parts[2],
+            traffic: parts[3]
+          });
+        }
+      }
+
+      if (rows.length === 0) {
+        container.innerHTML = '<div class="mdui-typo">暂无数据</div>';
+        return;
+      }
+
+      // 生成表格 HTML
+      let tableHtml = `
+        <div class="mdui-table-fluid">
+          <table class="mdui-table">
+            <thead>
+              <tr>
+                <th>IP</th>
+                <th>原因</th>
+                <th>当日流量(GB)</th>
+                <th>时间</th>
+              </tr>
+            </thead>
+            <tbody>
+      `;
+
+      for (const row of rows) {
+        tableHtml += `
+          <tr>
+            <td>${xf_escapeHtml(row.ip)}</td>
+            <td>${xf_escapeHtml(row.reason)}</td>
+            <td>${xf_escapeHtml(row.traffic)}</td>
+            <td>${xf_escapeHtml(row.time)}</td>
+          </tr>
+        `;
+      }
+
+      tableHtml += `
+            </tbody>
+          </table>
+        </div>
+      `;
+
+      container.innerHTML = tableHtml;
+    })
+    .catch(error => {
+      console.error('获取线路10封禁列表失败：', error);
+      container.innerHTML = `<div class="mdui-typo">${xf_escapeHtml(error.message)}</div>`;
+    });
+}
+
 
 /**
  * 获取所有线路流量信息

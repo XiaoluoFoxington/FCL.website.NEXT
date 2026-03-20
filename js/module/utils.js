@@ -77,3 +77,18 @@ export function isMultipleOfTen(num) {
 
   return num % 10 === 0;
 }
+
+/**
+ * 转义html
+ * @param {string} str - 输入字符串
+ * @returns {string} - 转义后的字符串
+ */
+export function xf_escapeHtml(str) {
+  if (!str) return '';
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
