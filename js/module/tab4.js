@@ -33,6 +33,7 @@ export function xf_loadWay2BanInfo() {
   const container = document.getElementById('xf_fclWay2BanInfoBody');
   const apiUrl = 'https://mirror.frostlynx.work/api/blocks/export';
   container.innerHTML = '<div class="mdui-spinner"></div>';
+  mdui.mutation();
 
   fetch(apiUrl)
     .then(response => {
@@ -74,7 +75,8 @@ export function xf_loadWay2BanInfo() {
       }
 
       if (items.length === 0) {
-        tbodyHtml = '<tr><td colspan="2">暂无数据</td></tr>';
+        container.innerHTML = '<div class="mdui-typo">暂无数据</div>';
+        return;
       }
 
       const tableHtml = `
@@ -96,7 +98,7 @@ export function xf_loadWay2BanInfo() {
     })
     .catch(error => {
       console.error('获取线路2封禁列表失败：', error);
-      container.innerHTML = `<div class="mdui-typo">${xf_escapeHtml(error.message)}</div>`;
+      container.innerHTML = `<div class="mdui-typo" style="color: #f00;">出错：${xf_escapeHtml(error.message)}</div>`;
     });
 }
 
@@ -107,6 +109,7 @@ export function xf_loadWay10BanInfo() {
   const container = document.getElementById('xf_fclWay10BanInfoBody');
   const apiUrl = 'https://mirror.lemwood.icu/download/banned_ips.txt';
   container.innerHTML = '<div class="mdui-spinner"></div>';
+  mdui.mutation();
 
   fetch(apiUrl)
     .then(response => {
@@ -177,7 +180,7 @@ export function xf_loadWay10BanInfo() {
     })
     .catch(error => {
       console.error('获取线路10封禁列表失败：', error);
-      container.innerHTML = `<div class="mdui-typo">${xf_escapeHtml(error.message)}</div>`;
+      container.innerHTML = `<div class="mdui-typo" style="color: #f00;">出错：${xf_escapeHtml(error.message)}</div>`;
     });
 }
 
