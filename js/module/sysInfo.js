@@ -38,13 +38,14 @@ export function detectSystemInfo() {
 /**
  * 展示系统信息
  * @param {HTMLElement} sysInfoEle - 系统信息元素
+ * @param {HTMLElement} uaInfoEle - User-Agent 信息元素
  */
-export function show(sysInfoEle) {
+export function show(sysInfoEle, uaInfoEle) {
   const { osn, osv, cpuarch, bn, matchedArch, matchedMsg } = detectSystemInfo();
 
   sysInfoEle.innerHTML = '';
 
-  addSysInfoItem(sysInfoEle, navigator.userAgent);
+  uaInfoEle.innerHTML = navigator.userAgent;
 
   if (osn !== 'Android') {
     addSysErrItem(sysInfoEle, '当前系统不是安卓系统。');

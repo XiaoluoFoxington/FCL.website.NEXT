@@ -90,7 +90,7 @@ export async function xf_writeSysInfoPanelClass() {
  */
 export async function xf_showSysInfo() {
   const sysInfoJs = await loadModule('/js/module/sysInfo.js');
-  sysInfoJs.show(sysInfo);
+  sysInfoJs.show(sysInfo, document.getElementById('xf_uaInfo'));
 }
 
 
