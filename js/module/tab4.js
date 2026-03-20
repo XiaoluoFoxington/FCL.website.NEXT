@@ -6,6 +6,7 @@ import { loadModule } from '/js/module/moduleLoader.js';
  */
 export async function xf_init() {
   await xf_loadTab4Content();
+  xf_addEventListeners();
   xf_loadTrafficInfo();
   const contributors = await getContributors();
   xf_generateContributors(contributors);
@@ -14,7 +15,99 @@ export async function xf_init() {
   xf_generateUseProjects(useProjects);
 }
 
+/**
+ * 添加事件监听
+ */
+export function xf_addEventListeners() {
+  document.getElementById('xf_fclWay2BanInfo').addEventListener('click', xf_loadWay2BanInfo, { once: true });
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * 加载线路2封禁信息
+ */
+export function xf_loadWay2BanInfo() {
+  const container = document.getElementById('xf_fclWay2BanInfoBody');
+  const apiUrl = 'https://mirror.frostlynx.work/api/blocks/export';
+  container.innerHTML = '<div class="mdui-spinner"></div>';
+
+  // HTML转义函数，防止XSS攻击
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function (m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
+  }
+
+  fetch(apiUrl)
+    .then(response => {
+      if (!response.ok) throw new Error(`HTTP错误: ${response.status}`);
+      return response.text();
+    })
+    .then(text => {
+      const lines = text.split(/\r?\n/);
+      const items = []; // 存储 { ip, reason }
+      let currentReason = null;
+
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (line === '') continue; // 跳过空行
+
+        if (line.startsWith('#')) {
+          // 注释行作为原因
+          currentReason = line.substring(1).trim();
+        } else if (currentReason !== null) {
+          // 非注释行且有待配对的原因，作为IP
+          items.push({
+            ip: line,
+            reason: currentReason
+          });
+          currentReason = null;
+        }
+        // 其他情况（非注释行但无待配对原因）忽略，防止格式错误
+      }
+
+      // 生成表格行
+      let tbodyHtml = '';
+      for (const item of items) {
+        tbodyHtml += `
+          <tr>
+            <td>${escapeHtml(item.ip)}</td>
+            <td>${escapeHtml(item.reason)}</td>
+          </tr>
+        `;
+      }
+
+      if (items.length === 0) {
+        tbodyHtml = '<tr><td colspan="2">暂无数据</td></tr>';
+      }
+
+      const tableHtml = `
+        <div class="mdui-table-fluid">
+          <table class="mdui-table">
+            <thead>
+              <tr>
+                <th>IP</th>
+                <th>原因</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${tbodyHtml}
+            </tbody>
+          </table>
+        </div>
+      `;
+      container.innerHTML = tableHtml;
+    })
+    .catch(error => {
+      console.error('获取线路2封禁列表失败：', error);
+      container.innerHTML = `<div class="mdui-typo">${escapeHtml(error.message)}</div>`;
+    });
+}
 
 /**
  * 获取所有线路流量信息
