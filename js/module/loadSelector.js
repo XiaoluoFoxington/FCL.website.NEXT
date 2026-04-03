@@ -464,9 +464,9 @@ export async function loadSelector(options) {
     const tr = document.createElement('tr');
     const tdOperation = document.createElement('td');
     const tdArch = document.createElement('td');
+    const tdDes = document.createElement('td');
     const tdSize = document.createElement('td');
     const tdName = document.createElement('td');
-    const tdDes = document.createElement('td');
     const tdUrl = document.createElement('td');
 
     const btnDl = document.createElement('a');
@@ -476,9 +476,10 @@ export async function loadSelector(options) {
     btnDl.className = 'mdui-btn mdui-btn-block mdui-btn-raised mdui-ripple';
     tdOperation.appendChild(btnDl);
 
-    tdArch.innerText = item.arch || inferArchFromStr(item.url) || inferArchFromStr(item.name) || inferArchForZL(item.url);
+    tdArch.innerText = item.arch || inferArchFromStr(item.url) || inferArchFromStr(item.name) || inferArchForZL(item.url) || '';
 
     function inferArchFromStr(str) {
+      if (!str) return '';
       const key = Object.keys(archMap).find(k => str.includes(k));
       return archMap[key] || '';
     }
@@ -495,10 +496,11 @@ export async function loadSelector(options) {
       tdArch.style.color = '#00ff00';
     }
 
-    tdSize.innerText = xf_formatBytes(item.size) || '';
-    tdName.innerText = item.name || '';
-
     tdDes.innerText = item.description || '';
+
+    tdSize.innerText = xf_formatBytes(item.size) || '';
+
+    tdName.innerText = item.name || '';
 
     const tdUrlA = document.createElement('a');
     tdUrlA.innerText = item.url;
@@ -510,9 +512,9 @@ export async function loadSelector(options) {
 
     tr.appendChild(tdOperation);
     tr.appendChild(tdArch);
+    tr.appendChild(tdDes);
     tr.appendChild(tdSize);
     tr.appendChild(tdName);
-    tr.appendChild(tdDes);
     tr.appendChild(tdUrl);
     
     // 存储原始文本和倒计时延迟时间
