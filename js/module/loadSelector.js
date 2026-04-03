@@ -311,10 +311,10 @@ export async function loadSelector(options) {
 
     // 分析哪些列是空的
     const columnIndicesToKeep = [];
-    const columnHeaders = ['操作', '架构', '大小', '显示名称', 'URL'];
+    const columnHeaders = ['操作', '架构', '描述', '大小', '显示名称', 'URL'];
     
     // 检查每一列是否全部为空
-    for (let colIndex = 0; colIndex < 5; colIndex++) {
+    for (let colIndex = 0; colIndex < 6; colIndex++) {
       let hasContent = false;
       
       for (const row of rows) {
@@ -466,6 +466,7 @@ export async function loadSelector(options) {
     const tdArch = document.createElement('td');
     const tdSize = document.createElement('td');
     const tdName = document.createElement('td');
+    const tdDes = document.createElement('td');
     const tdUrl = document.createElement('td');
 
     const btnDl = document.createElement('a');
@@ -497,6 +498,8 @@ export async function loadSelector(options) {
     tdSize.innerText = xf_formatBytes(item.size) || '';
     tdName.innerText = item.name || '';
 
+    tdDes.innerText = item.description || '';
+
     const tdUrlA = document.createElement('a');
     tdUrlA.innerText = item.url;
     tdUrlA.href = item.url;
@@ -509,6 +512,7 @@ export async function loadSelector(options) {
     tr.appendChild(tdArch);
     tr.appendChild(tdSize);
     tr.appendChild(tdName);
+    tr.appendChild(tdDes);
     tr.appendChild(tdUrl);
     
     // 存储原始文本和倒计时延迟时间
