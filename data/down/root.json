@@ -23,6 +23,11 @@
     "nextUrl": "/data/down/zl2/index.json"
   },
   {
+    "name": "Amethyst-Android",
+    "type": "启动器",
+    "nextUrl": "/data/down/amethyst-android/index.json"
+  },
+  {
     "name": "Pojav Launcher",
     "type": "启动器",
     "nextUrl": "/data/down/pl/index.json",
@@ -42,11 +47,6 @@
     "name": "MCinaBox",
     "type": "启动器",
     "nextUrl": "/data/down/mb/index.json"
-  },
-  {
-    "name": "Amethyst",
-    "type": "启动器",
-    "description": "<div class=\"mdui-typo\"><p>Amethyst还没有发行正式版（连预览版也没有）。</p></div>"
   },
   {
     "name": "渲染器",

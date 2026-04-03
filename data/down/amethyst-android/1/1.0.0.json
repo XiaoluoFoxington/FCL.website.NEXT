@@ -1,0 +1,11 @@
+[
+  {
+    "name": "Amethyst",
+    "url": "https://pan.huang1111.cn/f/kq6aIx/Amethyst.apk"
+  },
+  {
+    "name": "Amethyst-Debug",
+    "url": "https://pan.huang1111.cn/f/MPezSv/Amethyst-Debug.apk",
+    "description": "用于调试，可共存。如果您已经安装非调试版，安装此将会影响您的存档。"
+  }
+]
