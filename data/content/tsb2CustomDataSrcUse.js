@@ -46,6 +46,7 @@ async function xf_tab2CustomDataSrcReset_Click() {
   loadSelector.loadSelector({
     containerId: 'xf_selectors',
     dataSource: defaultDataSource,
+    forceStopLoadBtnId: 'forceStopLoadBtn',
   });
 }
 

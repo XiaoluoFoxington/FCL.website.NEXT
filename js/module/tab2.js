@@ -24,6 +24,12 @@ export function xf_addEventListeners() {
   sysInfoPanelEle.addEventListener('click', xf_sysInfoPanel_Click);
   document.getElementById('tsb2CustomDataSrcUseItem').addEventListener('click', xf_tsb2CustomDataSrcUseItem_Click, { once: true });
   document.getElementById('tsb2CustomDataSrcGuideItem').addEventListener('click', xf_tsb2CustomDataSrcGuideItem_Click, { once: true });
+  
+  // 添加强行终止加载按钮事件监听
+  const forceStopBtn = document.getElementById('forceStopLoadBtn');
+  if (forceStopBtn) {
+    forceStopBtn.addEventListener('click', xf_forceStopLoadBtn_Click);
+  }
 }
 
 /**
@@ -56,6 +62,40 @@ export async function xf_tsb2CustomDataSrcGuideItem_Click() {
   const customDataSrcGuide = document.getElementById('tsb2CustomDataSrcGuide');
   customDataSrcGuide.innerHTML = await loadContent.fetchItems('/data/content/tsb2CustomDataSrcGuide.html', 'text');
   hljs.highlightAll();
+}
+
+/**
+ * 强行终止加载按钮的click
+ */
+export function xf_forceStopLoadBtn_Click() {
+  console.log('强行终止加载：用户点击了终止按钮');
+
+  // 调用loadContent模块的取消方法
+  loadContent.xf_abortAllLoadings();
+
+  // 隐藏停止按钮
+  const forceStopBtn = document.getElementById('forceStopLoadBtn');
+  if (forceStopBtn) {
+    forceStopBtn.classList.add('xf-hide');
+  }
+
+  // 启用所有选择框和按钮
+  const container = document.getElementById('xf_selectors');
+  if (container) {
+    const selects = container.querySelectorAll('select');
+    const buttons = container.querySelectorAll('a');
+
+    selects.forEach(select => {
+      select.disabled = false;
+      select.classList.remove('disabled');
+    });
+
+    buttons.forEach(button => {
+      button.disabled = false;
+      button.classList.remove('disabled');
+    });
+  }
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -98,5 +138,6 @@ export async function xf_loadSelectors() {
   loadSelector.loadSelector({
     containerId: 'xf_selectors',
     dataSource: defaultDataSource,
+    forceStopLoadBtnId: 'forceStopLoadBtn',
   });
 }

@@ -1,6 +1,18 @@
 import utils from '/js/module/utils.js';
 
 export default class loadContent {
+  static abortController = null; // 全局AbortController用于取消请求
+
+  /**
+   * 取消所有正在进行的加载请求
+   */
+  static xf_abortAllLoadings() {
+    if (this.abortController) {
+      this.abortController.abort();
+      this.abortController = null;
+      console.log('强行终止加载：已终止所有正在进行的请求。');
+    }
+  }
 
   /**
    * 获取 HTML 内容
@@ -10,7 +22,11 @@ export default class loadContent {
    */
   static async xf_getHtmlContent(url, onProgress) {
     console.log(`获取 HTML 内容：${url}`); // 打印日志
-    return fetch(url) // 使用 fetch API 发起网络请求获取指定 URL 的内容
+    
+    // 创建新的AbortController用于取消请求
+    this.abortController = new AbortController();
+    
+    return fetch(url, { signal: this.abortController.signal }) // 使用 fetch API 发起网络请求获取指定 URL 的内容
       .then(response => {
         if (!response.ok) {
           throw new Error(`获取 HTML 内容：出错：HTTP：${response.status}`);
@@ -56,7 +72,15 @@ export default class loadContent {
       .catch(e => {
         console.error('获取 HTML 内容：出错：', e); // 在控制台输出错误信息
         const errorElement = document.createElement('span'); // 创建 DOM 元素用于显示错误信息
-        errorElement.textContent = `获取 HTML 内容：出错：${e.message}`; // 设置错误信息文本内容
+        
+        // 使用统一的错误处理函数
+        const errorInfo = utils.xf_handleError(e, {
+          defaultMessage: `获取 HTML 内容：出错：${e.message}`
+        });
+        
+        errorElement.textContent = errorInfo.message;
+        errorElement.style.color = errorInfo.color;
+        
         return errorElement; // 返回错误信息元素
       });
   }
@@ -116,7 +140,13 @@ export default class loadContent {
       mdui.mutation(); // 更新 MDUI
     } catch (e) {
       console.error('获取并加载 HTML 内容到指定容器：', e); // 报错
-      container.innerHTML = `<div class="xf-error-text">获取并加载 HTML 内容到指定容器：出错：${e.message}</div>`;
+      
+      // 使用统一的错误处理函数
+      const errorInfo = utils.xf_handleError(e, {
+        defaultMessage: `获取并加载 HTML 内容到指定容器：出错：${e.message}`
+      });
+      
+      container.innerHTML = `<div class="xf-error-text" style="color: ${errorInfo.color};">${errorInfo.message}</div>`;
     }
   }
 
@@ -129,7 +159,10 @@ export default class loadContent {
   static async fetchItems(source, responseType = 'json') {
     if (typeof source === 'string') {
       try {
-        const response = await fetch(source);
+        // 创建新的AbortController用于取消请求
+        this.abortController = new AbortController();
+        
+        const response = await fetch(source, { signal: this.abortController.signal });
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
@@ -139,6 +172,18 @@ export default class loadContent {
           // 网络错误处理
           throw new Error(`网络错误：${error.message}`);
         }
+        
+        // 使用统一的错误处理函数
+        const errorInfo = utils.xf_handleError(error, {
+          defaultMessage: error.message,
+          isUserFriendly: false // 这里不返回用户友好消息，因为需要抛出原始错误
+        });
+        
+        if (errorInfo.isAbort) {
+          // 取消操作导致的错误，抛出更友好的错误消息
+          throw new Error('强行终止加载。');
+        }
+        
         throw error;
       }
     }

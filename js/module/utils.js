@@ -94,4 +94,40 @@ export default class utils {
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#39;');
   }
+
+  /**
+   * 统一的错误处理函数
+   * @param {Error} error - 错误对象
+   * @param {Object} options - 配置选项
+   * @param {string} [options.defaultMessage] - 默认错误消息
+   * @param {boolean} [options.isUserFriendly] - 是否返回用户友好的消息
+   * @returns {Object} - 处理后的错误信息
+   */
+  static xf_handleError(error, options = {}) {
+    const {
+      defaultMessage = '出错：' + error.message,
+      isUserFriendly = true
+    } = options;
+
+    // 检查是否为取消操作导致的错误
+    const isAbortError = error.name === 'AbortError' || 
+                         error.message.includes('The operation was aborted');
+
+    if (isAbortError && isUserFriendly) {
+      return {
+        message: '强行终止加载。（' + defaultMessage + '）',
+        isAbort: true,
+        isUserFriendly: true,
+      };
+    }
+
+    // 其他类型的错误
+    return {
+      message: defaultMessage,
+      isAbort: false,
+      isUserFriendly: false,
+      color: '#f00',
+      originalError: error
+    };
+  }
 }

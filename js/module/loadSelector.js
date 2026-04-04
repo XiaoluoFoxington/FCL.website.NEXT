@@ -13,6 +13,7 @@ export default class loadSelector {
    * @param {string} options.sourceApiVer - 初始数据源的API Ver
    * @param {boolean} options.disableDebounce - 是否禁用下载按钮点击防抖
    * @param {number} options.debounceDelay - 防抖延迟时间（秒）
+   * @param {string} [options.forceStopLoadBtnId] - 强行终止加载按钮的ID
    * @param {Function} [options.onCreateSelectElement] - 创建选择元素的回调函数
    * @param {Function} [options.onCreateDescriptionElement] - 创建描述元素的回调函数
    * @param {Function} [options.onCreateDownloadElement] - 创建下载元素的回调函数
@@ -28,6 +29,7 @@ export default class loadSelector {
       sourceApiVer,
       disableDebounce = false,
       debounceDelay = 10,
+      forceStopLoadBtnId,
       onCreateSelectElement = defaultCreateSelectElement,
       onCreateDescriptionElement = defaultCreateDescriptionElement,
       onCreateDownloadElement = defaultCreateDownloadElement,
@@ -384,6 +386,14 @@ export default class loadSelector {
         button.disabled = true;
         button.classList.add('disabled'); // 意义不明，虽然<a>没有disabled属性，但明明有样式，添加disabled属性后样式竟然没变。只好直接添加disabled类名了。
       });
+      
+      // 显示强行终止加载按钮
+      if (forceStopLoadBtnId) {
+        const forceStopBtn = document.getElementById(forceStopLoadBtnId);
+        if (forceStopBtn) {
+          forceStopBtn.classList.remove('xf-hide');
+        }
+      }
     }
 
     /**
@@ -402,6 +412,14 @@ export default class loadSelector {
         button.disabled = false;
         button.classList.remove('disabled');
       });
+      
+      // 隐藏强行终止加载按钮
+      if (forceStopLoadBtnId) {
+        const forceStopBtn = document.getElementById(forceStopLoadBtnId);
+        if (forceStopBtn) {
+          forceStopBtn.classList.add('xf-hide');
+        }
+      }
     }
 
     // 默认实现函数
@@ -597,8 +615,15 @@ export default class loadSelector {
       enableAllSelects();
       clearLevelElements(level);
       const errorEl = document.createElement('div');
-      errorEl.style.color = '#f00';
-      errorEl.textContent = `出错：${message}`;
+      
+      // 使用统一的错误处理函数
+      const errorInfo = utils.xf_handleError(new Error(message), {
+        defaultMessage: `出错：${message}`
+      });
+      
+      errorEl.textContent = errorInfo.message;
+      errorEl.style.color = errorInfo.color;
+      
       container.appendChild(errorEl);
     }
 
