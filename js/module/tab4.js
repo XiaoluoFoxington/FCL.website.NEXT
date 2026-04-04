@@ -1,5 +1,5 @@
-import { loadModule } from '/js/module/moduleLoader.js';
-import { xf_escapeHtml } from './utils.js';
+import loadContent from '/js/module/loadContent.js';
+import utils from './utils.js';
 
 
 /**
@@ -68,8 +68,8 @@ export function xf_loadWay2BanInfo() {
       for (const item of items) {
         tbodyHtml += `
           <tr>
-            <td>${xf_escapeHtml(item.ip)}</td>
-            <td>${xf_escapeHtml(item.reason)}</td>
+            <td>${utils.xf_escapeHtml(item.ip)}</td>
+            <td>${utils.xf_escapeHtml(item.reason)}</td>
           </tr>
         `;
       }
@@ -98,7 +98,7 @@ export function xf_loadWay2BanInfo() {
     })
     .catch(error => {
       console.error('获取线路2封禁列表失败：', error);
-      container.innerHTML = `<div class="mdui-typo" style="color: #f00;">出错：${xf_escapeHtml(error.message)}</div>`;
+      container.innerHTML = `<div class="mdui-typo" style="color: #f00;">出错：${utils.xf_escapeHtml(error.message)}</div>`;
     });
 }
 
@@ -162,10 +162,10 @@ export function xf_loadWay10BanInfo() {
       for (const row of rows) {
         tableHtml += `
           <tr>
-            <td>${xf_escapeHtml(row.ip)}</td>
-            <td>${xf_escapeHtml(row.reason)}</td>
-            <td>${xf_escapeHtml(row.traffic)}</td>
-            <td>${xf_escapeHtml(row.time)}</td>
+            <td>${utils.xf_escapeHtml(row.ip)}</td>
+            <td>${utils.xf_escapeHtml(row.reason)}</td>
+            <td>${utils.xf_escapeHtml(row.traffic)}</td>
+            <td>${utils.xf_escapeHtml(row.time)}</td>
           </tr>
         `;
       }
@@ -180,7 +180,7 @@ export function xf_loadWay10BanInfo() {
     })
     .catch(error => {
       console.error('获取线路10封禁列表失败：', error);
-      container.innerHTML = `<div class="mdui-typo" style="color: #f00;">出错：${xf_escapeHtml(error.message)}</div>`;
+      container.innerHTML = `<div class="mdui-typo" style="color: #f00;">出错：${utils.xf_escapeHtml(error.message)}</div>`;
     });
 }
 
@@ -198,8 +198,6 @@ export function xf_loadTrafficInfo() {
  * @param {string} url 流量信息API URL
  */
 export async function xf_loadWay2TrafficInfo(url = '/data/content/way2Traffic.json') {
-  const loadContent = await loadModule('/js/module/loadContent.js');
-
   const trafficEl = document.getElementById('xf_fclWay2Traffic');
   const totalEl = document.getElementById('xf_fclWay2Total');
   try {
@@ -219,8 +217,6 @@ export async function xf_loadWay2TrafficInfo(url = '/data/content/way2Traffic.js
  * @param {string} url 流量信息API URL
  */
 export async function xf_loadWay10TrafficInfo(url = 'https://mirror.lemwood.icu/api/stats') {
-  const loadContent = await loadModule('/js/module/loadContent.js');
-
   const totalEl = document.getElementById('xf_fclWay10Total');
   try {
     const apiData = await loadContent.fetchItems(url);
@@ -238,7 +234,6 @@ export async function xf_loadWay10TrafficInfo(url = 'https://mirror.lemwood.icu/
  * @returns {Array} 贡献者数组
  */
 export async function getContributors() {
-  const loadContent = await loadModule('/js/module/loadContent.js');
   return await loadContent.fetchItems('/data/content/contributors.json');
 }
 
@@ -371,7 +366,6 @@ export function xf_generateDownloadLines(contributors) {
  * 加载tab4内容
  */
 export async function xf_loadTab4Content() {
-  const loadContent = await loadModule('/js/module/loadContent.js');
   await loadContent.xf_loadHtmlContentFromUrl('/page/tab4.html', document.getElementById('tab4')); // 加载tab4内容
 }
 
@@ -380,7 +374,6 @@ export async function xf_loadTab4Content() {
  * @returns {Promise<Array>} 使用的开源项目数组
  */
 export async function xf_getUseProjects() {
-  const loadContent = await loadModule('/js/module/loadContent.js');
   return loadContent.fetchItems('/data/content/useProject.json');
 }
 

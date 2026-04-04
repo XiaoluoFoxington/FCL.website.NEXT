@@ -1,4 +1,6 @@
-import { loadModule } from '/js/module/moduleLoader.js';
+import utils from '/js/module/utils.js';
+import loadContent from '/js/module/loadContent.js';
+import websiteInfo from '/js/module/websiteInfo.js';
 
 /**
  * 加载tab1内容并初始化
@@ -23,8 +25,7 @@ export function xf_addEventListeners() {
  * 加载“介绍FCL”按钮的click
  */
 export async function xf_loadIntroFclBtn_Click() {
-  const loadContent = await loadModule('/js/module/loadContent.js');
-  loadContent.xf_loadHtmlContentFromUrl('/page/introFcl.html', document.getElementById('introFcl')); // 加载introFcl内容
+  await loadContent.xf_loadHtmlContentFromUrl('/page/introFcl.html', document.getElementById('introFcl')); // 加载introFcl内容
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -33,7 +34,6 @@ export async function xf_loadIntroFclBtn_Click() {
  * 加载tab1内容
  */
 export async function xf_loadTab1Content() {
-  const loadContent = await loadModule('/js/module/loadContent.js');
   await loadContent.xf_loadHtmlContentFromUrl('/page/tab1.html', document.getElementById('tab1')); // 加载tab1内容
 }
 
@@ -41,8 +41,6 @@ export async function xf_loadTab1Content() {
  * 加载重要公告内容
  */
 export async function xf_loadImportantAnnouncement() {
-  const loadContent = await loadModule('/js/module/loadContent.js');
-  const utils = await loadModule('/js/module/utils.js');
 
   const headEl = document.getElementById('xf_importantAnnouncementHead');
   const contentEl = document.getElementById('xf_importantAnnouncementContent');
@@ -80,8 +78,6 @@ export async function xf_loadImportantAnnouncement() {
  * 加载公告内容
  */
 export async function xf_loadAnnouncement() {
-  const loadContent = await loadModule('/js/module/loadContent.js');
-  const utils = await loadModule('/js/module/utils.js');
 
   const CHECKSUM_STORAGE_KEY = 'xf_announcement_checksum';
 
@@ -136,10 +132,8 @@ export async function xf_loadAnnouncement() {
  * 判断并显示赞助提醒
  */
 export async function xf_checkAndShowSponsorRemind() {
-  const utils = await loadModule('/js/module/utils.js');
-  const main = await loadModule('/js/main.js');
   const notShowSponsorRemind = utils.xf_readLocalStorage('notShowSponsorRemind') === 'true';
-  const visitCount = await main.xf_getUserVisitCount();
+  const visitCount = await websiteInfo.xf_getUserVisitCount();
   const sponsorRemindEl = document.getElementById('sponsorRemind');
   if (!sponsorRemindEl || !utils.isMultipleOfTen(visitCount) || notShowSponsorRemind) {
     return;

@@ -1,4 +1,7 @@
-import { loadModule } from '/js/module/moduleLoader.js';
+import utils from '/js/module/utils.js';
+import sysInfoJs from '/js/module/sysInfo.js';
+import loadContent from '/js/module/loadContent.js';
+import loadSelector from '/js/module/loadSelector.js';
 const defaultDataSource = '/data/down/root.json';
 let sysInfoPanelEle;
 let sysInfo;
@@ -36,7 +39,6 @@ export function xf_sysInfoPanel_Click() {
  * 自定义数据源使用第三方源的click
  */
 export async function xf_tsb2CustomDataSrcUseItem_Click() {
-  const loadContent = await loadModule('/js/module/loadContent.js');
   const customDataSrcUse = document.getElementById('tsb2CustomDataSrcUse');
   const customDataSrcUseHtml = await loadContent.fetchItems('/data/content/tsb2CustomDataSrcUse.html', 'text');
   const customDataSrcUseJs = document.createElement('script');
@@ -51,7 +53,6 @@ export async function xf_tsb2CustomDataSrcUseItem_Click() {
  * 自定义数据源开发接入指南的click
  */
 export async function xf_tsb2CustomDataSrcGuideItem_Click() {
-  const loadContent = await loadModule('/js/module/loadContent.js');
   const customDataSrcGuide = document.getElementById('tsb2CustomDataSrcGuide');
   customDataSrcGuide.innerHTML = await loadContent.fetchItems('/data/content/tsb2CustomDataSrcGuide.html', 'text');
   hljs.highlightAll();
@@ -63,7 +64,6 @@ export async function xf_tsb2CustomDataSrcGuideItem_Click() {
  * 加载tab2内容
  */
 export async function xf_loadTab2Content() {
-  const loadContent = await loadModule('/js/module/loadContent.js');
   await loadContent.xf_loadHtmlContentFromUrl('/page/tab2.html', document.getElementById('tab2')); // 加载tab2内容
   sysInfoPanelEle = document.getElementById('xf_sysInfoPanel');
   sysInfo = document.getElementById('xf_sysInfo');
@@ -73,7 +73,6 @@ export async function xf_loadTab2Content() {
  * 读取保存的系统信息面板的class
  */
 export async function xf_loadSysInfoPanelClass() {
-  const utils = await loadModule('/js/module/utils.js');
   sysInfoPanelEle.className = utils.xf_readLocalStorage('xf_sysInfoPanelClass') || 'mdui-panel-item mdui-panel-item-open';
 }
 
@@ -81,7 +80,6 @@ export async function xf_loadSysInfoPanelClass() {
  * 写入系统信息面板的class
  */
 export async function xf_writeSysInfoPanelClass() {
-  const utils = await loadModule('/js/module/utils.js');
   utils.xf_writeLocalStorage('xf_sysInfoPanelClass', sysInfoPanelEle.className);
 }
 
@@ -89,7 +87,6 @@ export async function xf_writeSysInfoPanelClass() {
  * 展示系统信息
  */
 export async function xf_showSysInfo() {
-  const sysInfoJs = await loadModule('/js/module/sysInfo.js');
   sysInfoJs.show(sysInfo, document.getElementById('xf_uaInfo'));
 }
 
@@ -98,7 +95,6 @@ export async function xf_showSysInfo() {
  * 加载选择器
  */
 export async function xf_loadSelectors() {
-  const loadSelector = await loadModule('/js/module/loadSelector.js');
   loadSelector.loadSelector({
     containerId: 'xf_selectors',
     dataSource: defaultDataSource,

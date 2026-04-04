@@ -1,5 +1,6 @@
 import { loadModule } from '/js/module/moduleLoader.js';
 const defaultDataSource = '/data/down/root.json';
+import loadSelector from '/js/module/loadSelector.js';
 
 const srcInput = document.getElementById('tsb2CustomDataSrcInput');
 const srcApiVerInput = document.getElementById('tab2CustomDataSrcApiVerInput');
@@ -18,7 +19,6 @@ btnMoreParams.addEventListener('click', xf_tab2CustomDataSrcMoreParams_Click);
 * 自定义数据源提交按钮的click
 */
 async function xf_tab2CustomDataSrcSubmit_Click() {
-  const loadSelector = await loadModule('/js/module/loadSelector.js');
   const source = srcInput.value;
   let final = source;
   if (source.startsWith('[')) {
@@ -38,7 +38,6 @@ async function xf_tab2CustomDataSrcSubmit_Click() {
  * 自定义数据源还原默认按钮的click
  */
 async function xf_tab2CustomDataSrcReset_Click() {
-  const loadSelector = await loadModule('/js/module/loadSelector.js');
   srcInput.value = defaultDataSource;
   srcApiVerInput.value = '';
   disableDebounce.checked = false;

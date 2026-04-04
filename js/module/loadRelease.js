@@ -1,53 +1,53 @@
-import { loadModule } from '/js/module/moduleLoader.js';
+export default class loadRelease {
 
-/**
- * 通用Release历史加载器
- * @param {string} repoFullName - 仓库全名（例如：'XiaoluoFoxington/FCL.website.NEXT'）
- * @param {string} targetElementId - 目标元素ID，用于插入加载的内容
- */
-export async function loadReleaseHistory(repoFullName, targetElementId) {
-  console.log('加载Release历史：', repoFullName, targetElementId);
-  
-  try {
-    await fetchAndRenderReleases();
-  } catch (error) {
-    onError(error);
-  }
+  /**
+   * 通用Release历史加载器
+   * @param {string} repoFullName - 仓库全名（例如：'XiaoluoFoxington/FCL.website.NEXT'）
+   * @param {string} targetElementId - 目标元素ID，用于插入加载的内容
+   */
+  static async loadReleaseHistory(repoFullName, targetElementId) {
+    console.log('加载Release历史：', repoFullName, targetElementId);
 
-  async function fetchAndRenderReleases() {
     try {
-      if (!isValidRepoFullName(repoFullName)) {
-        onError('仓库全名非法');
-        return;
-      }
-      
-      const containerElement = document.getElementById(targetElementId);
-      if (!containerElement) {
-        onError('目标元素不存在');
-        return;
-      }
-      
-      const releaseData = await getReleaseData(repoFullName);
-      if (releaseData.length === 0) {
-        onError('没有Release数据');
-        return;
-      }
-      
-      renderReleasesToContainer(releaseData, containerElement);
+      await fetchAndRenderReleases();
     } catch (error) {
       onError(error);
     }
-  }
 
-  /**
-   * 渲染Release数据到容器
-   * @param {Array} releases Release数据数组
-   * @param {HTMLElement} container 渲染容器
-   */
-  function renderReleasesToContainer(releases, container) {
-    container.innerHTML = '';
+    async function fetchAndRenderReleases() {
+      try {
+        if (!isValidRepoFullName(repoFullName)) {
+          onError('仓库全名非法');
+          return;
+        }
 
-    const containerHaderStr = `
+        const containerElement = document.getElementById(targetElementId);
+        if (!containerElement) {
+          onError('目标元素不存在');
+          return;
+        }
+
+        const releaseData = await getReleaseData(repoFullName);
+        if (releaseData.length === 0) {
+          onError('没有Release数据');
+          return;
+        }
+
+        renderReleasesToContainer(releaseData, containerElement);
+      } catch (error) {
+        onError(error);
+      }
+    }
+
+    /**
+     * 渲染Release数据到容器
+     * @param {Array} releases Release数据数组
+     * @param {HTMLElement} container 渲染容器
+     */
+    function renderReleasesToContainer(releases, container) {
+      container.innerHTML = '';
+
+      const containerHaderStr = `
       <div class="mdui-panel-item-header mdui-ripple">
         <div class="mdui-panel-item-title">版本名称</div>
         <div class="mdui-panel-item-summary">版本Tag</div>
@@ -56,20 +56,20 @@ export async function loadReleaseHistory(repoFullName, targetElementId) {
       <div class="mdui-panel-item-body mdui-typo">
         <p>我是表头~</p>
       </div>`;
-    const containerHader = document.createElement('div');
-    containerHader.classList.add('mdui-panel-item');
-    containerHader.innerHTML = containerHaderStr;
+      const containerHader = document.createElement('div');
+      containerHader.classList.add('mdui-panel-item');
+      containerHader.innerHTML = containerHaderStr;
 
-    const panelContainer = document.createElement('div');
-    panelContainer.id = 'release-panel-container';
-    panelContainer.classList.add('mdui-panel');
-    panelContainer.setAttribute('mdui-panel', '');
-    
-    // 使用DocumentFragment批量处理DOM操作
-    const fragment = document.createDocumentFragment();
-    
-    releases.forEach((release, index) => {
-      const panelHtml = `
+      const panelContainer = document.createElement('div');
+      panelContainer.id = 'release-panel-container';
+      panelContainer.classList.add('mdui-panel');
+      panelContainer.setAttribute('mdui-panel', '');
+
+      // 使用DocumentFragment批量处理DOM操作
+      const fragment = document.createDocumentFragment();
+
+      releases.forEach((release, index) => {
+        const panelHtml = `
         <div class="mdui-panel-item ${index === 0 ? 'mdui-panel-item-open' : ''}" id="release-panel-${index}">
           <div class="mdui-panel-item-header mdui-ripple">
             <div class="mdui-panel-item-title">${release.name || '未命名版本'}</div>
@@ -107,30 +107,30 @@ export async function loadReleaseHistory(repoFullName, targetElementId) {
           </div>
         </div>`;
 
-      const panelElementWrapper = document.createElement('div');
-      panelElementWrapper.innerHTML = panelHtml;
-      
-      fragment.appendChild(panelElementWrapper.firstElementChild);
-    });
-    
-    panelContainer.appendChild(containerHader);
-    panelContainer.appendChild(fragment);
-    container.appendChild(panelContainer);
+        const panelElementWrapper = document.createElement('div');
+        panelElementWrapper.innerHTML = panelHtml;
 
-    mdui.mutation();
-  }
+        fragment.appendChild(panelElementWrapper.firstElementChild);
+      });
 
-  /**
-   * 渲染Release资源
-   * @param {Array} assets - Release资源数组
-   * @returns {string} - 渲染后的HTML字符串
-   */
-  function renderReleasesAssets(assets) {
-    if (assets.length === 0) {
-      return '<div class="mdui-typo">无资源</div>';
+      panelContainer.appendChild(containerHader);
+      panelContainer.appendChild(fragment);
+      container.appendChild(panelContainer);
+
+      mdui.mutation();
     }
-    
-    return assets.map(asset => `
+
+    /**
+     * 渲染Release资源
+     * @param {Array} assets - Release资源数组
+     * @returns {string} - 渲染后的HTML字符串
+     */
+    function renderReleasesAssets(assets) {
+      if (assets.length === 0) {
+        return '<div class="mdui-typo">无资源</div>';
+      }
+
+      return assets.map(asset => `
       <div class="mdui-table-fluid">
         <table class="mdui-table">
           <thead>
@@ -155,67 +155,67 @@ export async function loadReleaseHistory(repoFullName, targetElementId) {
         </table>
       </div>
       `).join('');
-  }
+    }
 
-  /**
-   * 获取Release数据
-   * @param {string} repoFullName - 仓库全名
-   * @returns {Promise<Array>} - Release数据数组
-   */
-  async function getReleaseData(repoFullName) {
-    const apiUrl = `https://api.github.com/repos/${repoFullName}/releases`;
-    const response = await fetch(apiUrl);
-    
-    if (!response.ok) {
-      const errorMsg = {
+    /**
+     * 获取Release数据
+     * @param {string} repoFullName - 仓库全名
+     * @returns {Promise<Array>} - Release数据数组
+     */
+    async function getReleaseData(repoFullName) {
+      const apiUrl = `https://api.github.com/repos/${repoFullName}/releases`;
+      const response = await fetch(apiUrl);
+
+      if (!response.ok) {
+        const errorMsg = {
           404: '404：找不到仓库',
           403: '403：API请求超限',
           500: '500：GH内部错误'
         }[response.status] || `${response.status}：${response.statusText}`;
-      throw new Error(errorMsg);
-    }
-    
-    const data = await response.json();
-    return data;
-  }
+        throw new Error(errorMsg);
+      }
 
-  /**
-   * 检查仓库全名是否合法
-   * @param {string} repoFullName - 仓库全名
-   * @returns {boolean} - 是否合法
-   */
-  function isValidRepoFullName(repoFullName) {
-    if (typeof repoFullName !== 'string') {
-      return false;
+      const data = await response.json();
+      return data;
     }
-    
-    const parts = repoFullName.split('/');
-    if (parts.length !== 2) {
-      return false;
-    }
-    
-    const [owner, repo] = parts;
-    return owner.trim() !== '' && repo.trim() !== '';
-  }
 
-  /**
-   * 处理加载错误
-   * @param {Error|string} e - 错误内容
-   */
-  function onError(e) {
-    const errorMessage = typeof e === 'string' ? e : e.message;
-    const fullErrorMessage = '加载Release历史：出错：' + errorMessage;
-    
-    // 打印详细错误日志
-    if (e instanceof Error) {
-      console.error(fullErrorMessage, e);
-    } else {
-      console.error(fullErrorMessage);
+    /**
+     * 检查仓库全名是否合法
+     * @param {string} repoFullName - 仓库全名
+     * @returns {boolean} - 是否合法
+     */
+    function isValidRepoFullName(repoFullName) {
+      if (typeof repoFullName !== 'string') {
+        return false;
+      }
+
+      const parts = repoFullName.split('/');
+      if (parts.length !== 2) {
+        return false;
+      }
+
+      const [owner, repo] = parts;
+      return owner.trim() !== '' && repo.trim() !== '';
     }
-    
-    const containerElement = document.getElementById(targetElementId);
-    if (containerElement) {
-      containerElement.innerHTML = `
+
+    /**
+     * 处理加载错误
+     * @param {Error|string} e - 错误内容
+     */
+    function onError(e) {
+      const errorMessage = typeof e === 'string' ? e : e.message;
+      const fullErrorMessage = '加载Release历史：出错：' + errorMessage;
+
+      // 打印详细错误日志
+      if (e instanceof Error) {
+        console.error(fullErrorMessage, e);
+      } else {
+        console.error(fullErrorMessage);
+      }
+
+      const containerElement = document.getElementById(targetElementId);
+      if (containerElement) {
+        containerElement.innerHTML = `
       <div class="mdui-panel" mdui-panel>
         <div class="mdui-panel-item mdui-panel-item-open" style="background-color: #ff000040;">
           <div class="mdui-panel-item-header mdui-ripple">
@@ -227,8 +227,9 @@ export async function loadReleaseHistory(repoFullName, targetElementId) {
           </div>
         </div>
       </div>`;
-      mdui.mutation();
+        mdui.mutation();
+      }
     }
+
   }
-  
 }

@@ -1,4 +1,4 @@
-import { loadModule } from '/js/module/moduleLoader.js';
+import loadContent from '/js/module/loadContent.js';
 
 /**
  * 加载tab3内容
@@ -13,7 +13,6 @@ export async function xf_init() {
  * 加载tab3内容
  */
 export async function xf_loadTab3Content() {
-  const loadContent = await loadModule('/js/module/loadContent.js');
   await loadContent.xf_loadHtmlContentFromUrl('/page/tab3.html', document.getElementById('tab3')); // 加载tab3内容
 }
 

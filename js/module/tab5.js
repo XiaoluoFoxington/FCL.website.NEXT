@@ -1,4 +1,5 @@
-import { loadModule } from '/js/module/moduleLoader.js';
+import loadContent from '/js/module/loadContent.js';
+import loadRelease from '/js/module/loadRelease.js';
 
 /**
  * 加载tab5内容并初始化
@@ -20,7 +21,7 @@ export async function xf_init() {
 export function xf_addEventListeners(repoConfig) {
   // 自定义仓库查询按钮
   document.getElementById('tab5CustomRepoSubmit').addEventListener('click', xf_tab5CustomRepoSubmit_click);
-  
+
   // 为每个仓库面板添加事件监听
   repoConfig.forEach(config => {
     const panelElement = document.getElementById(config.panelId);
@@ -36,7 +37,6 @@ export function xf_addEventListeners(repoConfig) {
  * 自定义仓库查询按钮的click
  */
 export async function xf_tab5CustomRepoSubmit_click() {
-  const loadRelease = await loadModule('/js/module/loadRelease.js');
   await loadRelease.loadReleaseHistory(document.getElementById('tab5CustomRepoInput').value, 'tab5CustomRepoResult');
 }
 
@@ -47,7 +47,6 @@ export async function xf_tab5CustomRepoSubmit_click() {
  * @returns {Array} 仓库配置数组
  */
 export async function xf_getRepoConfig() {
-  const loadContent = await loadModule('/js/module/loadContent.js');
   const repoConfig = await loadContent.fetchItems('/data/content/tab5RepoConfig.json');
   return repoConfig;
 }
@@ -56,7 +55,6 @@ export async function xf_getRepoConfig() {
  * 加载仓库Release信息
  */
 export async function xf_loadRepoRelease(repoFullName, containerId) {
-  const loadRelease = await loadModule('/js/module/loadRelease.js');
   await loadRelease.loadReleaseHistory(repoFullName, containerId);
 }
 
@@ -67,14 +65,14 @@ export async function xf_loadRepoRelease(repoFullName, containerId) {
 export function xf_generateRepoPanels(repoConfig) {
   const panelContainer = document.getElementById('tab5RepoInfo');
   if (!panelContainer) return;
-  
+
   // 为每个仓库生成面板
   repoConfig.forEach(config => {
     // 跳过FCL，因为它有特殊的注意事项面板
     if (config.id === 'Fcl') {
       return;
     }
-    
+
     const panelHtml = `
       <div class="mdui-panel-item" id="${config.panelId}">
         <div class="mdui-panel-item-header mdui-ripple">
@@ -86,7 +84,7 @@ export function xf_generateRepoPanels(repoConfig) {
         </div>
       </div>
     `;
-    
+
     panelContainer.insertAdjacentHTML('beforeend', panelHtml);
   });
 }
@@ -95,7 +93,6 @@ export function xf_generateRepoPanels(repoConfig) {
  * 加载tab5内容
  */
 export async function xf_loadTab5Content() {
-  const loadContent = await loadModule('/js/module/loadContent.js');
   await loadContent.xf_loadHtmlContentFromUrl('/page/tab5.html', document.getElementById('tab5'));
 }
 

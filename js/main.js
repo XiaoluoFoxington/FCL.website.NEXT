@@ -1,4 +1,10 @@
-import { loadModule } from '/js/module/moduleLoader.js';
+import utils from '/js/module/utils.js';
+import websiteInfo from '/js/module/websiteInfo.js';
+import { xf_init as tab1Init } from '/js/module/tab1.js';
+import { xf_init as tab2Init } from '/js/module/tab2.js';
+import { xf_init as tab3Init } from '/js/module/tab3.js';
+import { xf_init as tab4Init } from '/js/module/tab4.js';
+import { xf_init as tab5Init } from '/js/module/tab5.js';
 
 document.addEventListener('DOMContentLoaded', async function () {
   xf_setThemeByLocalStorage(); // 根据本地存储设置主题
@@ -7,7 +13,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   xf_loadHashContent();
   xf_loadWebsiteVisitCount(); // 获取访问量
   xf_loadWebsiteVerInfo(); // 加载网站版本信息
-  xf_increaseUserVisitCount();
+  await websiteInfo.xf_increaseUserVisitCount();
 });
 
 /**
@@ -48,8 +54,7 @@ function xf_xf_fclIcon_Click() {
  * TAB栏上的tab1链接的click
  */
 async function xf_tab1_link_Click() {
-  const tab1 = await loadModule('/js/module/tab1.js')
-  tab1.xf_init();
+  await tab1Init();
 }
 
 function xf_tab1_link_Click_Hash() {
@@ -62,8 +67,7 @@ function xf_tab1_link_Click_Hash() {
  * TAB栏上的tab2链接的click
  */
 async function xf_tab2_link_Click() {
-  const tab2 = await loadModule('/js/module/tab2.js')
-  tab2.xf_init();
+  await tab2Init();
 }
 
 function xf_tab2_link_Click_Hash() {
@@ -75,8 +79,7 @@ function xf_tab2_link_Click_Hash() {
  * TAB栏上的tab3链接的click
  */
 async function xf_tab3_link_Click() {
-  const tab3 = await loadModule('/js/module/tab3.js')
-  tab3.xf_init();
+  await tab3Init();
 }
 
 function xf_tab3_link_Click_Hash() {
@@ -88,8 +91,7 @@ function xf_tab3_link_Click_Hash() {
  * TAB栏上的tab4链接的click
  */
 async function xf_tab4_link_Click() {
-  const tab4 = await loadModule('/js/module/tab4.js')
-  tab4.xf_init();
+  await tab4Init();
 }
 
 function xf_tab4_link_Click_Hash() {
@@ -101,8 +103,7 @@ function xf_tab4_link_Click_Hash() {
  * TAB栏上的tab5链接的click
  */
 async function xf_tab5_link_Click() {
-  const tab5 = await loadModule('/js/module/tab5.js')
-  tab5.xf_init();
+  await tab5Init();
 }
 
 function xf_tab5_link_Click_Hash() {
@@ -185,7 +186,6 @@ async function xf_getCurrentTheme() {
  * @returns {string} - 本地存储中的主题，'dark'或'light'
  */
 async function xf_getLocalStorageTheme() {
-  const utils = await loadModule('/js/module/utils.js');
   const theme = utils.xf_readLocalStorage('theme') || 'dark';
   console.log('主题：本地存储中主题：' + theme);
   return theme;
@@ -200,7 +200,6 @@ async function xf_setTheme(theme) {
     console.error('主题：设置主题：参数错误');
     return;
   }
-  const utils = await loadModule('/js/module/utils.js');
   const body = document.body;
   const icon = document.getElementById('xf_themeSwitchBtn_icon');
   const text = document.getElementById('xf_themeSwitchBtn_text');
@@ -240,7 +239,6 @@ async function xf_setThemeByLocalStorage() {
  * 加载网站信息
  */
 async function xf_loadWebsiteInfo() {
-  const websiteInfo = await loadModule('/js/module/websiteInfo.js');
   websiteInfo.loadAll();
 }
 
@@ -260,26 +258,6 @@ async function xf_loadWebsiteVerInfo() {
   const response = await fetch('/versionInfo.json');
   const data = await response.json();
   document.getElementById('xf_websiteVer_git').textContent = data.git;
-}
-
-/**
- * 获取用户访问次数
- * @returns {number} - 访问次数
- */
-export async function xf_getUserVisitCount() {
-  const utils = await loadModule('/js/module/utils.js');
-  const visitCount = utils.xf_readLocalStorage('visitCount') || 0;
-  const visitCountInt = parseInt(visitCount);
-  return visitCountInt;
-}
-
-/**
- * 增加用户访问次数
- */
-async function xf_increaseUserVisitCount() {
-  const visitCountInt = await xf_getUserVisitCount();
-  const utils = await loadModule('/js/module/utils.js');
-  utils.xf_writeLocalStorage('visitCount', (visitCountInt + 1).toString());
 }
 
 /**
