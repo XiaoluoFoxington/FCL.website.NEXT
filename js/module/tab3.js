@@ -1,1 +1,1 @@
-import{loadModule}from"/js/module/moduleLoader.js";export async function xf_init(){await xf_loadTab3Content()}export async function xf_loadTab3Content(){const loadContent=await loadModule("/js/module/loadContent.js");await loadContent.xf_loadHtmlContentFromUrl("/page/tab3.html",document.getElementById("tab3"))}
+import loadContent from"/js/module/loadContent.js";export async function xf_init(){await xf_loadTab3Content()}export async function xf_loadTab3Content(){await loadContent.xf_loadHtmlContentFromUrl("/page/tab3.html",document.getElementById("tab3"))}
