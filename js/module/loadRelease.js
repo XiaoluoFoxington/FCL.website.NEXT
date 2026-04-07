@@ -1,3 +1,5 @@
+import utils from '/js/module/utils.js';
+
 export default class loadRelease {
 
   /**
@@ -138,7 +140,7 @@ function renderReleasesAssets(assets) {
           <tr><th colspan="2">${asset.name}</th></tr>
         </thead>
         <tbody>
-          <tr><td>大小</td><td>${asset.size}字节</td></tr>
+          <tr><td>大小</td><td>${utils.xf_formatBytes(asset.size)}</td></tr>
           <tr><td>校验</td><td>${asset.digest}</td></tr>
           <tr><td>GH下载URL</td><td><a href="${asset.browser_download_url}" target="_blank">${asset.browser_download_url}</a></td></tr>
         </tbody>
@@ -159,7 +161,7 @@ function renderReleasesAssets(assets) {
           <tr><th colspan="2">合计</th></tr>
         </thead>
         <tbody>
-          <tr><td>总大小</td><td>${totalSize}字节</td></tr>
+          <tr><td>总大小</td><td>${utils.xf_formatBytes(totalSize)}</td></tr>
           <tr><td>所有下载URL</td><td>${allUrls}</td></tr>
         </tbody>
       </table>
