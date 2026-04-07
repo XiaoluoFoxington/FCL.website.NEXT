@@ -120,42 +120,54 @@ export default class loadRelease {
       mdui.mutation();
     }
 
-    /**
-     * 渲染Release资源
-     * @param {Array} assets - Release资源数组
-     * @returns {string} - 渲染后的HTML字符串
-     */
-    function renderReleasesAssets(assets) {
-      if (assets.length === 0) {
-        return '<div class="mdui-typo">无资源</div>';
-      }
+/**
+ * 渲染Release资源
+ * @param {Array} assets - Release资源数组
+ * @returns {string} - 渲染后的HTML字符串
+ */
+function renderReleasesAssets(assets) {
+  if (assets.length === 0) {
+    return '<div class="mdui-typo">无资源</div>';
+  }
 
-      return assets.map(asset => `
-      <div class="mdui-table-fluid">
-        <table class="mdui-table">
-          <thead>
-            <tr>
-              <th colspan="2">${asset.name}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>大小</td>
-              <td>${asset.size}字节</td>
-            </tr>
-            <tr>
-              <td>校验</td>
-              <td>${asset.digest}</td>
-            </tr>
-            <tr>
-              <td>GH下载URL</td>
-              <td><a href="${asset.browser_download_url}" target="_blank">${asset.browser_download_url}</a></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      `).join('');
-    }
+  // 渲染每个资源的表格
+  const assetsHtml = assets.map(asset => `
+    <div class="mdui-table-fluid">
+      <table class="mdui-table">
+        <thead>
+          <tr><th colspan="2">${asset.name}</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>大小</td><td>${asset.size}字节</td></tr>
+          <tr><td>校验</td><td>${asset.digest}</td></tr>
+          <tr><td>GH下载URL</td><td><a href="${asset.browser_download_url}" target="_blank">${asset.browser_download_url}</a></td></tr>
+        </tbody>
+       </table>
+    </div>
+  `).join('');
+
+  // 计算总大小
+  const totalSize = assets.reduce((sum, asset) => sum + asset.size, 0);
+  // 收集所有下载URL，用 <br> 换行
+  const allUrls = assets.map(asset => asset.browser_download_url).join('<br>');
+
+  // 合计表格
+  const summaryHtml = `
+    <div class="mdui-table-fluid" style="margin-top: 16px;">
+      <table class="mdui-table">
+        <thead>
+          <tr><th colspan="2">合计</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>总大小</td><td>${totalSize}字节</td></tr>
+          <tr><td>所有下载URL</td><td>${allUrls}</td></tr>
+        </tbody>
+      </table>
+    </div>
+  `;
+
+  return assetsHtml + summaryHtml;
+}
 
     /**
      * 获取Release数据
