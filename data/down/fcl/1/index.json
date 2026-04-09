@@ -1,7 +1,13 @@
 [
+  { 
+    "name": "最后一个有Boat后端的版本",
+    "nextUrl": "/data/down/fcl/1/boat.json",
+    "description": "这是最后一个有Boat后端的版本。可以与已安装的版本共存。"
+  },
   {
     "name": "1.2.9.8",
-    "nextUrl": "/data/down/fcl/1/1.2.9.8.json"
+    "nextUrl": "/data/down/fcl/1/1.2.9.8.json",
+    "default": true
   },
   {
     "name": "1.2.9.7",
@@ -22,11 +28,6 @@
   {
     "name": "1.2.9.3",
     "nextUrl": "/data/down/fcl/1/1.2.9.3.json"
-  },
-  { 
-    "name": "boat",
-    "nextUrl": "/data/down/fcl/1/boat.json",
-    "description": "这是最后一个有Boat后端的版本。可以与已安装的版本共存。"
   },
   {
     "name": "1.2.9.2",
