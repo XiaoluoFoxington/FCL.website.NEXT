@@ -25,7 +25,8 @@
   {
     "name": "Amethyst-Android",
     "type": "启动器",
-    "nextUrl": "/data/down/amethyst-android/index.json"
+    "nextUrl": "/data/down/amethyst-android/index.json",
+    "description": "带“Debug”的版本用于调试，可共存，无需求不要安装。如果同时安装非调试版，可能会影响世界存档。"
   },
   {
     "name": "Pojav Launcher",
