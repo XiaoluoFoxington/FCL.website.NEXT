@@ -1,1 +1,1 @@
-[{"name":"线路1","nextUrl":"/data/down/amethyst-android/1/index.json","description":"带“Debug”的版本用于调试，可共存，无需求不要安装。如果同时安装非调试版，可能会影响世界存档。"}]
+[{"name":"线路1","nextUrl":"/data/down/amethyst-android/1/index.json"},{"name":"线路10","nextUrl":"https://mirror.lemwood.icu/api/status/aamc","apiVer":"Lemwood"}]
