@@ -5,9 +5,13 @@
     "description": "这是最后一个有Boat后端的版本。可以与已安装的版本共存。"
   },
   {
-    "name": "1.2.9.8",
-    "nextUrl": "/data/down/fcl/1/1.2.9.8.json",
+    "name": "1.2.9.9",
+    "nextUrl": "/data/down/fcl/1/1.2.9.9.json",
     "default": true
+  },
+  {
+    "name": "1.2.9.8",
+    "nextUrl": "/data/down/fcl/1/1.2.9.8.json"
   },
   {
     "name": "1.2.9.7",
