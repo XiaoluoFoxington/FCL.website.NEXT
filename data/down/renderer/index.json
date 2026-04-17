@@ -1,7 +1,8 @@
 [
   {
     "name": "线路1",
-    "nextUrl": "/data/down/renderer/1/index.json"
+    "nextUrl": "/data/down/renderer/1/index.json",
+    "description": "Krypton Wrapper 在 0.4.5 版本中更改了应用签名，在安装新版本前需卸载旧版本。"
   },
   {
     "name": "线路3",
