@@ -1,9 +1,9 @@
 // 架构映射表，包含正则、架构名称和提示信息
 const ARCH_MAP = [
-  { reg: /aarch64|arm64|armv8/i, name: 'arm64-v8a', msg: '请选择通用架构或“arm64-v8a”架构。' },
-  { reg: /armeabi-v7a|(arm$)|armv7/i, name: 'armeabi-v7a', msg: '请选择通用架构或“armeabi-v7a”架构。' },
-  { reg: /x86_64|x64|amd64/i, name: 'x86_64', msg: '请选择通用架构或“x86_64”架构。' },
-  { reg: /x86|i[36]86/i, name: 'x86', msg: '请选择通用架构或“x86”架构。' }
+  { reg: /aarch64|arm64|armv8/i, name: 'arm64-v8a', msg: '请选择all（通用）架构或arm64-v8a架构。' },
+  { reg: /armeabi-v7a|(arm$)|armv7/i, name: 'armeabi-v7a', msg: '请选择all（通用）架构或armeabi-v7a架构。' },
+  { reg: /x86_64|x64|amd64/i, name: 'x86_64', msg: '请选择all（通用）架构或x86_64架构。' },
+  { reg: /x86|i[36]86/i, name: 'x86', msg: '请选择all（通用）架构或x86架构。' }
 ];
 
 export default class sysInfo {
@@ -47,9 +47,9 @@ export default class sysInfo {
     uaInfoEle.innerHTML = navigator.userAgent;
 
     if (osn !== 'Android') {
-      this.addSysErrItem(sysInfoEle, '当前系统不是安卓系统。');
+      this.addSysErrItem(sysInfoEle, `当前系统（${osn}）不是安卓系统。（仅供参考，不一定准）`);
     } else if (parseInt(osv) < 9 && osn === 'Android') {
-      this.addSysErrItem(sysInfoEle, '当前安卓系统版本过低。');
+      this.addSysErrItem(sysInfoEle, `当前安卓系统版本（${osv}）过低。`);
     } else if (cpuarch) {
       // windows 系统不要根据平台来判断架构!!!
       // windows 系统不管是 64 位还是 32 位始终为 win32 平台
@@ -58,7 +58,7 @@ export default class sysInfo {
       if (matchedArch) {
         this.addSysGreenItem(sysInfoEle, matchedMsg);
       } else {
-        this.addSysInfoItem(sysInfoEle, '请选择通用架构。');
+        this.addSysInfoItem(sysInfoEle, '请选择all（通用）架构。');
       }
     }
     if (!['Chrome', 'Mobile Chrome', 'Firefox', 'Mobile Firefox', 'Edge', 'Opera', 'Safari', 'Mobile Safari'].includes(bn)) {
