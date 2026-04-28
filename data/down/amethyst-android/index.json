@@ -5,7 +5,7 @@
   },
   {
     "name": "线路10",
-    "nextUrl": "https://mirror.lemwood.icu/api/status/aamc",
+    "nextUrl": "https://mirror.lemwood.cn/api/status/aamc",
     "apiVer": "Lemwood"
   }
 ]
