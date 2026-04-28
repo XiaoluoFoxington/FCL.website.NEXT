@@ -107,7 +107,7 @@ export function xf_loadWay2BanInfo() {
  */
 export function xf_loadWay10BanInfo() {
   const container = document.getElementById('xf_fclWay10BanInfoBody');
-  const apiUrl = 'https://mirror.lemwood.icu/download/banned_ips.txt';
+  const apiUrl = 'https://mirror.lemwood.cn/download/banned_ips.txt';
   container.innerHTML = '<div class="mdui-spinner"></div>';
   mdui.mutation();
 
@@ -190,7 +190,7 @@ export function xf_loadWay10BanInfo() {
  */
 export function xf_loadTrafficInfo() {
   xf_loadWay2TrafficInfo('https://mirror.frostlynx.work/stats');
-  xf_loadWay10TrafficInfo('https://mirror.lemwood.icu/api/stats');
+  xf_loadWay10TrafficInfo('https://mirror.lemwood.cn/api/stats');
 }
 
 /**
@@ -216,7 +216,7 @@ export async function xf_loadWay2TrafficInfo(url = '/data/content/way2Traffic.js
  * 获取线10流量信息
  * @param {string} url 流量信息API URL
  */
-export async function xf_loadWay10TrafficInfo(url = 'https://mirror.lemwood.icu/api/stats') {
+export async function xf_loadWay10TrafficInfo(url = 'https://mirror.lemwood.cn/api/stats') {
   const totalEl = document.getElementById('xf_fclWay10Total');
   try {
     const apiData = await loadContent.fetchItems(url);
