@@ -14,7 +14,7 @@
   },
   {
     "name": "线路10",
-    "nextUrl": "https://mirror.lemwood.icu/api/status/MG",
+    "nextUrl": "https://mirror.lemwood.cn/api/status/MG",
     "apiVer": "Lemwood"
   }
 ]
