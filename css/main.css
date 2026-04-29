@@ -1,5 +1,10 @@
+@font-face {
+  font-family: 'mojangles';
+  src: url('/media/font/Mojangles.ttf');
+}
+
 * {
-  font-family: unset;
+  font-family: mojangles;
   scroll-margin-top: 50vh; /* TODO: 扒开mdui.css在里面加上*/
   scroll-behavior: smooth;
 }
