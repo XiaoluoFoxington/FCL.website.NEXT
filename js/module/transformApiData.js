@@ -233,7 +233,7 @@ export default class transformApiData {
       console.warn('选择器模块：Lemwood线：latest：选择器的文本不在映射中');
       return null;
     }
-    const latest = await loadContent.fetchItems(`https://mirror.lemwood.cn/api/latest/${selectName}`, 'text');
+    const latest = await loadContent.fetchItems(`https://miawa.cn/api/latest/${selectName}`, 'text');
     console.log(`选择器模块：Lemwood线：latest：${latest}`);
     return latest;
   }
