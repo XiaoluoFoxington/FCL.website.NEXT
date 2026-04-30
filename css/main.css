@@ -60,3 +60,7 @@ img {
   opacity: 0.5;
   font-family: monospace;
 }
+
+.description {
+  margin: 1rem 0;
+}
