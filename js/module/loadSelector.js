@@ -308,19 +308,6 @@ export default class loadSelector {
         }
       });
 
-      // 检查是否有匹配到系统架构的项（通过已渲染的行数据判断）
-      const hasMatchedArch = rows.some(row => {
-        const archCell = row.querySelector('.arch-cell');
-        return archCell && archCell.style.color === 'rgb(0, 255, 0)';
-      });
-
-      // 如果匹配到系统架构，添加描述文本
-      if (hasMatchedArch) {
-        const matchDesc = defaultCreateDescriptionElement();
-        matchDesc.textContent = '已匹配到当前架构，请注意架构列的绿色字段。';
-        container.appendChild(matchDesc);
-      }
-
       // 分析哪些列是空的
       const columnIndicesToKeep = [];
       const columnHeaders = ['操作', '架构', '描述', '大小', '显示名称', 'URL'];
@@ -358,6 +345,9 @@ export default class loadSelector {
       buttonsContainerHead.appendChild(headerRow);
       buttonsContainer.appendChild(buttonsContainerHead);
 
+      // 检查是否有匹配到系统架构的项
+      const hasMatchedArch = tempBody.querySelector('#matchedArchRow') !== null;
+
       // 创建正式tbody并添加处理后的行
       const buttonsContainerBody = document.createElement('tbody');
       buttonsContainer.appendChild(buttonsContainerBody);
@@ -373,8 +363,21 @@ export default class loadSelector {
           }
         });
 
+        // 给匹配到架构的行设置样式和重新添加ID
+        if (row.id === 'matchedArchRow') {
+          newRow.id = 'matchedArchRow';
+          newRow.style.backgroundColor = '#00ff0040';
+        }
+
         buttonsContainerBody.appendChild(newRow);
       });
+
+      // 如果匹配到系统架构，在表格上方添加描述文本
+      if (hasMatchedArch) {
+        const matchDesc = defaultCreateDescriptionElement();
+        matchDesc.textContent = '已匹配到当前架构，请留意表格中绿色行。';
+        container.appendChild(matchDesc);
+      }
 
       container.appendChild(buttonsContainerContainer);
       mdui.mutation();
@@ -505,7 +508,6 @@ export default class loadSelector {
       tdOperation.appendChild(btnDl);
 
       tdArch.innerText = item.arch || inferArchFromStr(item.url) || inferArchFromStr(item.name) || inferArchForZL(item.url) || '';
-      tdArch.classList.add('arch-cell');
 
       function inferArchFromStr(str) {
         if (!str) return '';
@@ -522,7 +524,7 @@ export default class loadSelector {
       }
 
       if (tdArch.innerText === sysInfoa.matchedArch) {
-        tdArch.style.color = '#00ff00';
+        tr.id = 'matchedArchRow';
       }
 
       tdDes.innerText = item.description || '';
