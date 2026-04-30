@@ -87,6 +87,21 @@
   border-right: none;
 }
 
+.mdui-typo.mdui-typo a {
+  color: unset;
+  text-decoration: underline;;
+}
+
+.mdui-typo a::before,
+.mdui-typo a:focus::before,
+.mdui-typo a:hover::before {
+  all: unset;
+}
+
+.mdui-typo a:hover {
+  text-decoration: none;
+}
+
 [disabled],
 .disabled {
   opacity: .5;
