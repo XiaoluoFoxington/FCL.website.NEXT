@@ -65,3 +65,7 @@ img {
 .description {
   margin: 1rem 0;
 }
+
+.download-buttons-container{
+  text-wrap: nowrap;
+}
