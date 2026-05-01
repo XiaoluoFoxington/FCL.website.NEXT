@@ -19,35 +19,6 @@ const _defaultRoute = 'tab1';
 const _loaded = {};
 let _tabInstance = null;
 
-function xf_handleHashChange() {
-  const name = location.hash.slice(1);
-  const route = _routeMap[name] ? name : _defaultRoute;
-  const cfg = _routeMap[route];
-
-  document.title = cfg.title;
-
-  // 同步MDUI tab组件状态
-  if (_tabInstance) {
-    _tabInstance.show(cfg.index);
-  }
-
-  if (!_loaded[route]) {
-    _loaded[route] = true;
-    cfg.init();
-  }
-}
-
-function xf_initTabComponent() {
-  if (_tabInstance) {
-    return; // 已经初始化过，直接返回
-  }
-  
-  const tabElement = document.querySelector('.mdui-tab');
-  if (tabElement) {
-    _tabInstance = new mdui.Tab(tabElement);
-  }
-}
-
 window.addEventListener('hashchange', xf_handleHashChange);
 
 document.addEventListener('DOMContentLoaded', async function () {
@@ -56,7 +27,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   xf_initTabComponent(); // 初始化MDUI tab组件
   
   // 如果当前没有hash，自动跳转到默认tab
-  if (!location.hash) {
+  if (!location.hash || !_routeMap[location.hash.slice(1)]) {
     location.hash = _defaultRoute;
   } else {
     xf_handleHashChange();
@@ -130,6 +101,38 @@ function xf_websiteInfoLink_Click() {
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+function xf_handleHashChange() {
+  const name = location.hash.slice(1);
+
+  // 如果是已知的tab路由，才进行处理
+  if (_routeMap[name]) {
+    const cfg = _routeMap[name];
+    document.title = cfg.title;
+
+    // 同步MDUI tab组件状态
+    if (_tabInstance) {
+      _tabInstance.show(cfg.index);
+    }
+
+    if (!_loaded[name]) {
+      _loaded[name] = true;
+      cfg.init();
+    }
+  }
+  // 如果是其他hash（如页面内锚点），保持原样不处理
+}
+
+function xf_initTabComponent() {
+  if (_tabInstance) {
+    return; // 已经初始化过，直接返回
+  }
+
+  const tabElement = document.querySelector('.mdui-tab');
+  if (tabElement) {
+    _tabInstance = new mdui.Tab(tabElement);
+  }
+}
 
 /**
  * 获取当前主题
