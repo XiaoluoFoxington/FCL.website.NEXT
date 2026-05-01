@@ -151,6 +151,7 @@ export async function xf_checkAndShowSponsorRemind() {
         <p>下载流量高昂，网站运营困难，我们一直坚守开源、无广告，使此站保持公益性质。如果您觉得此站对您有帮助且您经济条件允许，欢迎赞助我们！您的赞助将帮助我们继续运营此站，非常感谢！</p>
         <p>这不是强制要求，您完全可以选择不赞助。显示此提示仅仅是因为您的访问次数达到了10的倍数。如果您不点击“永久关闭”，此提示将会在您的访问次数再次达到10的倍数时显示。</p>
       </div>
+      <div style="height: 1rem;"></div>
       <a class="mdui-btn mdui-btn-block mdui-btn-raised mdui-ripple" id="xf_sponsorRemindCloseBtn">永久关闭</a>
     </div>
   `;
