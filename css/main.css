@@ -5,7 +5,7 @@
 
 * {
   font-family: mojangles;
-  scroll-margin-top: 50vh; /* TODO: 扒开mdui.css在里面加上*/
+  scroll-margin-top: 50vh;
   scroll-behavior: smooth;
   font-size: 1rem;
 }
