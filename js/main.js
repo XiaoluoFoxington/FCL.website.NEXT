@@ -6,11 +6,62 @@ import { xf_init as tab3Init } from '/js/module/tab3.js';
 import { xf_init as tab4Init } from '/js/module/tab4.js';
 import { xf_init as tab5Init } from '/js/module/tab5.js';
 
+const _routeMap = {
+  tab1: { init: tab1Init, title: '首页 - Fold Craft Launcher 下载站', index: 0 },
+  tab2: { init: tab2Init, title: '下载 - Fold Craft Launcher 下载站', index: 1 },
+  tab3: { init: tab3Init, title: '赞助 - Fold Craft Launcher 下载站', index: 3 },
+  tab4: { init: tab4Init, title: '关于 - Fold Craft Launcher 下载站', index: 4 },
+  tab5: { init: tab5Init, title: '详情 - Fold Craft Launcher 下载站', index: 2 },
+};
+
+const _defaultRoute = 'tab1';
+
+const _loaded = {};
+let _tabInstance = null;
+
+function xf_handleHashChange() {
+  const name = location.hash.slice(1);
+  const route = _routeMap[name] ? name : _defaultRoute;
+  const cfg = _routeMap[route];
+
+  document.title = cfg.title;
+
+  // 同步MDUI tab组件状态
+  if (_tabInstance) {
+    _tabInstance.show(cfg.index);
+  }
+
+  if (!_loaded[route]) {
+    _loaded[route] = true;
+    cfg.init();
+  }
+}
+
+function xf_initTabComponent() {
+  if (_tabInstance) {
+    return; // 已经初始化过，直接返回
+  }
+  
+  const tabElement = document.querySelector('.mdui-tab');
+  if (tabElement) {
+    _tabInstance = new mdui.Tab(tabElement);
+  }
+}
+
+window.addEventListener('hashchange', xf_handleHashChange);
+
 document.addEventListener('DOMContentLoaded', async function () {
   xf_setThemeByLocalStorage(); // 根据本地存储设置主题
   xf_addEventListeners(); // 添加事件监听
-  xf_addHashEventListeners();
-  xf_loadHashContent();
+  xf_initTabComponent(); // 初始化MDUI tab组件
+  
+  // 如果当前没有hash，自动跳转到默认tab
+  if (!location.hash) {
+    location.hash = _defaultRoute;
+  } else {
+    xf_handleHashChange();
+  }
+  
   xf_loadWebsiteVisitCount(); // 获取访问量
   xf_loadWebsiteVerInfo(); // 加载网站版本信息
   await websiteInfo.xf_increaseUserVisitCount();
@@ -21,26 +72,32 @@ document.addEventListener('DOMContentLoaded', async function () {
  */
 function xf_addEventListeners() {
   document.getElementById('xf_fclIcon').addEventListener('click', xf_xf_fclIcon_Click, { once: true });
-  document.getElementById('tab1_link').addEventListener('click', xf_tab1_link_Click, { once: true });
-  document.getElementById('tab2_link').addEventListener('click', xf_tab2_link_Click, { once: true });
-  document.getElementById('tab3_link').addEventListener('click', xf_tab3_link_Click, { once: true });
-  document.getElementById('tab4_link').addEventListener('click', xf_tab4_link_Click, { once: true });
-  document.getElementById('tab5_link').addEventListener('click', xf_tab5_link_Click, { once: true });
   document.getElementById('xf_themeSwitchBtn').addEventListener('click', xf_themeSwitchBtn_Click);
   document.getElementById('xf_refreshBtn').addEventListener('click', xf_refreshBtn_Click);
   document.getElementById('xf_websiteInfoLink').addEventListener('click', xf_websiteInfoLink_Click);
   document.getElementById('easterEgg').addEventListener('click', openEasterEgg);
-}
-
-/**
- * 添加哈希事件
- */
-function xf_addHashEventListeners() {
-  document.getElementById('tab1_link').addEventListener('click', xf_tab1_link_Click_Hash);
-  document.getElementById('tab2_link').addEventListener('click', xf_tab2_link_Click_Hash);
-  document.getElementById('tab3_link').addEventListener('click', xf_tab3_link_Click_Hash);
-  document.getElementById('tab4_link').addEventListener('click', xf_tab4_link_Click_Hash);
-  document.getElementById('tab5_link').addEventListener('click', xf_tab5_link_Click_Hash);
+  
+  // 重新绑定tab链接点击事件，因为MDUI会阻止默认的hash导航
+  document.getElementById('tab1_link').addEventListener('click', (e) => {
+    e.preventDefault();
+    location.hash = 'tab1';
+  });
+  document.getElementById('tab2_link').addEventListener('click', (e) => {
+    e.preventDefault();
+    location.hash = 'tab2';
+  });
+  document.getElementById('tab3_link').addEventListener('click', (e) => {
+    e.preventDefault();
+    location.hash = 'tab3';
+  });
+  document.getElementById('tab4_link').addEventListener('click', (e) => {
+    e.preventDefault();
+    location.hash = 'tab4';
+  });
+  document.getElementById('tab5_link').addEventListener('click', (e) => {
+    e.preventDefault();
+    location.hash = 'tab5';
+  });
 }
 
 /**
@@ -50,70 +107,7 @@ function xf_xf_fclIcon_Click() {
   xf_loadWebsiteInfo(); // 加载网站信息
 }
 
-/**
- * TAB栏上的tab1链接的click
- */
-async function xf_tab1_link_Click() {
-  await tab1Init();
-}
-
-function xf_tab1_link_Click_Hash() {
-  location.hash = '#tab1';
-  document.title = '首页 - Fold Craft Launcher 下载站';
-}
-
-/**
-/**
- * TAB栏上的tab2链接的click
- */
-async function xf_tab2_link_Click() {
-  await tab2Init();
-}
-
-function xf_tab2_link_Click_Hash() {
-  location.hash = '#tab2';
-  document.title = '下载 - Fold Craft Launcher 下载站';
-}
-
-/**
- * TAB栏上的tab3链接的click
- */
-async function xf_tab3_link_Click() {
-  await tab3Init();
-}
-
-function xf_tab3_link_Click_Hash() {
-  location.hash = '#tab3';
-  document.title = '赞助 - Fold Craft Launcher 下载站';
-}
-
-/**
- * TAB栏上的tab4链接的click
- */
-async function xf_tab4_link_Click() {
-  await tab4Init();
-}
-
-function xf_tab4_link_Click_Hash() {
-  location.hash = '#tab4';
-  document.title = '关于 - Fold Craft Launcher 下载站';
-}
-
-/**
- * TAB栏上的tab5链接的click
- */
-async function xf_tab5_link_Click() {
-  await tab5Init();
-}
-
-function xf_tab5_link_Click_Hash() {
-  location.hash = '#tab5';
-  document.title = '详情 - Fold Craft Launcher 下载站';
-}
-
-/**
- * 工具栏三点菜单中的主题切换按钮的click
- */
+///////////////////////////////////////////////////////////////////////////////////////////////////
 async function xf_themeSwitchBtn_Click() {
   const currentTheme = await xf_getCurrentTheme();
   const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
@@ -136,39 +130,6 @@ function xf_websiteInfoLink_Click() {
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-
-/**
- * 获取地址栏hash参数并加载内容
- */
-function xf_loadHashContent() {
-  const hash = location.hash;
-  switch (hash) {
-    case '#tab1':
-      xf_tab1_link_Click();
-      xf_tab1_link_Click_Hash();
-      break;
-    case '#tab2':
-      xf_tab2_link_Click();
-      xf_tab2_link_Click_Hash();
-      break;
-    case '#tab3':
-      xf_tab3_link_Click();
-      xf_tab3_link_Click_Hash();
-      break;
-    case '#tab4':
-      xf_tab4_link_Click();
-      xf_tab4_link_Click_Hash();
-      break;
-    case '#tab5':
-      xf_tab5_link_Click();
-      xf_tab5_link_Click_Hash();
-      break;
-    default:
-      xf_tab1_link_Click();
-      xf_tab1_link_Click_Hash();
-      break;
-  }
-}
 
 /**
  * 获取当前主题
