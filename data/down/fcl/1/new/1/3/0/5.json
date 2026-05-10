@@ -1,0 +1,22 @@
+[
+  {
+    "arch": "all",
+    "url": "https://pan.huang1111.cn/f/dAwDhW/FCL-release-1.3.0.5-all.apk"
+  },
+  {
+    "arch": "arm64-v8a",
+    "url": "https://pan.huang1111.cn/f/2mZBT6/FCL-release-1.3.0.5-arm64-v8a.apk"
+  },
+  {
+    "arch": "armeabi-v7a",
+    "url": "https://pan.huang1111.cn/f/z21YtE/FCL-release-1.3.0.5-armeabi-v7a.apk"
+  },
+  {
+    "arch": "x86",
+    "url": "https://pan.huang1111.cn/f/9LmjSx/FCL-release-1.3.0.5-x86.apk"
+  },
+  {
+    "arch": "x86_64",
+    "url": "https://pan.huang1111.cn/f/QV3XUO/FCL-release-1.3.0.5-x86_64.apk"
+  }
+]
