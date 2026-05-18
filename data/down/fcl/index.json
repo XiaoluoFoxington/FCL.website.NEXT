@@ -22,7 +22,7 @@
   },
   {
     "name": "线路9",
-    "nextUrl": "https://api.lisongyun.top/file_tree.json",
+    "nextUrl": "https://api.lisongyun.top/fcl/",
     "notJoinRandom": true
   },
   {
