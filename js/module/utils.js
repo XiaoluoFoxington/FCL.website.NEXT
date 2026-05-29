@@ -96,6 +96,36 @@ export default class utils {
   }
 
   /**
+   * 下载按钮点击防抖倒计时
+   * @param {HTMLAnchorElement} link - 下载按钮元素
+   */
+  static xf_startCountdown(link) {
+    const delay = parseInt(link.dataset.debounceDelay) || 3;
+    if (delay <= 0) return;
+
+    const originalText = link.dataset.originalText || link.innerText;
+    let remaining = delay;
+
+    link.disabled = true;
+    link.style.opacity = '0.5';
+    link.style.cursor = 'not-allowed';
+    link.innerText = `${remaining}秒后可再次下载`;
+
+    const timer = setInterval(() => {
+      remaining--;
+      if (remaining <= 0) {
+        clearInterval(timer);
+        link.disabled = false;
+        link.style.opacity = '';
+        link.style.cursor = '';
+        link.innerText = originalText;
+      } else {
+        link.innerText = `${remaining}秒后可再次下载`;
+      }
+    }, 1000);
+  }
+
+  /**
    * 统一的错误处理函数
    * @param {Error} error - 错误对象
    * @param {Object} options - 配置选项
