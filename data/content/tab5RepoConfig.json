@@ -61,5 +61,12 @@
     "repoFullName": "BZLZHH/NGG-FCLRendererPlugin",
     "containerId": "tab5KW",
     "panelId": "tab5KryptonPanelEle"
+  },
+  {
+    "id": "Mindustry",
+    "name": "Mindustry",
+    "repoFullName": "Anuken/Mindustry",
+    "containerId": "tab5Mindustry",
+    "panelId": "tab5MindustryPanelEle"
   }
 ]
