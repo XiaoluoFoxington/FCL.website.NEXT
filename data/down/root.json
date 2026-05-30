@@ -110,6 +110,21 @@
     ]
   },
   {
+    "name": "其它软件",
+    "type": "分类",
+    "children": [
+      {
+        "name": "MiXplorer",
+        "nextUrl": "/data/down/os/mixplorer/index.json",
+        "nameIsSoftname": true
+      },
+      {
+        "name": "MiX_Addons",
+        "nextUrl": "/data/down/os/mixaddons/index.json"
+      }
+    ]
+  },
+  {
     "name": "其它游戏",
     "type": "分类",
     "children": [
