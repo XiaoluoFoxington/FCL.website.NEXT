@@ -108,5 +108,16 @@
         ]
       }
     ]
+  },
+  {
+    "name": "其它游戏",
+    "type": "分类",
+    "children": [
+      {
+        "name": "Mindustry",
+        "nextUrl": "/data/down/og/mindustry/index.json",
+        "nameIsSoftname": true
+      }
+    ]
   }
 ]
