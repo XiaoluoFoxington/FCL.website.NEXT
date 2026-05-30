@@ -8,26 +8,29 @@ export default class transformApiData {
    * @param {string} apiVer - API 版本
    * @param {string} container - 选择器容器元素
    * @param {boolean} random - 是否随机为一个项设为默认值
+   * @param {string} selectName - 当前选中的软件名称
    * @returns {Array} 转换后的数据
    */
-  static async transformDataIfNecessary(data, apiVer, container, random) {
+  static async transformDataIfNecessary(data, apiVer, container, random, selectName) {
+    console.log('选择器模块：转换数据：selectName：', selectName);
     if (!this.validateItems(data) && !apiVer) {
       console.warn('选择器模块：转换数据：补兑');
       return data;
     }
+
     switch (apiVer) {
       case "Way2old": {
-        const latestWay2old = await this.getWay2oldApiLatestVersion(data, container);
+        const latestWay2old = await this.getWay2oldApiLatestVersion(data, selectName);
         data = this.transformWay2oldApiData(data, latestWay2old);
         break;
       }
       case "frostlynx": {
-        const latestFrostlynx = await this.getWay2oldApiLatestVersion(data, container);
+        const latestFrostlynx = await this.getWay2oldApiLatestVersion(data, selectName);
         data = this.transformFrostlynxApiData(data, latestFrostlynx);
         break;
       }
       case "Lemwood": {
-        const latestLemwood = await this.getLemwoodApiLatestVersion(container);
+        const latestLemwood = await this.getLemwoodApiLatestVersion(selectName);
         data = this.transformLemwoodApiData(data, latestLemwood);
         break;
       }
@@ -153,10 +156,10 @@ export default class transformApiData {
   /**
    * 获取Way2old API最新版本
    * @param {Object} data - 原始数据
-   * @param {Object} container - 选择器容器元素
+   * @param {string} selectName - 当前选中的软件名称
    * @returns {string} 最新版本名称
    */
-  static async getWay2oldApiLatestVersion(data, container) {
+  static async getWay2oldApiLatestVersion(data, selectName) {
     const repoMap = {
       'Fold Craft Launcher': 'FCL-Team/FoldCraftLauncher',
       'Zalith Launcher 2': 'ZalithLauncher/ZalithLauncher2',
@@ -164,12 +167,10 @@ export default class transformApiData {
 
     console.log(`选择器模块：Way2Old线：latest：通过原始数据获取：${data.latest}`);
 
-    const firstSelect = container.firstElementChild;
-    if (!firstSelect || !firstSelect.selectedOptions || firstSelect.selectedOptions.length === 0) {
-      console.error('选择器模块：Way2Old线：无法获取第一个选择器的选中项');
+    if (!selectName) {
+      console.error('选择器模块：Way2Old线：无法获取当前选择的软件名称');
       return null;
     }
-    let selectName = firstSelect.selectedOptions[0].innerText;
     selectName = repoMap[selectName] || selectName;
     const repoRelInfo = await loadContent.fetchItems(`https://api.github.com/repos/${selectName}/releases/latest`, 'json');
     const latest = repoRelInfo.tag_name;
@@ -212,10 +213,10 @@ export default class transformApiData {
 
   /**
    * 获取Lemwood API最新版本
-   * @param {Object} container - 选择器容器元素
+   * @param {string} selectName - 当前选中的软件名称
    * @returns {string} 最新版本名称
    */
-  static async getLemwoodApiLatestVersion(container) {
+  static async getLemwoodApiLatestVersion(selectName) {
     const apiMap = {
       'Fold Craft Launcher': 'fcl',
       'Zalith Launcher': 'zl',
@@ -225,13 +226,10 @@ export default class transformApiData {
       '渲染器': 'MG',
     };
 
-    // 获取选择器容器的第一个选择器（软件选择）的当前选中项的文本
-    const firstSelect = container.firstElementChild;
-    if (!firstSelect || !firstSelect.selectedOptions || firstSelect.selectedOptions.length === 0) {
-      console.warn('选择器模块：Lemwood线：无法获取第一个选择器的选中项');
+    if (!selectName) {
+      console.warn('选择器模块：Lemwood线：无法获取当前选择的软件名称');
       return null;
     }
-    let selectName = firstSelect.selectedOptions[0].innerText;
     selectName = apiMap[selectName] || null;
     if (selectName === null) {
       console.warn('选择器模块：Lemwood线：latest：选择器的文本不在映射中');

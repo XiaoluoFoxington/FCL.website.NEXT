@@ -36,6 +36,7 @@ export default class SelectorRunner {
     this.debounceDelay = debounceDelay;
     this.forceStopLoadBtnId = forceStopLoadBtnId;
     this.pendingDataTransform = sourceApiVer;
+    this.selectName = null;
 
     this.container = document.getElementById(containerId);
     if (!this.container) {
@@ -79,6 +80,8 @@ export default class SelectorRunner {
         rawItems,
         this.pendingDataTransform,
         this.container,
+        false,
+        this.selectName,
       );
       if (this.pendingDataTransform !== undefined) {
         console.log(`${PREFIX}层级 ${level}：已消费根级数据转换版本，后续层级使用各自的 apiVer`);
@@ -152,6 +155,11 @@ export default class SelectorRunner {
       const selectedItem = items[selectedIndex];
       console.log(`${PREFIX}层级 ${level} 选中：${selectedItem.name}`);
 
+      if (selectedItem.nameIsSoftname) {
+        this.selectName = selectedItem.name;
+        console.log(`${PREFIX}记录软件名称：${this.selectName}`);
+      }
+
       if (selectedItem.description) {
         console.log(`${PREFIX}${selectedItem.name}：渲染内联描述`);
         descDiv.innerHTML = selectedItem.description;
@@ -203,7 +211,7 @@ export default class SelectorRunner {
 
     if (children && Array.isArray(children)) {
       console.log(`${PREFIX}${selectedItem.name}：使用内联 children 数据加载层级 ${nextLevel}`);
-      const transformedData = await transformApiData.transformDataIfNecessary(children, apiVer, this.container, random);
+      const transformedData = await transformApiData.transformDataIfNecessary(children, apiVer, this.container, random, this.selectName);
       await this.loadLevel(transformedData, nextLevel);
       return;
     }
@@ -212,7 +220,7 @@ export default class SelectorRunner {
       console.log(`${PREFIX}${selectedItem.name}：从 ${nextUrl} 加载层级 ${nextLevel}`);
       try {
         const rawData = await loadContent.fetchItems(nextUrl);
-        const transformedData = await transformApiData.transformDataIfNecessary(rawData, apiVer, this.container, random);
+        const transformedData = await transformApiData.transformDataIfNecessary(rawData, apiVer, this.container, random, this.selectName);
         await this.loadLevel(transformedData, nextLevel);
       } catch (error) {
         console.error(`${PREFIX}加载层级 ${nextLevel} 从 ${nextUrl} 获取数据出错：`, error);
@@ -235,7 +243,7 @@ export default class SelectorRunner {
 
     if (!selectedItem.description && !selectedItem.desUrl) {
       if (selectedItem.apiVer) {
-        const transformedData = await transformApiData.transformDataIfNecessary([], selectedItem.apiVer, this.container, random);
+        const transformedData = await transformApiData.transformDataIfNecessary([], selectedItem.apiVer, this.container, random, this.selectName);
         this.loadLevel(transformedData, nextLevel);
         return;
       }
