@@ -89,7 +89,8 @@
 
 .mdui-typo.mdui-typo a {
   color: unset;
-  text-decoration: underline;;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
 }
 
 .mdui-typo a::before,
@@ -106,4 +107,8 @@
 .disabled {
   opacity: .5;
   pointer-events: none;
+}
+
+.mdui-typo li p:last-child {
+  margin-bottom: 1.2em;
 }
