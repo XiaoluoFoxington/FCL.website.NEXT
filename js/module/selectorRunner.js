@@ -234,6 +234,12 @@ export default class SelectorRunner {
     }
 
     if (!selectedItem.description && !selectedItem.desUrl) {
+      if (selectedItem.apiVer) {
+        const transformedData = await transformApiData.transformDataIfNecessary([], selectedItem.apiVer, this.container, random);
+        this.loadLevel(transformedData, nextLevel);
+        return;
+      }
+      
       console.log(`${PREFIX}${selectedItem.name}：无下级数据，无描述信息`);
       descDiv.innerHTML = '<div class="mdui-typo"><p>此层级既无下一级数据，也无描述信息。</p></div>';
     }

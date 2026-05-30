@@ -30,5 +30,9 @@
     "nextUrl": "https://miawa.cn/api/status/fcl",
     "apiVer": "Lemwood",
     "default": true
+  },
+  {
+    "name": "线路11",
+    "apiVer": "cxsjmc"
   }
 ]

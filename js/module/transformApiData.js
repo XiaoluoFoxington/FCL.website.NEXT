@@ -35,6 +35,10 @@ export default class transformApiData {
         data = this.transformLemwoodLatestApiData(data);
         break;
       }
+      case "cxsjmc": {
+        data = await this.transformCxsjmcApiData(data);
+        break;
+      }
       default: {
         break;
       }
@@ -236,5 +240,19 @@ export default class transformApiData {
     const latest = await loadContent.fetchItems(`https://miawa.cn/api/latest/${selectName}`, 'text');
     console.log(`选择器模块：Lemwood线：latest：${latest}`);
     return latest;
+  }
+
+  /**
+   * 转换cxsjmc API数据
+   * @param {Object} data - 原始数据（已废弃，此线路不需要提供）
+   * @returns {Promise<Array>} 转换后的数据
+   */
+  static async transformCxsjmcApiData(data) {
+    const response = await loadContent.fetchItems('https://api.github.com/repos/FCL-Team/FoldCraftLauncher/releases/latest', 'json');
+    const assets = response.assets || [];
+    return assets.map(asset => ({
+      name: asset.name,
+      url: `https://fcl.cxsjmc.cn/FCL/${asset.name}`
+    }));
   }
 }
