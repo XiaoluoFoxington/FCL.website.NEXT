@@ -1,5 +1,6 @@
 <div class="mdui-typo">
   <p>很高兴您能为FCL下载站添砖加瓦！您可根据下方指南开发第三方数据源。</p>
+  <p>您可在/data/content/tsb2CustomDataSrcGuide.html（<a href="/data/content/tsb2CustomDataSrcGuide.html" target="_blank">访问</a>，<a href="/data/content/tsb2CustomDataSrcGuide.html" download>下载</a>）中获取此指南的纯HTML代码，以便AI开发或离线查看。</p>
   <p>此网站的数据源解析使用<code>loadSelector</code>模块，您可在<a href="https://github.com/XiaoluoFoxington/FCL.website.NEXT/blob/main/js/module/loadSelector.js" target="_blank">https://github.com/XiaoluoFoxington/FCL.website.NEXT/blob/main/js/module/loadSelector.js</a>中查看其实现源码。</p>
   <hr>
   <p>数据源使用JSON格式，提供时需提供根层级的JSON文件，一切从这里开始。</p>
@@ -73,7 +74,7 @@
           <td>apiVer</td>
           <td>String</td>
           <td>否</td>
-          <td>API 版本标识，用于数据格式转换。支持的版本包括：<code>Way2old</code>、<code>frostlynx</code>、<code>Lemwood</code>、<code>LemwoodLatest</code>、<code>cxsjmc</code></td>
+          <td>API 版本标识，用于数据格式转换。支持的版本包括：<code>Way2old</code>、<code>frostlynx</code>、<code>Lemwood</code>、<code>LemwoodLatest</code>、<code>cxsjmc</code>、<code>fengyuan</code></td>
         </tr>
         <tr>
           <td>random</td>
@@ -135,12 +136,18 @@
           <td>Array</td>
           <td>多个下载项，如同时提供了<code>url</code>，则忽略<code>url</code></td>
         </tr>
+        <tr>
+          <td>btnText</td>
+          <td>String</td>
+          <td>下载按钮上的文字，默认为"下载"</td>
+        </tr>
       </tbody>
     </table>
   </div>
   <p><code>url</code>与<code>items</code>为最底层，将直接渲染为一个或多个按钮。<code>nextUrl</code>与<code>children</code>为下一层级，将通过判断是否为最底层来决定渲染下一层级还是按钮。</p>
-  <p>下载表格的列显示是智能的，系统会自动隐藏所有下载项中均为空的列。表格列包括：操作、架构、描述、大小、显示名称、URL。</p>
-  <p>系统会自动检测用户设备架构，并在下载表格中高亮显示匹配的架构行（绿色背景）。</p>
+  <p>下载表格会自动隐藏所有下载项中均为空的列。表格列包括：操作、架构、描述、大小、显示名称、URL。</p>
+  <p>下载项的架构（<code>arch</code>）支持自动推断。如果未显式设置 <code>arch</code>，系统会依次尝试从下载 URL、选项名称中识别常见架构关键词（如 <code>arm64-v8a</code>、<code>x86_64</code> 等）。Zalith Launcher 2 的 <code>all</code> 架构文件的下载 URL、选项名称中不会包含 <code>all</code>（即使它是），会自动推断为 <code>all</code> 架构。</p>
+  <p>下载表格会自动检测用户设备架构，并在下载表格中高亮显示匹配的架构行（绿色背景）。</p>
   <hr>
   <p>通过设置<code>apiVer</code>字段，可以将第三方 API 的数据格式转换为选择器所需的标准格式。支持的 API 版本：</p>
   <div class="mdui-table-fluid">
@@ -154,29 +161,33 @@
       <tbody>
         <tr>
           <td><code>Way2old</code></td>
-          <td>Way2old API 格式，支持目录/文件结构。需要配合<code>nameIsSoftname</code>使用以获取 GitHub 最新版本</td>
+          <td>线路2旧旧</td>
         </tr>
         <tr>
           <td><code>frostlynx</code></td>
-          <td>frostlynx API 格式，包含 versions 对象结构</td>
+          <td>线路2旧</td>
         </tr>
         <tr>
           <td><code>Lemwood</code></td>
-          <td>Lemwood API 格式，包含 name 和 assets 数组</td>
+          <td>线路10</td>
         </tr>
         <tr>
           <td><code>LemwoodLatest</code></td>
-          <td>Lemwood API 格式的单条目版本</td>
+          <td>线路10</td>
         </tr>
         <tr>
           <td><code>cxsjmc</code></td>
-          <td>cxsjmc API 格式，直接从 GitHub Releases 获取最新版本</td>
+          <td>线路3</td>
+        </tr>
+        <tr>
+          <td><code>fengyuan</code></td>
+          <td>线路2</td>
         </tr>
       </tbody>
     </table>
   </div>
   <hr>
-  <p>通过设置<code>random: true</code>，可以让系统从当前层级的选项中随机选择一个设为默认值。某些选项可能不希望参与随机选择（如"自定义"选项），可通过设置<code>notJoinRandom: true</code>来排除。</p>
+  <p>通过设置<code>random: true</code>，可以让系统从当前层级的选项中随机选择一个设为默认值。某些选项可能不希望参与随机选择，可通过设置<code>notJoinRandom: true</code>来排除。</p>
   <hr>
   <p>示例数据源 1：</p>
   <p>此示例为此站默认数据源的简化版，展示多层级嵌套及<code>nameIsSoftname</code>标记用法。</p>
@@ -228,8 +239,9 @@
 
   <pre><code class="language-json">[
   {
-    "name": "访问官网",
-    "url": "https://www.example.com"
+    "name": "官网",
+    "url": "https://www.example.com",
+    "btnText": "访问"
   },
   {
     "name": "软件 1",
@@ -239,11 +251,11 @@
         "name": "最新版本",
         "children": [
           {
-            "name": "all",
+            "arch": "all",
             "url": "https://assets.example.com/software1/latest/all.7z"
           },
           {
-            "name": "arm64-v8a",
+            "arch": "arm64-v8a",
             "url": "https://assets.example.com/software1/latest/arm64-v8a.7z"
           }
         ]
@@ -284,13 +296,13 @@
             "name": "all",
             "arch": "all",
             "url": "https://assets.example.com/v1.0.0/all.7z",
-            "size": 10485760
+            "size": 114514
           },
           {
             "name": "arm64-v8a",
             "arch": "arm64-v8a",
             "url": "https://assets.example.com/v1.0.0/arm64-v8a.7z",
-            "size": 8388608
+            "size": 1919810
           }
         ]
       }
