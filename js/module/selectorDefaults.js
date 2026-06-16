@@ -5,7 +5,9 @@ const PREFIX = '选择器默认回调：';
 const ARCH_MAP = {
   'all': 'all',
   'arm64-v8a': 'arm64-v8a',
+  'arm64': 'arm64-v8a',
   'armeabi-v7a': 'armeabi-v7a',
+  'arm': 'armeabi-v7a',
   'x86_64': 'x86_64',
   'x86': 'x86',
 };
