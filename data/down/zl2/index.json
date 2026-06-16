@@ -17,6 +17,7 @@
     "name": "线路10",
     "nextUrl": "https://miawa.cn/api/status/zl2",
     "apiVer": "Lemwood",
-    "default": true
+    "default": true,
+    "filter": [".apk"]
   }
 ]

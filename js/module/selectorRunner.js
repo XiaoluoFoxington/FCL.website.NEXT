@@ -68,7 +68,7 @@ export default class SelectorRunner {
     await this.loadLevel(this.dataSource, 0);
   }
 
-  async loadLevel(source, level) {
+  async loadLevel(source, level, inheritedFilter) {
     console.log(`${PREFIX}加载层级 ${level}：`, source);
     this.clearLevelElements(level);
 
@@ -98,10 +98,10 @@ export default class SelectorRunner {
       console.log(`${PREFIX}层级 ${level}：共 ${items.length} 项，是否为最底层：${isBottom}`);
 
       if (isBottom) {
-        this.renderDownloadButtons(items, level);
+        this.renderDownloadButtons(items, level, inheritedFilter);
         this.enableAllControls();
       } else {
-        this.renderSelect(items, level);
+        this.renderSelect(items, level, inheritedFilter);
       }
     } catch (error) {
       console.error(`${PREFIX}加载层级 ${level} 出错：`, error);
@@ -126,13 +126,13 @@ export default class SelectorRunner {
     }
   }
 
-  renderSelect(items, level) {
+  renderSelect(items, level, inheritedFilter) {
     console.log(`${PREFIX}渲染层级 ${level} 的选择框`);
 
     const select = this.callbacks.onCreateSelectElement(items, level);
     const descDiv = this.callbacks.onCreateDescriptionElement();
 
-    this.addSelectEventListeners(select, items, level, descDiv);
+    this.addSelectEventListeners(select, items, level, descDiv, inheritedFilter);
 
     this.container.appendChild(select);
     this.container.appendChild(descDiv);
@@ -140,7 +140,7 @@ export default class SelectorRunner {
     this.autoSelectOption(select, items, level);
   }
 
-  addSelectEventListeners(select, items, level, descDiv) {
+  addSelectEventListeners(select, items, level, descDiv, inheritedFilter) {
     select.addEventListener('change', async () => {
       this.disableAllControls();
 
@@ -191,7 +191,7 @@ export default class SelectorRunner {
         }
       }
 
-      await this.handleItemSelection(selectedItem, level + 1, descDiv);
+      await this.handleItemSelection(selectedItem, level + 1, descDiv, inheritedFilter);
 
       if (this.callbacks.onLevelChange) {
         this.callbacks.onLevelChange(level + 1);
@@ -206,13 +206,16 @@ export default class SelectorRunner {
     }
   }
 
-  async handleItemSelection(selectedItem, nextLevel, descDiv) {
-    const { children, nextUrl, url, items: itemArray, apiVer, random } = selectedItem;
+  async handleItemSelection(selectedItem, nextLevel, descDiv, inheritedFilter) {
+    const { children, nextUrl, url, items: itemArray, apiVer, random, filter } = selectedItem;
+
+    // filter 继承逻辑：子项若有自己的 filter 则覆盖，否则继承父级的
+    const nextFilter = filter !== undefined ? filter : inheritedFilter;
 
     if (children && Array.isArray(children)) {
       console.log(`${PREFIX}${selectedItem.name}：使用内联 children 数据加载层级 ${nextLevel}`);
       const transformedData = await transformApiData.transformDataIfNecessary(children, apiVer, this.container, random, this.selectName);
-      await this.loadLevel(transformedData, nextLevel);
+      await this.loadLevel(transformedData, nextLevel, nextFilter);
       return;
     }
 
@@ -221,7 +224,7 @@ export default class SelectorRunner {
       try {
         const rawData = await loadContent.fetchItems(nextUrl);
         const transformedData = await transformApiData.transformDataIfNecessary(rawData, apiVer, this.container, random, this.selectName);
-        await this.loadLevel(transformedData, nextLevel);
+        await this.loadLevel(transformedData, nextLevel, nextFilter);
       } catch (error) {
         console.error(`${PREFIX}加载层级 ${nextLevel} 从 ${nextUrl} 获取数据出错：`, error);
         this.callbacks.onRenderError(error.message, nextLevel, this.container);
@@ -231,13 +234,13 @@ export default class SelectorRunner {
 
     if (itemArray && Array.isArray(itemArray)) {
       console.log(`${PREFIX}${selectedItem.name}：渲染 ${itemArray.length} 个下载项`);
-      this.renderDownloadButtons(itemArray, nextLevel);
+      this.renderDownloadButtons(itemArray, nextLevel, nextFilter);
       return;
     }
 
     if (url) {
       console.log(`${PREFIX}${selectedItem.name}：渲染单个下载项`);
-      this.renderDownloadButtons([selectedItem], nextLevel);
+      this.renderDownloadButtons([selectedItem], nextLevel, nextFilter);
       return;
     }
 
@@ -268,7 +271,7 @@ export default class SelectorRunner {
     select.dispatchEvent(event);
   }
 
-  renderDownloadButtons(items, level) {
+  renderDownloadButtons(items, level, filter) {
     const validItems = items.filter(item => item.url);
     console.log(`${PREFIX}渲染下载按钮，层级 ${level}，有效项：${validItems.length}/${items.length}`);
 
@@ -277,6 +280,7 @@ export default class SelectorRunner {
     const fragment = document.createDocumentFragment();
     const rows = [];
     let hasMatchedArch = false;
+    let hiddenCount = 0;
 
     validItems.forEach(item => {
       const delayToUse = this.disableDebounce ? 0 : this.debounceDelay;
@@ -286,6 +290,17 @@ export default class SelectorRunner {
         delayToUse,
         this.sysInfo.matchedArch,
       );
+
+      // filter 过滤：如果 filter 数组存在且 item.url 不匹配任一正则，则标记为隐藏
+      if (filter && filter.length > 0) {
+        const matches = filter.some(f => new RegExp(f).test(item.url));
+        if (!matches) {
+          row.classList.add('xf-filter-hidden');
+          hiddenCount++;
+        }
+        console.log(`${PREFIX}${item.name}：URL 过滤器匹配结果：${matches}`);
+      }
+
       rows.push(row);
       fragment.appendChild(row);
       if (row.id === 'matchedArchRow') {
@@ -309,7 +324,7 @@ export default class SelectorRunner {
     }
 
     const keptColumnNames = columnIndicesToKeep.map(i => COLUMN_HEADERS[i]);
-    console.log(`${PREFIX}层级 ${level}：表格保留列：${keptColumnNames.join('、')}，匹配架构：${hasMatchedArch}`);
+    console.log(`${PREFIX}层级 ${level}：表格保留列：${keptColumnNames.join('、')}，匹配架构：${hasMatchedArch}，隐藏项：${hiddenCount}`);
 
     const wrapper = document.createElement('div');
     wrapper.classList.value = 'mdui-table-fluid';
@@ -343,6 +358,10 @@ export default class SelectorRunner {
         newRow.id = 'matchedArchRow';
         newRow.style.backgroundColor = '#00ff0040';
       }
+      // 保留隐藏标记以便显示/隐藏切换
+      if (row.classList.contains('xf-filter-hidden')) {
+        newRow.classList.add('xf-filter-hidden');
+      }
       tbody.appendChild(newRow);
     });
 
@@ -352,7 +371,34 @@ export default class SelectorRunner {
       this.container.appendChild(matchDesc);
     }
 
+    // 如果有被隐藏的项目，显示提示和显示按钮
+    if (hiddenCount > 0) {
+      this.ensureFilterStyles();
+      const filterNotice = document.createElement('div');
+      filterNotice.className = 'description';
+      filterNotice.style.cssText = 'background-color: #ffff0040;';
+
+      const showBtn = document.createElement('a');
+      showBtn.className = 'mdui-btn mdui-btn-raised mdui-ripple mdui-block';
+      showBtn.textContent = `显示 ${hiddenCount} 个因不符合筛选条件而被隐藏的项目`;
+
+      showBtn.addEventListener('click', () => {
+        const hiddenRows = wrapper.querySelectorAll('.xf-filter-hidden');
+        if (hiddenRows.length > 0) {
+          hiddenRows.forEach(row => row.classList.remove('xf-filter-hidden'));
+          showBtn.textContent = `已显示 ${hiddenCount} 个因不符合筛选条件而被隐藏的项目`;
+          showBtn.disabled = true;
+          showBtn.style.opacity = '0.5';
+          showBtn.style.pointerEvents = 'none';
+        }
+      });
+
+      filterNotice.appendChild(showBtn);
+      this.container.appendChild(filterNotice);
+    }
+
     this.container.appendChild(wrapper);
+
     mdui.mutation();
 
     this.enableAllControls();
@@ -401,5 +447,22 @@ export default class SelectorRunner {
         forceStopBtn.classList.add('xf-hide');
       }
     }
+  }
+
+  /**
+   * 确保 filter 隐藏样式存在（动态注入 CSS）
+   */
+  ensureFilterStyles() {
+    const styleId = 'xf-filter-styles';
+    if (document.getElementById(styleId)) return;
+
+    const style = document.createElement('style');
+    style.id = styleId;
+    style.textContent = `
+      .xf-filter-hidden {
+        display: none !important;
+      }
+    `;
+    document.head.appendChild(style);
   }
 }
