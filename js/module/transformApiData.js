@@ -42,6 +42,10 @@ export default class transformApiData {
         data = await this.transformCxsjmcApiData(data);
         break;
       }
+      case "fengyuan": {
+        data = this.transformFengyuanApiData(data);
+        break;
+      }
       default: {
         break;
       }
@@ -253,4 +257,61 @@ export default class transformApiData {
       url: `https://fcl.cxsjmc.cn/FCL/${asset.name}`
     }));
   }
+
+/**
+ * 转换fengyuan API数据
+ * @param {Object} data - 原始数据
+ * @returns {Array} 转换后的数据
+ */
+static transformFengyuanApiData(data) {
+  const baseUrl = 'https://fengyuan.frostlynx.work';
+  const assets = data?.data?.assets || [];
+
+  // 按版本分组
+  const versionMap = {};
+  assets.forEach(asset => {
+    if (!versionMap[asset.version]) {
+      versionMap[asset.version] = [];
+    }
+    versionMap[asset.version].push(asset);
+  });
+
+  // 版本号排序（从高到低）
+  const versions = Object.keys(versionMap).sort((a, b) => {
+    const partsA = a.split('.').map(Number);
+    const partsB = b.split('.').map(Number);
+    for (let i = 0; i < Math.max(partsA.length, partsB.length); i++) {
+      const numA = partsA[i] || 0;
+      const numB = partsB[i] || 0;
+      if (numA !== numB) return numB - numA;
+    }
+    return 0;
+  });
+
+  const latestVersion = versions[0]; // 最高版本为默认
+
+  return versions.map(version => ({
+    name: version,
+    default: version === latestVersion,
+    children: (versionMap[version] || []).map(asset => ({
+      name: asset.file_name,
+      arch: inferArch(asset.architecture, asset.file_name),
+      url: baseUrl + asset.download_path,
+      size: asset.size_bytes,
+      available: asset.available
+    }))
+  }));
+
+  function inferArch(rawArch, name) {
+    if (rawArch == 'None') {
+      if (name.includes('Zalith')) {
+        return 'all';
+      }
+    }
+    return rawArch;
+  }
+
+}
+
+
 }

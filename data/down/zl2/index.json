@@ -5,6 +5,11 @@
   },
   {
     "name": "线路2",
+    "nextUrl": "https://fengyuan.frostlynx.work/api/public/v1/projects/ZalithLauncher2/assets",
+    "apiVer": "fengyuan"
+  },
+  {
+    "name": "线路2（旧）",
     "nextUrl": "https://api.mirror.frostlynx.work/api/projects/zl2",
     "apiVer": "frostlynx"
   },
