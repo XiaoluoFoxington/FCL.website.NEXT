@@ -1,6 +1,7 @@
 [
   {
     "name": "需跳转到外部网站",
-    "url": "https://alist.8mi.tech/Minecraft/FCL/Auto"
+    "url": "https://alist.8mi.tech/Minecraft/FCL/Auto",
+    "btnText": "跳转"
   }
 ]
