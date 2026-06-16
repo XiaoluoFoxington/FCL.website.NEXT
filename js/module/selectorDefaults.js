@@ -74,7 +74,7 @@ export function defaultCreateDownloadElement(item, onDownload, debounceDelay, ma
   const tdUrl = document.createElement('td');
 
   const btnDl = document.createElement('a');
-  btnDl.innerText = '下载';
+  btnDl.innerText = item.btnText || '下载';
   btnDl.href = item.url;
   btnDl.target = '_blank';
   btnDl.className = 'mdui-btn mdui-btn-block mdui-btn-raised mdui-ripple';
