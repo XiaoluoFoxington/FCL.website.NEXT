@@ -9,6 +9,9 @@ export async function xf_init() {
   await xf_loadTab4Content();
   xf_addEventListeners();
   xf_loadTrafficInfo();
+  setInterval(() => {
+    xf_loadTrafficInfo();
+  }, 10000);
   const contributors = await getContributors();
   xf_generateContributors(contributors);
   xf_generateDownloadLines(contributors);
