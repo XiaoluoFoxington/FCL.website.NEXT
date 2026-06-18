@@ -189,7 +189,7 @@ export function xf_loadWay10BanInfo() {
  * 获取所有线路流量信息
  */
 export function xf_loadTrafficInfo() {
-  xf_loadWay2TrafficInfo('https://mirror.frostlynx.work/stats');
+  xf_loadWay2TrafficInfo('https://fengyuan.frostlynx.work/api/public/v1/stats');
   xf_loadWay10TrafficInfo('https://miawa.cn/api/stats');
 }
 
@@ -202,8 +202,8 @@ export async function xf_loadWay2TrafficInfo(url = '/data/content/way2Traffic.js
   const totalEl = document.getElementById('xf_fclWay2Total');
   try {
     const apiData = await loadContent.fetchItems(url);
-    trafficEl.textContent = apiData.total_gigabytes_transferred + 'GiB' || 'N/A';
-    totalEl.textContent = apiData.total_downloads || 'N/A';
+    trafficEl.textContent = utils.xf_formatBytes(apiData["p"][3]) || 'N/A';
+    totalEl.textContent = apiData["p"][2] || 'N/A';
   } catch (error) {
     console.error('获取线2流量信息失败:', error);
     trafficEl.textContent = error.message;
