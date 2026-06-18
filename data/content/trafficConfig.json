@@ -4,7 +4,7 @@
     "name": "线路2",
     "apiUrl": "https://fengyuan.frostlynx.work/api/public/v1/stats",
     "refreshInterval": 10000,
-    "refreshLabel": "每10秒刷新",
+    "refreshLabel": "每10秒更新",
     "charts": [
       {
         "id": "way2Visit",
@@ -67,7 +67,7 @@
     "name": "线路10",
     "apiUrl": "https://miawa.cn/api/stats",
     "refreshInterval": 300000,
-    "refreshLabel": "每5分钟刷新",
+    "refreshLabel": "每5分钟更新",
     "charts": [
       {
         "id": "way10Visit",

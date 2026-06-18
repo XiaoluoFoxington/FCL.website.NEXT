@@ -112,6 +112,11 @@
           <td>Array</td>
           <td>下一层级的数组，可为多个下载项或继续向下嵌套。如同时提供了<code>nextUrl</code>，则忽略<code>nextUrl</code></td>
         </tr>
+        <tr>
+          <td>filter</td>
+          <td>Array&lt;String&gt;</td>
+          <td>URL 筛选器，是一个正则表达式字符串数组。下载项中只有 <code>url</code> 匹配至少一个正则表达式的才会显示。不匹配的项会被隐藏，并显示"显示被隐藏项"按钮。子项会继承父级的 <code>filter</code>，除非子项自己显式设置了 <code>filter</code></td>
+        </tr>
       </tbody>
     </table>
   </div>
@@ -145,6 +150,7 @@
     </table>
   </div>
   <p><code>url</code>与<code>items</code>为最底层，将直接渲染为一个或多个按钮。<code>nextUrl</code>与<code>children</code>为下一层级，将通过判断是否为最底层来决定渲染下一层级还是按钮。</p>
+  <p><code>filter</code>字段用于筛选下载表格中的项。当设置了<code>filter</code>后，只有下载项的<code>url</code>能匹配到<code>filter</code>数组中至少一个正则表达式的，才会显示在表格中。不匹配的项会被隐藏（带<code>xf-filter-hidden</code>类），并在表格下方显示"显示 N 个因不符合筛选条件而被隐藏的项目"按钮，用户可点击展开查看所有项。<code>filter</code>支持继承：子层级的选项会继承父级的<code>filter</code>，若子项自身也设置了<code>filter</code>，则覆盖继承值。</p>
   <p>下载表格会自动隐藏所有下载项中均为空的列。表格列包括：操作、架构、描述、大小、显示名称、URL。</p>
   <p>下载项的架构（<code>arch</code>）支持自动推断。如果未显式设置 <code>arch</code>，系统会依次尝试从下载 URL、选项名称中识别常见架构关键词（如 <code>arm64-v8a</code>、<code>x86_64</code> 等）。Zalith Launcher 2 的 <code>all</code> 架构文件的下载 URL、选项名称中不会包含 <code>all</code>（即使它是），会自动推断为 <code>all</code> 架构。</p>
   <p>下载表格会自动检测用户设备架构，并在下载表格中高亮显示匹配的架构行（绿色背景）。</p>
@@ -270,7 +276,7 @@
 ]</code></pre>
 
   <p>示例数据源 3：</p>
-  <p>此示例展示<code>apiVer</code>和<code>random</code>用法。</p>
+  <p>此示例展示<code>apiVer</code>、<code>random</code>和<code>filter</code>用法。</p>
 
   <pre><code class="language-json">[
   {
@@ -291,6 +297,7 @@
     "children": [
       {
         "name": "v1.0.0",
+        "filter": [".apk"],
         "children": [
           {
             "name": "all",
@@ -301,7 +308,7 @@
           {
             "name": "arm64-v8a",
             "arch": "arm64-v8a",
-            "url": "https://assets.example.com/v1.0.0/arm64-v8a.7z",
+            "url": "https://assets.example.com/v1.0.0/arm64-v8a.apk",
             "size": 1919810
           }
         ]

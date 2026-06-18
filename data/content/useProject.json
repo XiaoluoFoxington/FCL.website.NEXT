@@ -36,6 +36,15 @@
     "licenseLink": "https://github.com/highlightjs/highlight.js/blob/main/LICENSE"
   },
   {
+    "name": "chart.js",
+    "description": "HTML5 Canvas 绘制图表库。",
+    "useDescription": "关于页流量信息统计图。",
+    "useVersion": "4.4.7",
+    "link": "https://github.com/chartjs/Chart.js",
+    "license": "MIT",
+    "licenseLink": "https://github.com/chartjs/Chart.js/blob/master/LICENSE.md"
+  },
+  {
     "name": "Vercount",
     "description": "网站计数器。",
     "useDescription": "菜单栏网站详情网站访问计数。",
