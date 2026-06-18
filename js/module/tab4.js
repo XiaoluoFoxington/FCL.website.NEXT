@@ -8,10 +8,8 @@ import utils from './utils.js';
 export async function xf_init() {
   await xf_loadTab4Content();
   xf_addEventListeners();
-  xf_loadTrafficInfo();
-  setInterval(() => {
-    xf_loadTrafficInfo();
-  }, 10000);
+  const config = await loadContent.fetchItems('/data/content/trafficConfig.json');
+  xf_initTrafficCharts(config);
   const contributors = await getContributors();
   xf_generateContributors(contributors);
   xf_generateDownloadLines(contributors);
@@ -188,47 +186,222 @@ export function xf_loadWay10BanInfo() {
 }
 
 
+/** 最大保留数据点数 */
+const MAX_DATA_POINTS = 114;
+
+/** 所有线路的实时数据记录（按 routeId → chartId → records[]） */
+const routeRecords = {};
+
+/** Chart.js 实例缓存 */
+const trafficCharts = {};
+
 /**
- * 获取所有线路流量信息
+ * 获取当前时间标签 (HH:MM:SS)
  */
-export function xf_loadTrafficInfo() {
-  xf_loadWay2TrafficInfo('https://fengyuan.frostlynx.work/api/public/v1/stats');
-  xf_loadWay10TrafficInfo('https://miawa.cn/api/stats');
+function xf_getTimeLabel() {
+  const now = new Date();
+  return `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
 }
 
 /**
- * 获取线2流量信息
- * @param {string} url 流量信息API URL
+ * 向记录数组中追加数据点，超出最大长度时移除最早的点
+ * @param {Array} records 记录数组
+ * @param {number} value 数值
  */
-export async function xf_loadWay2TrafficInfo(url = '/data/content/way2Traffic.json') {
-  const trafficEl = document.getElementById('xf_fclWay2Traffic');
-  const totalEl = document.getElementById('xf_fclWay2Total');
-  try {
-    const apiData = await loadContent.fetchItems(url);
-    trafficEl.textContent = utils.xf_formatBytes(apiData["p"][3]) || 'N/A';
-    totalEl.textContent = apiData["p"][2] || 'N/A';
-  } catch (error) {
-    console.error('获取线2流量信息失败:', error);
-    trafficEl.textContent = error.message;
-    totalEl.textContent = error.message;
-    return;
+function xf_pushRecord(records, value) {
+  records.push({ time: xf_getTimeLabel(), value });
+  if (records.length > MAX_DATA_POINTS) {
+    records.shift();
   }
 }
 
 /**
- * 获取线10流量信息
- * @param {string} url 流量信息API URL
+ * 创建或更新折线图
+ * @param {string} canvasId canvas 元素 ID
+ * @param {Array} records 记录数组 [{time, value}, ...]
+ * @param {Object} chartConfig 图表的配置对象（含 label、color、style 等）
+ * @param {function} [tooltipCallback] 格式化 tooltip 的回调
+ * @param {function} [yAxisCallback] 格式化 Y 轴刻度的回调
  */
-export async function xf_loadWay10TrafficInfo(url = 'https://miawa.cn/api/stats') {
-  const totalEl = document.getElementById('xf_fclWay10Total');
-  try {
-    const apiData = await loadContent.fetchItems(url);
-    totalEl.textContent = apiData.total_downloads || 'N/A';
-  } catch (error) {
-    console.error('获取线10流量信息失败:', error);
-    totalEl.textContent = error.message;
+function xf_createOrUpdateChart(canvasId, records, chartConfig, tooltipCallback, yAxisCallback) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+
+  const labels = records.map(r => r.time);
+  const data = records.map(r => r.value);
+  const s = chartConfig.style || {};
+  const color = chartConfig.color;
+
+  if (trafficCharts[canvasId]) {
+    const chart = trafficCharts[canvasId];
+    chart.data.labels = labels;
+    chart.data.datasets[0].data = data;
+    chart.update('none');
     return;
   }
+
+  trafficCharts[canvasId] = new Chart(canvas.getContext('2d'), {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: chartConfig.label,
+        data: data,
+        borderColor: color,
+        backgroundColor: s.backgroundColor || color.replace('1)', '0.1)'),
+        fill: s.fill !== undefined ? s.fill : true,
+        tension: s.tension !== undefined ? s.tension : 0,
+        pointRadius: s.pointRadius !== undefined ? s.pointRadius : 2,
+        pointHoverRadius: s.pointHoverRadius !== undefined ? s.pointHoverRadius : 5,
+        borderWidth: s.borderWidth !== undefined ? s.borderWidth : 2
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: s.maintainAspectRatio !== undefined ? s.maintainAspectRatio : true,
+      animation: false,
+      plugins: {
+        legend: { display: s.legendDisplay || false },
+        tooltip: {
+          callbacks: {
+            label: tooltipCallback || (ctx => `${ctx.parsed.y}`)
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { display: s.xGridDisplay !== undefined ? s.xGridDisplay : false },
+          ticks: { maxTicksLimit: s.maxTicksLimit || 10 }
+        },
+        y: {
+          beginAtZero: s.yBeginAtZero || false,
+          ticks: {
+            callback: yAxisCallback || (value => value)
+          }
+        }
+      }
+    }
+  });
+}
+
+/**
+ * 按路径表达式从对象中取值，支持 p[1]、total_visits 等格式
+ * @param {Object} obj 源对象
+ * @param {string} path 路径表达式
+ * @returns {*}
+ */
+function xf_getValueByPath(obj, path) {
+  // 先尝试用方括号匹配：p[1] → obj.p[1]
+  const bracketMatch = path.match(/^([^[]+)\[(\d+)\]$/);
+  if (bracketMatch) {
+    const key = bracketMatch[1];
+    const index = parseInt(bracketMatch[2], 10);
+    return obj?.[key]?.[index];
+  }
+  // 否则直接当属性名
+  return obj?.[path];
+}
+
+/**
+ * 动态生成流量监控面板 HTML（flex 布局）
+ * @param {Array} config 流量配置
+ * @returns {string}
+ */
+function xf_generateTrafficHtml(config) {
+  let html = '<div class="mdui-panel" mdui-panel>';
+
+  config.forEach(route => {
+    html += `
+      <div class="mdui-panel-item mdui-panel-item-open">
+        <div class="mdui-panel-item-header mdui-ripple">
+          <div>${route.name} （${route.refreshLabel}）</div>
+          <i class="mdui-panel-item-arrow mdui-icon material-icons">keyboard_arrow_down</i>
+        </div>
+        <div class="mdui-panel-item-body">
+          <div class="mdui-container-fluid">
+            <div style="display: flex; flex-wrap: wrap; gap: 16px;">`;
+
+    route.charts.forEach(chart => {
+      html += `
+              <div style="flex: 1 1 300px; min-width: 260px;">
+                <div class="mdui-panel" mdui-panel>
+                  <div class="mdui-panel-item mdui-panel-item-open">
+                    <div class="mdui-panel-item-header mdui-ripple">
+                      <div>${chart.label}</div>
+                      <i class="mdui-panel-item-arrow mdui-icon material-icons">keyboard_arrow_down</i>
+                    </div>
+                    <div class="mdui-panel-item-body">
+                      <canvas id="xf_${chart.id}Chart"></canvas>
+                    </div>
+                  </div>
+                </div>
+              </div>`;
+    });
+
+    html += `
+            </div>
+          </div>
+        </div>
+      </div>`;
+  });
+
+  html += '</div>';
+  return html;
+}
+
+/**
+ * 根据配置获取并更新某条线路的所有图表
+ * @param {Object} route 线路配置
+ */
+async function xf_fetchRouteData(route) {
+  try {
+    const apiData = await loadContent.fetchItems(route.apiUrl);
+    const records = routeRecords[route.id];
+
+    route.charts.forEach(chart => {
+      const value = xf_getValueByPath(apiData, chart.dataPath);
+      if (value === null || value === undefined) return;
+
+      xf_pushRecord(records[chart.id], value);
+
+      xf_createOrUpdateChart(
+        `xf_${chart.id}Chart`,
+        records[chart.id],
+        chart,
+        chart.formatBytes ? ctx => utils.xf_formatBytes(ctx.parsed.y) : undefined,
+        chart.formatBytes ? v => utils.xf_formatBytes(v) : undefined
+      );
+    });
+  } catch (error) {
+    console.error(`获取${route.name}流量信息失败:`, error);
+  }
+}
+
+/**
+ * 初始化流量监控：生成 HTML + 初始化数据记录 + 首次加载 + 启动定时轮询
+ * @param {Array} config 流量配置
+ */
+export function xf_initTrafficCharts(config) {
+  const container = document.getElementById('xf_trafficInfoBody');
+  if (!container || !config) return;
+
+  // 1. 动态生成 HTML
+  container.innerHTML = xf_generateTrafficHtml(config);
+  mdui.mutation();
+
+  // 2. 初始化数据记录结构
+  config.forEach(route => {
+    routeRecords[route.id] = {};
+    route.charts.forEach(chart => {
+      routeRecords[route.id][chart.id] = [];
+    });
+  });
+
+  // 3. 首次加载 & 启动定时轮询
+  config.forEach(route => {
+    xf_fetchRouteData(route);
+    setInterval(() => xf_fetchRouteData(route), route.refreshInterval);
+  });
 }
 
 
