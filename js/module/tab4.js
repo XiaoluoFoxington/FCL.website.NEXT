@@ -32,52 +32,32 @@ export function xf_addEventListeners() {
  */
 export function xf_loadWay2BanInfo() {
   const container = document.getElementById('xf_fclWay2BanInfoBody');
-  const apiUrl = 'https://mirror.frostlynx.work/api/blocks/export';
+  const apiUrl = 'https://fengyuan.frostlynx.work/api/public/v1/blocklist.json';
   container.innerHTML = '<div class="mdui-spinner"></div>';
   mdui.mutation();
 
   fetch(apiUrl)
     .then(response => {
       if (!response.ok) throw new Error(`HTTP错误: ${response.status}`);
-      return response.text();
+      return response.json();
     })
-    .then(text => {
-      const lines = text.split(/\r?\n/);
-      const items = []; // 存储 { ip, reason }
-      let currentReason = null;
-
-      for (let i = 0; i < lines.length; i++) {
-        const line = lines[i].trim();
-        if (line === '') continue; // 跳过空行
-
-        if (line.startsWith('#')) {
-          // 注释行作为原因
-          currentReason = line.substring(1).trim();
-        } else if (currentReason !== null) {
-          // 非注释行且有待配对的原因，作为IP
-          items.push({
-            ip: line,
-            reason: currentReason
-          });
-          currentReason = null;
-        }
-        // 其他情况（非注释行但无待配对原因）忽略，防止格式错误
-      }
-
-      // 生成表格行
-      let tbodyHtml = '';
-      for (const item of items) {
-        tbodyHtml += `
-          <tr>
-            <td>${utils.xf_escapeHtml(item.ip)}</td>
-            <td>${utils.xf_escapeHtml(item.reason)}</td>
-          </tr>
-        `;
-      }
-
-      if (items.length === 0) {
+    .then(data => {
+      const blocks = data?.data?.blocks;
+      if (!Array.isArray(blocks) || blocks.length === 0) {
         container.innerHTML = '<div class="mdui-typo">暂无数据</div>';
         return;
+      }
+
+      let tbodyHtml = '';
+      for (const block of blocks) {
+        tbodyHtml += `
+          <tr>
+            <td>${utils.xf_escapeHtml(block.entry)}</td>
+            <td>${utils.xf_escapeHtml(block.reason || '')}</td>
+            <td>${utils.xf_formatISO8601Time(block.blocked_at || '')}</td>
+            <td>${utils.xf_escapeHtml(block.attempts_after_block || '')}</td>
+          </tr>
+        `;
       }
 
       const tableHtml = `
@@ -87,6 +67,8 @@ export function xf_loadWay2BanInfo() {
               <tr>
                 <th>IP</th>
                 <th>原因</th>
+                <th>封禁时间</th>
+                <th>封禁后尝试次数</th>
               </tr>
             </thead>
             <tbody>
