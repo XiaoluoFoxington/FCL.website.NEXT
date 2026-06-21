@@ -17,6 +17,45 @@ export default class utils {
   }
 
   /**
+   * 格式化ISO 8601为中文字符串
+   * @param {string} iso8601 - ISO 8601字符串
+   * @returns {string} - 格式化后的字符串
+   */
+  static xf_formatISO8601Time(isoString) {
+    const date = new Date(isoString);
+    const nanoMatch = isoString.match(/\.(\d+)Z?$/);
+    const ns = nanoMatch ? parseInt(nanoMatch[1].padEnd(9, '0')) : 0;
+
+    // 北京时间 (UTC+8)
+    const h = (date.getUTCHours() + 8) % 24;
+    const m = date.getUTCMinutes();
+    const s = date.getUTCSeconds();
+
+    // 构建时间部分，过滤掉尾部的0
+    const timeArr = [
+      { value: h, label: '时' },
+      { value: m, label: '分' },
+      { value: s, label: '秒' },
+      { value: ns, label: '纳秒' }
+    ];
+
+    // 找到最后一个非零值的索引
+    let lastNonZero = 0;
+    for (let i = timeArr.length - 1; i >= 0; i--) {
+      if (timeArr[i].value > 0) {
+        lastNonZero = i;
+        break;
+      }
+    }
+
+    // 只取到最后一个非零值
+    const displayParts = timeArr.slice(0, lastNonZero + 1);
+    const timeStr = displayParts.map(p => p.value + p.label).join('');
+
+    return `${date.getUTCFullYear()}年${date.getUTCMonth() + 1}月${date.getUTCDate()}日${timeStr || '0时'}`;
+  }
+
+  /**
    * 将多个Uint8Array合并为一个将多个Uint8Array合并为一个
    */
   static xf_concatChunks(chunks) {
@@ -87,6 +126,7 @@ export default class utils {
    */
   static xf_escapeHtml(str) {
     if (!str) return '';
+    if (typeof str !== 'string') return str;
     return str
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
@@ -140,8 +180,8 @@ export default class utils {
     } = options;
 
     // 检查是否为取消操作导致的错误
-    const isAbortError = error.name === 'AbortError' || 
-                         error.message.includes('The operation was aborted');
+    const isAbortError = error.name === 'AbortError' ||
+      error.message.includes('The operation was aborted');
 
     if (isAbortError && isUserFriendly) {
       return {
