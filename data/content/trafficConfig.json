@@ -65,7 +65,7 @@
   {
     "id": "way10",
     "name": "线路10",
-    "apiUrl": "https://miawa.cn/api/stats",
+    "apiUrl": "https://miawa.cn/api/v2/stats",
     "refreshInterval": 300000,
     "refreshLabel": "每5分钟更新",
     "charts": [
@@ -73,7 +73,7 @@
         "id": "way10Visit",
         "label": "总访问次数",
         "color": "rgba(54, 162, 235, 1)",
-        "dataPath": "total_visits",
+        "dataPath": "data.total_visits",
         "formatBytes": false,
         "style": {
           "fill": true,
@@ -91,7 +91,7 @@
         "id": "way10Download",
         "label": "总下载次数",
         "color": "rgba(255, 159, 64, 1)",
-        "dataPath": "total_downloads",
+        "dataPath": "data.total_downloads",
         "formatBytes": false,
         "style": {
           "fill": true,

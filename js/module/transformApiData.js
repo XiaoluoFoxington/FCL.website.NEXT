@@ -195,7 +195,9 @@ export default class transformApiData {
    * @returns {Array} 转换后的数据
    */
   static transformLemwoodApiData(data, latest) {
-    return data.map(item => ({
+    // 适配 v2 统一信封 {data, error, meta}
+    const payload = data?.data ?? data;
+    return payload.map(item => ({
       name: item.name,
       default: item.name === latest,
       children: item.assets?.map(asset => ({
@@ -212,7 +214,9 @@ export default class transformApiData {
    * @returns {Array} 转换后的数据
    */
   static transformLemwoodLatestApiData(data) {
-    return this.transformLemwoodApiData([data]);
+    // 适配 v2 统一信封 {data, error, meta}
+    const payload = data?.data ?? data;
+    return this.transformLemwoodApiData([payload]);
   }
 
   /**
@@ -239,7 +243,7 @@ export default class transformApiData {
       console.warn('选择器模块：Lemwood线：latest：选择器的文本不在映射中');
       return null;
     }
-    const latest = await loadContent.fetchItems(`https://miawa.cn/api/latest/${selectName}`, 'text');
+    const latest = await loadContent.fetchItems(`https://miawa.cn/api/v2/latest/${selectName}`, 'text');
     console.log(`选择器模块：Lemwood线：latest：${latest}`);
     return latest;
   }
