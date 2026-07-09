@@ -1,6 +1,7 @@
 import json
 import os
 import re
+import datetime
 
 DEFAULT_ARCHS = ["all", "arm64-v8a", "armeabi-v7a", "x86", "x86_64"]
 
@@ -44,18 +45,31 @@ def get_architectures() -> list[str]:
     return DEFAULT_ARCHS.copy()
 
 
-def get_latest_version(output_dir: str) -> str | None:
-    """扫描输出目录，返回最新版本号（按数字部分排序）"""
-    versions = [f.removesuffix(".json") for f in os.listdir(output_dir) if f.endswith(".json")]
-    if not versions:
+def get_latest_version(output_dir: str) -> tuple[str, float] | None:
+    """扫描输出目录，按文件修改时间返回最新版本号及修改时间戳"""
+    json_files = [f for f in os.listdir(output_dir) if f.endswith(".json")]
+    if not json_files:
         return None
+    latest = max(
+        json_files,
+        key=lambda f: os.path.getmtime(os.path.join(output_dir, f)),
+    )
+    mtime = os.path.getmtime(os.path.join(output_dir, latest))
+    return latest.removesuffix(".json"), mtime
 
-    def version_key(v: str):
-        parts = re.findall(r"\d+", v)
-        return tuple(int(p) for p in parts) if parts else ()
 
-    versions.sort(key=version_key, reverse=True)
-    return versions[0]
+def load_previous_items(output_dir: str) -> dict[str, dict]:
+    """加载最新版本的文件内容，按 arch 索引返回 dict"""
+    info = get_latest_version(output_dir)
+    if not info:
+        return {}
+    filepath = os.path.join(output_dir, f"{info[0]}.json")
+    try:
+        with open(filepath, encoding="utf-8") as f:
+            items = json.load(f)
+        return {item["arch"]: item for item in items if "arch" in item}
+    except Exception:
+        return {}
 
 
 def collect_version(output_dir: str, architectures: list[str]) -> None:
@@ -63,10 +77,17 @@ def collect_version(output_dir: str, architectures: list[str]) -> None:
     交互式收集一个版本的信息，生成 JSON 文件。
     输出格式符合数据源规范：{"arch": "...", "url": "..."}
     """
-    # 展示当前最新版本
-    latest = get_latest_version(output_dir)
-    if latest:
-        print(f"当前最新版本：{latest}")
+    # 展示最新版本信息（按修改时间）
+    latest_info = get_latest_version(output_dir)
+    if latest_info:
+        version, mtime = latest_info
+        dt = datetime.datetime.fromtimestamp(mtime).strftime("%Y-%m-%d %H:%M:%S")
+        print(f"最新版本：{version}（修改于 {dt}）")
+
+    # 加载上一版本的 URL 作为参考提示
+    prev_items = load_previous_items(output_dir)
+    if prev_items:
+        print("（上一版本的 URL 会显示在输入提示上方，方便对照修改）")
 
     # 输入版本名
     while True:
@@ -79,13 +100,23 @@ def collect_version(output_dir: str, architectures: list[str]) -> None:
     items: list[dict] = []
     print(f"\n输入各架构下载 URL（直接回车跳过该架构，全跳过则取消生成）：")
     for arch in architectures:
+        prev = prev_items.get(arch, {})
+        prev_url = prev.get("url", "")
+        prev_size = prev.get("size")
+
+        if prev_url:
+            print(f"  上一版 [{arch}] URL：{prev_url}")
+
         url = input(f"  [{arch}] URL：").strip()
         if not url:
             print(f"    跳过 {arch}")
             continue
 
-        # 可选文件大小
-        size_str = input(f"  [{arch}] 大小（字节，留空跳过）：").strip()
+        # 可选文件大小，显示上一版的大小作为参考
+        hint = ""
+        if prev_size is not None:
+            hint = f"（上一版：{prev_size}）"
+        size_str = input(f"  [{arch}] 大小（字节，留空跳过）{hint}：").strip()
         item: dict[str, str | int] = {"arch": arch, "url": url}
         if size_str:
             try:
