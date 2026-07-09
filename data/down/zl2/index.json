@@ -9,11 +9,6 @@
     "apiVer": "fengyuan"
   },
   {
-    "name": "线路2（旧）",
-    "nextUrl": "https://api.mirror.frostlynx.work/api/projects/zl2",
-    "apiVer": "frostlynx"
-  },
-  {
     "name": "线路10",
     "nextUrl": "https://miawa.cn/api/v2/launchers/zl2",
     "apiVer": "Lemwood",

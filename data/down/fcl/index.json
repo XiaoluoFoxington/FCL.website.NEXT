@@ -10,12 +10,6 @@
     "apiVer": "fengyuan"
   },
   {
-    "name": "线路2（旧）",
-    "nextUrl": "https://api.mirror.frostlynx.work/api/projects/fcl",
-    "apiVer": "frostlynx",
-    "notJoinRandom": true
-  },
-  {
     "name": "线路4",
     "nextUrl": "/data/down/fcl/4/index.json",
     "notJoinRandom": true
