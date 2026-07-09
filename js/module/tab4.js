@@ -273,6 +273,8 @@ function xf_createOrUpdateChart(canvasId, records, chartConfig, tooltipCallback,
  * @returns {*}
  */
 function xf_getValueByPath(obj, path) {
+  if (!path) return undefined;
+
   // 先尝试用方括号匹配：p[1] → obj.p[1]
   const bracketMatch = path.match(/^([^[]+)\[(\d+)\]$/);
   if (bracketMatch) {
@@ -280,6 +282,12 @@ function xf_getValueByPath(obj, path) {
     const index = parseInt(bracketMatch[2], 10);
     return obj?.[key]?.[index];
   }
+
+  // 支持点号路径：data.total_visits
+  if (path.includes('.')) {
+    return path.split('.').reduce((current, key) => current?.[key], obj);
+  }
+
   // 否则直接当属性名
   return obj?.[path];
 }
