@@ -268,7 +268,7 @@ export default class transformApiData {
  * @returns {Array} 转换后的数据
  */
 static transformFengyuanApiData(data) {
-  const baseUrl = 'https://fengyuan.frostlynx.work';
+  const baseUrl = 'https://fyhub.cn';
   const assets = data?.data?.assets || [];
 
   // 按版本分组

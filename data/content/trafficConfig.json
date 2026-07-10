@@ -2,7 +2,7 @@
   {
     "id": "way2",
     "name": "线路2",
-    "apiUrl": "https://fengyuan.frostlynx.work/api/public/v1/stats",
+    "apiUrl": "https://fyhub.cn/api/public/v1/stats",
     "refreshInterval": 10000,
     "refreshLabel": "每10秒更新",
     "charts": [

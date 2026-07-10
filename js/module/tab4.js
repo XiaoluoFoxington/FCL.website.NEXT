@@ -32,7 +32,7 @@ export function xf_addEventListeners() {
  */
 export function xf_loadWay2BanInfo() {
   const container = document.getElementById('xf_fclWay2BanInfoBody');
-  const apiUrl = 'https://fengyuan.frostlynx.work/api/public/v1/blocklist.json';
+  const apiUrl = 'https://fyhub.cn/api/public/v1/blocklist.json';
   container.innerHTML = '<div class="mdui-spinner"></div>';
   mdui.mutation();
 
