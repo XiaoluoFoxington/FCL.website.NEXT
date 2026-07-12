@@ -1,0 +1,22 @@
+[
+  {
+    "arch": "all",
+    "url": "https://mirror.cxsjmc.cn/ZL/ZalithLauncher-latest.apk"
+  },
+  {
+    "arch": "arm64-v8a",
+    "url": "https://mirror.cxsjmc.cn/ZL/ZalithLauncher-latest-arm64-v8a.apk"
+  },
+  {
+    "arch": "armeabi-v7a",
+    "url": "https://mirror.cxsjmc.cn/ZL/ZalithLauncher-latest-armeabi-v7a.apk"
+  },
+  {
+    "arch": "x86",
+    "url": "https://mirror.cxsjmc.cn/ZL/ZalithLauncher-latest-x86.apk"
+  },
+  {
+    "arch": "x86_64",
+    "url": "https://mirror.cxsjmc.cn/ZL/ZalithLauncher-latest-x86_64.apk"
+  }
+]
