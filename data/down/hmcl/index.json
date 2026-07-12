@@ -8,5 +8,9 @@
     "name": "线路10",
     "nextUrl": "https://miawa.cn/api/v2/launchers/hmcl",
     "apiVer": "Lemwood"
+  },
+  {
+    "name": "线路11",
+    "nextUrl": "/data/down/hmcl/11.json"
   }
 ]
