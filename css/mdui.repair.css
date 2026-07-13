@@ -62,6 +62,12 @@
 
 .mdui-table th,
 .mdui-table td {
+  border-right: 1px solid rgba(0, 0, 0, .12);
+  padding: 12px;
+}
+
+.mdui-theme-layout-dark .mdui-table th,
+.mdui-theme-layout-dark .mdui-table td {
   border-right: 1px solid rgba(255, 255, 255, .12);
   padding: 12px;
 }
