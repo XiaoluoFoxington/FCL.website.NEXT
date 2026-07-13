@@ -367,7 +367,7 @@ export default class SelectorRunner {
 
     if (hasMatchedArch) {
       const matchDesc = this.callbacks.onCreateDescriptionElement();
-      matchDesc.textContent = '已匹配到当前架构，请留意表格中绿色行。';
+      matchDesc.textContent = '已匹配到当前架构，请留意表格中绿色行（仅供参考，如无法安装请选择通用（all）架构）。';
       this.container.appendChild(matchDesc);
     }
 
