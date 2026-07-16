@@ -33,6 +33,6 @@
   },
   {
     "name": "线路11",
-    "nextUrl": "/data/down/fcl/11.json"
+    "nextUrl": "https://mirror.cxsjmc.cn/api/v1/FCL/"
   }
 ]

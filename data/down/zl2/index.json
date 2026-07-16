@@ -17,6 +17,6 @@
   },
   {
     "name": "线路11",
-    "nextUrl": "/data/down/zl2/11.json"
+    "nextUrl": "https://mirror.cxsjmc.cn/api/v1/ZL2/"
   }
 ]
