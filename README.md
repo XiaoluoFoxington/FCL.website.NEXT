@@ -1,3 +1,6 @@
+>[!important]
+> 此项目已重制，将**不会**有任何更新，请转到[XiaoluoFoxington/FCL.downsite.NEW](https://github.com/XiaoluoFoxington/FCL.downsite.NEW)。
+
 # FCL.website.NEXT
 
 ## 项目介绍
