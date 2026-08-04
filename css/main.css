@@ -69,3 +69,7 @@ img {
 .download-buttons-container{
   text-wrap: nowrap;
 }
+
+.xf-warningBg.xf-warningBg {
+  background-color: #ffff0040;
+}
