@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="/css/lib/mdui.min.css">
   <link rel="stylesheet" href="/css/mdui.repair.css">
   <link rel="stylesheet" href="/css/main.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css" onerror="this.onerror=null;this.href='/css/lib/github-dark.min.css'">
   <link rel="preload" as="image" href="/media/img/loading.avif">
 </head>
 
@@ -329,7 +329,15 @@
   <script src="/js/lib/ua-parser.min.js"></script>
   <script src="/js/lib/marked.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+  <script>
+    // 远程 highlight.js 加载失败时回退到本地仓库副本
+    window.hljs || document.write('<script src="/js/lib/highlight.min.js"><\/script>');
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <script>
+    // 远程 Chart.js 加载失败时回退到本地仓库副本
+    window.Chart || document.write('<script src="/js/lib/chart.umd.min.js"><\/script>');
+  </script>
   <script type="module" src="/js/main.js"></script>
 </body>
 
